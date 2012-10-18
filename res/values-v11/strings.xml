@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Apertium</string>
+    <string name="input_text">Apertium offers both text translation, along with the translation of documents and surf and translate.</string>
+    <string name="translateHint">Translated text will appear here</string>
+    
+    
+	<!-- Menu  -->
+    <string name="manage">Manage</string>
+    <string name="share">Share</string>
+    <string name="clear">Clear</string>
+	<string name="inbox">Inbox</string>
+    
+    
+     <!-- Widgets  -->
+    <string name="widgetAddButton">+</string>
+    <string name="widgetConfigButton">*</string>
+    <string name="widgetTitle">Desktop Widget</string>
+      
+    
+    <!-- Button  -->
+    <string name="arrow">→</string>
+    <string name="back">Back</string>   
+    <string name="discard">Discard</string>
+    <string name="from">&lt;from&gt;</string>
+    <string name="install">Install</string>
+    <string name="no">No</string>
+    <string name="ok">Okay</string>
+    <string name="reinstall">Reinstall</string>
+    <string name="reload">Reload</string>
+    <string name="report">Report</string>
+    <string name="setting">Setting</string>
+    <string name="to">&lt;to&gt;</string>
+    <string name="translate">Translate</string>
+    <string name="translate_from">Translate from</string>
+    <string name="translate_to">Translated to</string>
+    <string name="update">Update</string>
+    <string name="yes">Yes</string>
+    
+   
+    <!-- Dialog -->
+    <string name="crash_detect">Crash Detected!</string>
+    <string name="crash_message_with_error_and_support_address">The application has crashed during last run with error [%1$s].\n\n Please tell us about it at %2$s .</string>
+   	<string name="confirm_packageRemove">Are you sure want to remove this package?</string>
+	<string name="copying">Copying files</string>
+	<string name="deleting">Deleting</string>
+	<string name="downloading">Downloading</string>
+	<string name="error">Error</string>
+	<string name="error_removing_old">Cannot remove old package</string>
+    <string name="invalid_jar">This is not a valid JAR package!</string>
+    <string name="installing">Installing</string>
+	<string name="lastmodified">Lastmodified</string>
+	<string name="loading">Loading</string>
+	<string name="modes">Translation directions</string>
+	<string name="NA">Not Available</string>
+    <string name="no_mode_available">There is no language direction from %1$s to %2$s</string>
+    <string name="no_mode_from">Select language to be translate &lt;from&gt;</string>
+    <string name="no_mode_to">Select language to be translate &lt;to&gt;</string>
+    <string name="package_Name">Package</string>
+    <string name="package_list">Package List</string>
+    <string name="removing_db">Removing database</string>
+	<string name="removing_files">Removing files</string>
+	<string name="removing_temp">Removing temporary files</string>
+	<string name="removing_old">Removing old files</string>
+	<string name="select_language_mode">Select languages to translate</string>
+    <string name="send_email_in">Send your email in:</string>
+    <string name="share_via">Share via</string>
+    <string name="translating">Translating</string>
+	<string name="unziping">Unzipping files</string>
+	<string name="updating_db">Updating database</string>
+    <string name="working">Working</string>
+	<string name="writing_db">Writing database</string>
+	
+	
+	<!-- Preference -->
+	<string name="applicationSetting">Application Setting</string>
+	<string name="clipBoardGet">ClipBoard Get</string>
+	<string name="clipBoardGetDescription">Fill input from clipboard</string>
+	<string name="clipBoardPush">ClipBoard Push</string>
+	<string name="clipBoardPushDescription">Copy output to clipboard</string>
+	<string name="displayMark">Show mark</string>
+	<string name="displayMarkDescription">Mark the unknown words</string>
+	<string name="enableCache">Enable Cache</string>
+	<string name="enableCacheDescription">For quick translation enable</string>
+	<string name="installInternet">Install from Internet</string>
+	<string name="installInternetDescription">Download and Install directly from internet</string>
+	<string name="installLocal">Install from SDcard</string>
+	<string name="installLocalDescription">localy downloaded package</string>
+	<string name="installPackage">Install Package</string>
+	<string name="installPackageDescription">Install/Update new package</string>
+	<string name="languagePackage">Language Package</string>
+	<string name="listPackage">List Package</string>
+	<string name="listPackageDescription">Select/Remove installed packages</string>
+	<string name="updateDatabase">Update Database</string>
+	<string name="updateDatabaseDescription">Update or repair database</string>
+	<string name="widgetSetting">Widget Settings</string>
+	<string name="widgetSettingDescription">Widgets such as shortcut for specific language</string>
+   
+</resources>

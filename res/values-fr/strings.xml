@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Apertium</string>
+    <string name="input_text">Apertium offre à la fois la traduction de textes, avec la traduction de documents et de surfer et de traduire.</string>
+    <string name="translateHint">Le texte traduit apparaît ici</string>
+    
+    
+	<!-- Menu  -->
+    <string name="manage">Gérer</string>
+    <string name="share">Part</string>
+    <string name="inbox"> Boîte de réception</string>
+    <string name="clear">Effacer</string>
+    
+    
+     <!-- Widgets  -->
+    <string name="widgetAddButton">+</string>
+    <string name="widgetConfigButton">*</string>
+    <string name="widgetTitle">Desktop Widget</string>
+      
+    
+    <!-- Button  -->
+    <string name="arrow">→</string>
+    <string name="back">Dos</string> 
+    <string name="discard">Jeter</string>
+    <string name="from">&lt;de&gt;</string>
+    <string name="install">Installer</string>
+    <string name="no">Aucun</string>
+    <string name="ok">Bien</string>
+    <string name="reinstall">Réinstaller</string>
+    <string name="reload">Recharger</string>
+    <string name="report">Rapport</string>
+    <string name="setting">Mise</string>
+    <string name="to">&lt;à&gt;</string>
+    <string name="translate">Traduire</string>
+    <string name="translate_from">Traduire à partir de</string>
+    <string name="translate_to">Traduire en</string>
+    <string name="update">Réviser</string>
+    <string name="yes">Oui</string>
+    
+   
+    <!-- Dialog -->
+    <string name="crash_detect">Blocage\' détecté!</string>
+    <string name="crash_message_with_error_and_support_address">L\'application s\'est écrasé lors de la dernière exécution avec l\'erreur [%1$s].\n\n  S\'il vous plaît nous dire à ce sujet à %2$s.</string>
+   	<string name="confirm_packageRemove">Etes-vous sûr de vouloir supprimer ce paquet?</string>
+	<string name="copying">Copie de fichiers</string>
+	<string name="deleting">Suppression</string>
+	<string name="downloading">Téléchargement</string>
+	<string name="error">Erreur</string>
+	<string name="error_removing_old">Impossible de supprimer l\'ancien package</string>
+	<string name="invalid_jar">Ce n\'est pas un package JAR valide!</string>
+    <string name="installing">Installing</string>
+	<string name="lastmodified">Lastmodified</string>
+	<string name="loading">Chargement</string>
+	<string name="modes">Directions de traduction</string>
+	<string name="NA">Non disponible</string>
+    <string name="no_mode_available">Il n\'ya pas de mode de %1$s à %2$s</string>
+    <string name="no_mode_from">Sélectionnez la langue à traduire à partir &lt;de&gt;</string>
+    <string name="no_mode_to">Sélectionnez la langue à traduire &lt;à&gt;</string>
+    <string name="package_Name">Package</string>
+    <string name="package_list">Liste des packages</string>
+    <string name="removing_db">Retrait de base de données</string>
+	<string name="removing_files">Suppression de fichiers</string>
+	<string name="removing_temp">Suppression des fichiers temporaires</string>
+	<string name="removing_old">Suppression des fichiers anciens</string>
+	<string name="select_language_mode">Select languages to be translate</string>
+    <string name="send_email_in">Envoyez-nous votre email:</string>
+    <string name="share_via">Partager par</string>
+    <string name="translating">Translating</string>
+	<string name="unziping">Fichiers décompression</string>
+	<string name="updating_db">Mise à jour base de données</string>
+    <string name="working">Actif</string>
+	<string name="writing_db">Rédaction base de données</string>
+	
+	
+	<!-- Preference -->
+	<string name="applicationSetting">Cadre d\'application</string>
+	<string name="clipBoardGet">Obtenez ClipBoard</string>
+	<string name="clipBoardGetDescription">Remplissez entrée du presse-papiers</string>
+	<string name="clipBoardPush">Pousser ClipBoard</string>
+	<string name="clipBoardPushDescription">Copier le presse-papiers de sortie</string>
+	<string name="displayMark">Voir marque</string>
+	<string name="displayMarkDescription">Marquez les mots inconnus</string>
+	<string name="enableCache">Activer le cache</string>
+	<string name="enableCacheDescription">Pour permettre une traduction rapide</string>
+	<string name="installInternet">Installer à partir d\'Internet</string>
+	<string name="installInternetDescription">Télécharger et installer directement à partir d\'Internet</string>
+	<string name="installLocal">Installer à partir d\'SDcard</string>
+	<string name="installLocalDescription">Package téléchargé localement</string>
+	<string name="installPackage">Installer le paquet</string>
+	<string name="installPackageDescription">Installer/Mettre à jour nouveau paquet</string>
+	<string name="languagePackage">Forfait Langue</string>
+	<string name="listPackage">Forfait Liste</string>
+	<string name="listPackageDescription">Sélectionnez / Suppression de paquets installés</string>
+	<string name="updateDatabase">Base de données mise à jour</string>
+	<string name="updateDatabaseDescription">Mettre à jour ou réparer la base de données</string>
+	<string name="widgetSetting">Paramètres des widgets</string>
+	<string name="widgetSettingDescription">Widgets comme raccourci pour la langue spécifique</string>
+   
+</resources>

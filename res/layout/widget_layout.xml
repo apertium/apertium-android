@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="3dip"
+    android:layout_marginTop="12dip"
+    android:layout_marginBottom="12dip"
+    android:layout_marginLeft="3dip"
+    android:background="@drawable/widget_bg" 
+    >
+    
+	<Button
+		android:id="@+id/widgetmode1"
+		android:layout_width="0dip"
+		android:layout_height="match_parent"
+		android:layout_marginTop="2dip"
+		android:layout_marginLeft="1dip"
+		android:layout_marginRight="1dip"
+		android:layout_marginBottom="2dip"
+		android:layout_gravity="center"
+		android:layout_weight = "1"
+		android:text="@string/widgetAddButton"
+		android:textColor ="#FFFFFF"
+		android:background="@drawable/botton_selector" />
+
+  	<Button
+		android:id="@+id/widgetmode2"
+		android:layout_width="0dip"
+		android:layout_height="match_parent"
+		android:layout_marginTop="2dip"
+		android:layout_marginBottom="2dip"
+		android:layout_marginLeft="1dip"
+		android:layout_marginRight="1dip"
+		android:layout_gravity="center"
+		android:layout_weight = "1"
+		android:text="@string/widgetAddButton" 
+		android:textColor ="#FFFFFF"
+android:background="@drawable/botton_selector" />
+  	
+  	<Button
+		android:id="@+id/widgetmode3"
+		android:layout_width="0dip"
+		android:layout_height="match_parent"
+		android:layout_marginTop="2dip"
+		android:layout_marginBottom="2dip"
+		android:layout_marginLeft="1dip"
+		android:layout_marginRight="1dip"
+		android:layout_gravity="center"
+		android:layout_weight = "1"
+		android:text="@string/widgetAddButton" 
+		android:textColor ="#FFFFFF"
+android:background="@drawable/botton_selector" />
+  	
+  	<Button
+		android:id="@+id/widgetmode4"
+		android:layout_width="0dip"
+		android:layout_height="match_parent"
+		android:layout_marginTop="2dip"
+		android:layout_marginBottom="2dip"
+		android:layout_marginLeft="1dip"
+		android:layout_marginRight="1dip"
+		android:layout_gravity="center"		
+		android:layout_weight = "1"
+		android:text="@string/widgetAddButton" 
+		android:textColor ="#FFFFFF"
+android:background="@drawable/botton_selector" />
+  	
+  	<Button
+		android:id="@+id/widgetmode5"
+		android:layout_width="0dip"
+		android:layout_height="match_parent"
+		android:layout_marginTop="2dip"
+		android:layout_marginBottom="2dip"
+		android:layout_marginLeft="1dip"
+		android:layout_marginRight="1dip"
+		android:layout_gravity="center"
+		android:layout_weight = "1"
+		android:text="@string/widgetAddButton" 
+		android:textColor ="#FFFFFF"
+		android:background="@drawable/botton_selector" />
+  	
+  	 <Button
+		android:id="@+id/WidgetConfigButton"
+		android:layout_width="15dip"
+		android:layout_height="match_parent"
+		android:layout_marginTop="1dip"
+		android:layout_marginBottom="1dip"
+		android:layout_marginLeft="1dip"
+		android:layout_marginRight="1dip"
+		android:layout_gravity="center"
+		android:background="#e8470f"
+		android:text="@string/widgetConfigButton"  />
+  	
+
+</LinearLayout>
