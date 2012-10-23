@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2012 Arink Verma
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -29,15 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.helper.AppPreference;
+import org.apertium.android.helper.Prefs;
 
 public class InternetManifest {
 
 	private List<ManifestRow> manifestRowList = null;
-	
+
 	public InternetManifest(String ManifestFile) throws IOException{
 		manifestRowList = new ArrayList<ManifestRow>();
-		InputStream is = new FileInputStream(AppPreference.TEMP_DIR+"/"+AppPreference.MANIFEST_FILE);
+		InputStream is = new FileInputStream(Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		String input="";
     	if (is!=null) {
@@ -51,15 +51,15 @@ public class InternetManifest {
     		}
     	}
 	}
-	
+
 	public int size(){
 		return manifestRowList.size();
 	}
-	
+
 	public ManifestRow get(int location){
 		return manifestRowList.get(location);
 	}
-	
+
 	public String[] PackageTitleList(){
 		String[] list = new String[manifestRowList.size()];
 		for(int i=0;i<manifestRowList.size();i++){
@@ -67,6 +67,6 @@ public class InternetManifest {
 		}
 		return list;
 	}
-	
+
 
 }

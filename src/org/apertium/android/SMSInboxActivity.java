@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2012 Arink Verma
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -21,7 +21,7 @@
  * SMSInboxActivity.java
  * Open SMS inbox list view
  * @author Arink Verma
- * 
+ *
  */
 
 package org.apertium.android;
@@ -56,39 +56,39 @@ public class SMSInboxActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    mContentResolver = getContentResolver();
-	    
+
 		fill();
 	}
-	
+
 	private void fill() {
          this.setTitle(getString(R.string.inbox));
          List<SMSobject>dir = getSms();
-        
+
          Comparator<Object> comparator = Collections.reverseOrder();
          Collections.sort(dir,comparator);
-        
+
          adapter = new SmsArrayAdapter(SMSInboxActivity.this,R.layout.sms_layout,dir);
 		 this.setListAdapter(adapter);
     }
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		smsObj = adapter.getItem(position);	
+		smsObj = adapter.getItem(position);
 
 		Intent intent = getIntent();
     	intent.putExtra("input", smsObj.getBody());
 	    setResult(RESULT_OK, intent);
 	    finish();
 	}
-	
+
 	public List<SMSobject> getSms() {
 		Log.i(TAG, "getSMS");
         Uri mSmsQueryUri = Uri.parse("content://sms/inbox");
         List<SMSobject> messages = new ArrayList<SMSobject>();
         Cursor cursor = null;
         try {
-           
+
 			cursor = mContentResolver.query(mSmsQueryUri, null, null, null, null);
             if (cursor == null) {
                 Log.i(TAG, "cursor is null. uri: " + mSmsQueryUri);
@@ -99,12 +99,13 @@ public class SMSInboxActivity extends ListActivity {
                 final String body = cursor.getString(cursor.getColumnIndexOrThrow("body"));
                 final String sender = cursor.getString(cursor.getColumnIndexOrThrow("address"));
                 final Long date = cursor.getLong(cursor.getColumnIndexOrThrow("date"));
-                
+
                 SMSobject s = new SMSobject(body,sender,date);
                 messages.add(s);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
+            e.printStackTrace();
         } finally {
             cursor.close();
         }

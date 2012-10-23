@@ -4,4 +4,8 @@
     <item android:id="@+id/inbox" android:title="@string/inbox" android:icon="@drawable/email"></item>
     <item android:id="@+id/clear" android:title="@string/clear" android:icon="@drawable/discard"></item>
     <item android:id="@+id/manage" android:title="@string/manage" android:icon="@drawable/settings"></item>
+    <item android:id="@+id/about" android:title="@string/about"
+				android:icon="@android:drawable/ic_menu_help"
+				android:showAsAction="ifRoom|withText">
+    </item>
 </menu>

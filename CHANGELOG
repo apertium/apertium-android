@@ -1,0 +1,19 @@
+
+22.-24 oct 2012 Jacob Nordfalk
+Add missing e.printStackTrace()
+Add files COPYING, AUTHORS, CHANGELOG
+Add Application singleton
+Add about screen
+Add Bugsense library and key
+
+
+TODO
+link to Apertium,
+info about the license have been fulfilled
+Preselect languages - for example default phone language as target language and English as source language
+Language selection should be remembered in prefs
+Cache package list and refresh if there is network
+Bundle fallback package list with the app.
+
+
+

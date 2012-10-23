@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2012 Arink Verma
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -39,7 +39,7 @@ public class FileChooserActivity extends ListActivity {
 	private File currentDir;
 	private FileArrayAdapter adapter;
 	private Option o;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class FileChooserActivity extends ListActivity {
 		currentDir = new File(Environment.getExternalStorageDirectory().getPath());
 		fill(currentDir);
 	}
-	
+
 	private void fill(File f) {
         File[]dirs = f.listFiles();
          this.setTitle("Current Dir: "+f.getName());
@@ -65,20 +65,20 @@ public class FileChooserActivity extends ListActivity {
              }
          }catch(Exception e)
          {
-             
+             e.printStackTrace();
          }
          Collections.sort(dir);
          Collections.sort(fls);
          dir.addAll(fls);
          if(!f.getName().equalsIgnoreCase("sdcard"))
              dir.add(0,new Option("..","Parent Directory",f.getParent()));
-         
+
          adapter = new FileArrayAdapter(FileChooserActivity.this,R.layout.file_view,dir);
 		 this.setListAdapter(adapter);
 
 
     }
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
@@ -88,7 +88,7 @@ public class FileChooserActivity extends ListActivity {
 				fill(currentDir);
 		}else
 		{
-			Intent myIntent = new Intent(FileChooserActivity.this, InstallActivity.class);	
+			Intent myIntent = new Intent(FileChooserActivity.this, InstallActivity.class);
 	    	myIntent.putExtra("filepath", o.getPath());
 	    	myIntent.putExtra("filename", o.getName());
 	    	startActivity(myIntent);

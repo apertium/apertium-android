@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2012 Arink Verma
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -34,7 +34,7 @@ import org.apertium.Translator;
 import org.apertium.android.Internet.InternetManifest;
 import org.apertium.android.Internet.ManifestRow;
 import org.apertium.android.filemanager.FileManager;
-import org.apertium.android.helper.AppPreference;
+import org.apertium.android.helper.Prefs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -71,30 +71,30 @@ public class DownloadActivity extends Activity  implements OnClickListener{
     private ManifestRow toDownload = null;
 
     private Button _reloadButton;
-  
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.download_layout);
 		FileManager.setDIR();
-	
+
 	    listView  = (ListView) findViewById(R.id.listView1);
 	    thisActivity = this;
 
 	    _reloadButton = (Button) findViewById(R.id.reloadButton);
 	    _reloadButton.setOnClickListener(this);
-	    
+
 	    progressDialog = new ProgressDialog(thisActivity);
 	    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	    progressDialog.setTitle(getString(R.string.downloading)+"\n"+getString(R.string.package_list));
-		
+
 	    progressDialog.setCancelable(false);
 	    progressDialog.show();
 
-	    File svnCache = new File(AppPreference.TEMP_DIR+"/"+AppPreference.MANIFEST_FILE);
+	    File svnCache = new File(Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE);
 	    if(!svnCache.exists()){
-	    	FileManager.DownloadRun(AppPreference.SVN_MANIFEST_ADDRESS,AppPreference.TEMP_DIR+"/"+AppPreference.MANIFEST_FILE,thisActivity.handler);
+	    	FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS,Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE,thisActivity.handler);
 	    }else{
 	    	progressDialog.setMessage("Generating view");
         	ParseHtmlRun();
@@ -108,7 +108,7 @@ public class DownloadActivity extends Activity  implements OnClickListener{
 	        @Override
 	        public void run() {
 	        	try {
-	        		internetManifest = new InternetManifest(AppPreference.TEMP_DIR+"/"+AppPreference.MANIFEST_FILE);
+	        		internetManifest = new InternetManifest(Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -135,20 +135,20 @@ public class DownloadActivity extends Activity  implements OnClickListener{
 		        case   FileManager.MESSAGE_DOWNLOAD_STARTED :
 		        	FILE_SIZE = (int)msg.arg1;
 		        	ModifiedSince = (String) msg.obj;
-		        
+
 		        	Log.d("Download","Lastmodified ="+ModifiedSince);
-		        	SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");		        	 
-		        	Date resultdate = new Date(Long.parseLong(ModifiedSince));		        
+		        	SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		        	Date resultdate = new Date(Long.parseLong(ModifiedSince));
 		        	if(isListLoaded == false){
 		        		progressDialog.setTitle(getString(R.string.downloading)+"\n"+getString(R.string.package_list));
 		        		progressDialog.setMessage(getString(R.string.lastmodified)+" "+sdf.format(resultdate)+"\n"+getString(R.string.downloading)+" ["+ FILE_SIZE+"kb]");
 		        	}else{
-		        		
+
 		        		progressDialog.setTitle(getString(R.string.downloading)+"\n"+Translator.getTitle(toDownload.getpackageMode())+" ("+FILE_SIZE+"KB)");
 		        	}
-		        	
-		        	
-		        	
+
+
+
 		        	Log.i(TAG,"Download started "+ FILE_SIZE+"kb");
 		        	break;
 
@@ -205,7 +205,7 @@ public class DownloadActivity extends Activity  implements OnClickListener{
 		        	progressDialog.dismiss();
 		        	Intent myIntent = new Intent(thisActivity, InstallActivity.class);
 		        	myIntent.putExtra("filename",toDownload.getJarFileName());
-			    	myIntent.putExtra("filepath",AppPreference.TEMP_DIR+"/"+toDownload.getJarFileName());
+			    	myIntent.putExtra("filepath",Prefs.TEMP_DIR+"/"+toDownload.getJarFileName());
 			    	myIntent.putExtra("filedate",ModifiedSince);
 			    	startActivity(myIntent);
 	        	}
@@ -227,7 +227,7 @@ public class DownloadActivity extends Activity  implements OnClickListener{
 	    				toDownload = internetManifest.get(position);
 						// start the download immediately
 	    			    startDownload();
-	    			    
+
 	    			    return;
 	    			}
 	    	    });
@@ -243,7 +243,7 @@ public class DownloadActivity extends Activity  implements OnClickListener{
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		progressDialog.setCancelable(true);
 		progressDialog.show();
-		FileManager.DownloadRun(toDownload.getJarURL(),AppPreference.TEMP_DIR+"/"+toDownload.getJarFileName(),thisActivity.handler);
+		FileManager.DownloadRun(toDownload.getJarURL(),Prefs.TEMP_DIR+"/"+toDownload.getJarFileName(),thisActivity.handler);
 	}
 
 
@@ -256,9 +256,9 @@ public class DownloadActivity extends Activity  implements OnClickListener{
 			progressDialog.setTitle(getString(R.string.downloading)+"\n"+getString(R.string.package_list));
 		    progressDialog.setCancelable(false);
 		    progressDialog.show();
-			FileManager.DownloadRun(AppPreference.SVN_MANIFEST_ADDRESS,AppPreference.TEMP_DIR+"/svn.html",thisActivity.handler);
-		     
+			FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS,Prefs.TEMP_DIR+"/svn.html",thisActivity.handler);
+
 		}
-		
+
 	}
 }

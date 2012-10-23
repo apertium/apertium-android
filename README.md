@@ -1,6 +1,9 @@
 Apertium on mobile
 =========
-Port Apertium to Android and possibly iPhone under Google Summer of Code 2012. Apertium has a Java port which doesn't currently work on mobile telephones. Lots of people have mobile telephones, and some of them would like to have a translator there.
+Port Apertium to Android and possibly iPhone under Google Summer of Code 2012.
+Apertium has a Java port which doesn't currently work on mobile telephones.
+Lots of people have mobile telephones, and some of them would like to have a
+translator there.
 
 
 Features [version 2.4.1]

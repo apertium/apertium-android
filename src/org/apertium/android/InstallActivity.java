@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2012 Arink Verma
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -32,7 +32,7 @@ import java.util.List;
 import org.apertium.Translator;
 import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.filemanager.FileManager;
-import org.apertium.android.helper.AppPreference;
+import org.apertium.android.helper.Prefs;
 import org.apertium.android.languagepair.LanguagePackage;
 import org.apertium.android.languagepair.TranslationMode;
 
@@ -58,7 +58,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 	private Button submitButton,cancelButton;
 	//Text view
 	private TextView heading,info1,info2;
-	
+
 	/*Mode related variable*/
 	private List<TranslationMode> translationModes;
 	//To pharse and manage Config.json
@@ -67,21 +67,21 @@ public class InstallActivity extends Activity implements OnClickListener {
 	private String packageID =  null;
 	private String lastModified = null;
 	private String FileName = null;
-	
-	
+
+
     /*Data Handler
      * Data which persist */
 	private DatabaseHandler dataBaseHandler;
-	
+
 	/*Process Handlers */
 	/* Lint warning
-	 * This Handler class should be static or leaks might occur 
+	 * This Handler class should be static or leaks might occur
 	 * Android Lint Problem
 	 */
 	private static Handler handler = null;
 	private ProgressDialog progressDialog = null;
-	
-	
+
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,27 +91,27 @@ public class InstallActivity extends Activity implements OnClickListener {
 
 	    handler = new Handler();
 	    dataBaseHandler = new DatabaseHandler(thisActivity);
-		
+
 		try {
 			languagePackage = new LanguagePackage(this.FilePath,this.packageID);
 			languagePackage.setModifiedDate(this.lastModified);
-			/* Finding the mode present in the package */		
-			translationModes = languagePackage.getAvailableModes();	
+			/* Finding the mode present in the package */
+			translationModes = languagePackage.getAvailableModes();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}	
-		
+		}
+
 	    initView();
 	}
-	
+
 	void getExtrasData(){
 	    Bundle extras = getIntent().getExtras();
 	    this.FilePath = extras.getString("filepath");
 	    this.FileName = extras.getString("filename");
 	    this.lastModified = extras.getString("filedate");
-	    
+
 	    Log.i(TAG,"getExtrasData filename ="+FileName+", path = "+FilePath+", LastDate="+lastModified);
-	    
+
 	    if(!isPackageValid()){
 	        final AlertDialog.Builder b = new AlertDialog.Builder(this);
 	        b.setIcon(android.R.drawable.ic_dialog_alert);
@@ -124,12 +124,12 @@ public class InstallActivity extends Activity implements OnClickListener {
 	        });
 	        b.show();
 	    }
-	    
+
 	    this.packageID =  this.FileName.substring(0, this.FileName.length() - 4);
 	}
-		
-	
-	/* Init View, 
+
+
+	/* Init View,
 	 * Initialing view */
 	private void initView() {
 		Log.i(TAG,"InitView Started");
@@ -139,18 +139,18 @@ public class InstallActivity extends Activity implements OnClickListener {
 		info1 = (TextView) findViewById(R.id.textView2);
 		info2 = (TextView) findViewById(R.id.textView4);
 		info1.setText(this.FilePath);
-		info2.setText("");	
+		info2.setText("");
 		for (int i=0; i<this.translationModes.size(); i++) {
 			TranslationMode M = this.translationModes.get(i);
-			info2.append((i+1)+". "+Translator.getTitle(M.getID())+"\n");						
+			info2.append((i+1)+". "+Translator.getTitle(M.getID())+"\n");
 		}
-		
-		
+
+
 		/*Action Button*/
 		submitButton = (Button) findViewById(R.id.installButton);
 		cancelButton = (Button) findViewById(R.id.discardButton);
 		submitButton.setText(R.string.install);
-		
+
 		LanguagePackage installedPackage = dataBaseHandler.getPackage(this.packageID);
 		if(installedPackage!=null){
 			String installedDate = installedPackage.ModifiedDate();
@@ -162,25 +162,25 @@ public class InstallActivity extends Activity implements OnClickListener {
 		}
 
 		submitButton.setOnClickListener(this);
-		cancelButton.setOnClickListener(this);	
-		
-	}
-	
+		cancelButton.setOnClickListener(this);
 
-	
+	}
+
+
+
 	@Override
 	public void onClick(View v) {
 		if (v.equals(submitButton)){
 			String Action =  (String) submitButton.getText();
-			
+
 			progressDialog = ProgressDialog.show(this, getString(R.string.installing)+"...", Action, true,false);
-			
+
 			if(Action.equals(getString(R.string.install))){
 				//Zero run to remove previous package
-				ExtractRun();	
+				ExtractRun();
 			}else if(Action.equals(getString(R.string.update)) || Action.equals(getString(R.string.reinstall))){
 				//First run to copy new package
-				RemoveOldRun();					
+				RemoveOldRun();
 			}else{
 				finish();
 			}
@@ -188,26 +188,26 @@ public class InstallActivity extends Activity implements OnClickListener {
 			finish();
 		}
 	}
-	
-	
-	
-/*** Installation in 3 steps 
- * Step 0 (if updatating) RemoveOldRun() 
+
+
+
+/*** Installation in 3 steps
+ * Step 0 (if updatating) RemoveOldRun()
  * Step 1 ExtractRun()
  * Step 2 FileCopyRun()
  * Step 3 DataBaseWriteRun()
  * Step 4 RemoveOtherFileRun()
  * */
-	
-//Step 0 
+
+//Step 0
 //Removing old files and data
-		private void RemoveOldRun(){		
+		private void RemoveOldRun(){
 			progressDialog.setMessage(getString(R.string.removing_old));
 			Thread t = new Thread() {
 		        @Override
 		        public void run() {
 		        	try {
-		        		File file = new File(AppPreference.JAR_DIR+"/"+languagePackage.PackageID());
+		        		File file = new File(Prefs.JAR_DIR+"/"+languagePackage.PackageID());
 		        		FileManager.remove(file);
 		        		dataBaseHandler.deletePackage(languagePackage.PackageID());
 		        	} catch (Exception e) {
@@ -215,7 +215,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 						info1.setText(R.string.error_removing_old);
 						e.printStackTrace();
 					}
-		        	
+
 		        	handler.post(new Runnable() {
 		        		@Override
 						public void run() {
@@ -225,24 +225,24 @@ public class InstallActivity extends Activity implements OnClickListener {
 		        }
 		    };
 		    t.start();
-		}	
-	
-	
+		}
+
+
 //Step 1
 //Unziping file in temp dir
-	private void ExtractRun(){	
+	private void ExtractRun(){
 		progressDialog.setMessage(getString(R.string.unziping));
 	    Thread t = new Thread() {
 	        @Override
 	        public void run() {
-	        	
+
 				try {
-					FileManager.unzip(FilePath,AppPreference.TEMP_DIR+"/"+packageID);
+					FileManager.unzip(FilePath,Prefs.TEMP_DIR+"/"+packageID);
 				} catch (IOException e) {
 					Log.e(TAG,e+"");
 					e.printStackTrace();
 				}
-				
+
 	        	handler.post(new Runnable() {
 	        		@Override
 					public void run() {
@@ -253,46 +253,46 @@ public class InstallActivity extends Activity implements OnClickListener {
 	    };
 	    t.start();
 	}
-	
+
 //Step 2
 //Installing..", "Copying files
-	private void FileCopyRun(){	
+	private void FileCopyRun(){
 		progressDialog.setMessage(getString(R.string.copying));
 	    Thread t = new Thread() {
 	        @Override
 	        public void run() {
-	        	
-	    	   
-				FileManager.move(AppPreference.TEMP_DIR+"/"+languagePackage.PackageID(),AppPreference.JAR_DIR+"/"+languagePackage.PackageID()+"/extract");
-				
+
+
+				FileManager.move(Prefs.TEMP_DIR+"/"+languagePackage.PackageID(),Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/extract");
+
 				try {
-					FileManager.copyFile(FilePath,AppPreference.JAR_DIR+"/"+languagePackage.PackageID()+"/"+languagePackage.PackageID()+".jar");
-				} catch (IOException e) {
-					Log.e(TAG,e+"");
-					e.printStackTrace();
-				}
-				
+					FileManager.copyFile(FilePath,Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/"+languagePackage.PackageID()+".jar");
 	        	handler.post(new Runnable() {
 	        		@Override
 					public void run() {
 						DataBaseWriteRun();
 					}
                 });
-	        	
+				} catch (IOException e) {
+					Log.e(TAG,e+"");
+					e.printStackTrace();
+          App.langToast(e.getLocalizedMessage());
+				}
+
 	        }
 	    };
 	    t.start();
 	}
-	
+
 //Step 3
 //Writing database
-	private void DataBaseWriteRun(){	
+	private void DataBaseWriteRun(){
 		progressDialog.setMessage(getString(R.string.writing_db));
 	    Thread t = new Thread() {
 	        @Override
 	        public void run() {
 	        	dataBaseHandler.addLanuagepair(languagePackage);
-	        	
+
 	        	handler.post(new Runnable() {
 	        		@Override
 					public void run() {
@@ -304,15 +304,15 @@ public class InstallActivity extends Activity implements OnClickListener {
 	    };
 	    t.start();
 	}
-	
+
 	//Step 4
 	//Removing  temp files
-	private void RemoveOtherFileRun(){	
+	private void RemoveOtherFileRun(){
 		progressDialog.setMessage(getString(R.string.removing_temp));
 	    Thread t = new Thread() {
 	        @Override
 	        public void run() {
-	        	File file = new File(AppPreference.JAR_DIR+"/"+languagePackage.PackageID()+"/extract");
+	        	File file = new File(Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/extract");
 	        	File[] childfiles = file.listFiles();
 	        	for(int i=0;i<childfiles.length;i++){
 	        		if(childfiles[i].isDirectory()){
@@ -321,18 +321,18 @@ public class InstallActivity extends Activity implements OnClickListener {
 	        			}
 	        		}
 	        	}
-	        	
-	           	progressDialog.dismiss();	
+
+	           	progressDialog.dismiss();
 	        	Intent myIntent1 = new Intent(InstallActivity.this,ModeManageActivity.class);
 	        	InstallActivity.this.startActivity(myIntent1);
 	        	finish();
-	      
+
 	        }
 	    };
 	    t.start();
 	}
-	
-	
+
+
 	boolean isPackageValid(){
 		boolean isValid = true;
 		String extn = this.FileName.substring(this.FileName.length() - 3, this.FileName.length());
@@ -349,7 +349,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 				isValid = false;
 			}
 		}
-		return isValid;	
+		return isValid;
 	}
-	
+
 }

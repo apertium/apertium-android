@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2012 Arink Verma
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -31,7 +31,7 @@ import java.util.List;
 import org.apertium.Translator;
 import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.filemanager.FileManager;
-import org.apertium.android.helper.AppPreference;
+import org.apertium.android.helper.Prefs;
 import org.apertium.android.languagepair.RulesHandler;
 import org.apertium.android.languagepair.TranslationMode;
 
@@ -61,17 +61,17 @@ public class ModeManageActivity extends ListActivity {
 	private static String packagetoRemove = null;
 	/* List of installed modes*/
 	private List<TranslationMode> listTranslationMode = null;
-	
+
     /*Data Handler
      * Data which persist */
 	private DatabaseHandler dataHandler = null;
 	private RulesHandler rulesHandler = null;
 	private String PrefToSet = null;
-	
+
     /*Process Handler*/
 	private static ProgressDialog progressDialog = null;
 	private static Handler handler = null;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class ModeManageActivity extends ListActivity {
 		rulesHandler = new RulesHandler(thisActivity);
 		handler = new Handler();
 	    listTranslationMode = dataHandler.getAllModes();
-	    
+
 	    int len = listTranslationMode.size();
 	    final String[] ModeTitle = new String[len];
 	    final String[] ModeId = new String[len];
@@ -99,7 +99,7 @@ public class ModeManageActivity extends ListActivity {
 	    }
 
 	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, android.R.id.text1, ModeTitle);
-	
+
 	    this.setListAdapter(adapter);
 
 	    ListView lv = getListView();
@@ -141,12 +141,12 @@ public class ModeManageActivity extends ListActivity {
 	                    	FileRemoveRun();
 
 	                    	String currentPackage = rulesHandler.getCurrentPackage();
-	                    	
+
 	                    	Log.i(TAG,"PacketToRemove = "+packagetoRemove+", CurrentPackage = "+currentPackage);
 	        	            if(currentPackage!=null && packagetoRemove.equals(currentPackage)){
 	        	            	rulesHandler.clearCurrentMode();
 	        	            }
-	 
+
 	                    }
 	            });
 	            b.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -172,13 +172,13 @@ public class ModeManageActivity extends ListActivity {
 	        @Override
 	        public void run() {
 	        	try {
-	        		Log.i(TAG,"removing file="+AppPreference.JAR_DIR+"/"+packagetoRemove);
-	        		File file = new File(AppPreference.JAR_DIR+"/"+packagetoRemove);
+	        		Log.i(TAG,"removing file="+Prefs.JAR_DIR+"/"+packagetoRemove);
+	        		File file = new File(Prefs.JAR_DIR+"/"+packagetoRemove);
 	        		FileManager.remove(file);
 	        	} catch (Exception e) {
 					e.printStackTrace();
 				}
-	        	
+
 	        	handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -205,8 +205,7 @@ public class ModeManageActivity extends ListActivity {
                     @Override
                     public void run() {
                     	progressDialog.dismiss();
-        	        	AppPreference appPreference = new AppPreference(thisActivity);
-        	        	appPreference.SaveState();
+        	        	Prefs.saveState();
                     }
                 });
 	        }
@@ -231,14 +230,14 @@ public class ModeManageActivity extends ListActivity {
     			rulesHandler.setCurrentMode(MODE);
 	    		if(!PackageTOLoad.equals(currentPackage)){
 	    			Log.i(TAG,"BASE ="+rulesHandler.getClassLoader()+"path = "+rulesHandler.ExtractPathCurrentPackage());
-	        		
+
 	    			Translator.setBase(rulesHandler.ExtractPathCurrentPackage(), rulesHandler.getClassLoader());
-	  
+
 	          		Translator.setDelayedNodeLoadingEnabled(true);
 	        		Translator.setMemmappingEnabled(true);
 	    		}
-    			
-        		
+
+
 				Translator.setMode(MODE);
 				Log.e("CurrentMode",rulesHandler.getCurrentMode());
 			} catch (Exception e) {

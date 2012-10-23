@@ -3,24 +3,24 @@
     <string name="app_name">Apertium</string>
     <string name="input_text">Apertium offers both text translation, along with the translation of documents and surf and translate.</string>
     <string name="translateHint">Translated text will appear here</string>
-    
-    
+
+
 	<!-- Menu  -->
     <string name="manage">Manage</string>
     <string name="share">Share</string>
     <string name="clear">Clear</string>
 	<string name="inbox">Inbox</string>
-    
-    
+
+
      <!-- Widgets  -->
     <string name="widgetAddButton">+</string>
     <string name="widgetConfigButton">*</string>
     <string name="widgetTitle">Desktop Widget</string>
-      
-    
+
+
     <!-- Button  -->
     <string name="arrow">→</string>
-    <string name="back">Back</string>   
+    <string name="back">Back</string>
     <string name="discard">Discard</string>
     <string name="from">&lt;from&gt;</string>
     <string name="install">Install</string>
@@ -36,8 +36,8 @@
     <string name="translate_to">Translated to</string>
     <string name="update">Update</string>
     <string name="yes">Yes</string>
-    
-   
+
+
     <!-- Dialog -->
     <string name="crash_detect">Crash Detected!</string>
     <string name="crash_message_with_error_and_support_address">The application has crashed during last run with error [%1$s].\n\n Please tell us about it at %2$s .</string>
@@ -70,8 +70,8 @@
 	<string name="updating_db">Updating database</string>
     <string name="working">Working</string>
 	<string name="writing_db">Writing database</string>
-	
-	
+
+
 	<!-- Preference -->
 	<string name="applicationSetting">Application Setting</string>
 	<string name="clipBoardGet">ClipBoard Get</string>
@@ -95,5 +95,75 @@
 	<string name="updateDatabaseDescription">Update or repair database</string>
 	<string name="widgetSetting">Widget Settings</string>
 	<string name="widgetSettingDescription">Widgets such as shortcut for specific language</string>
-   
+
+
+  <string name="about">About</string>
+  <string name="aboutText"><![CDATA[
+<html><body>
+This app is a free, open source, offline machine translation app which offers
+most of the language directions from Apertium.<br>
+
+Apertium is a rule based, open source, machine translation project and platform.
+
+Apertium can, like this app, be installed on your own machine.
+
+That means that you don\'t need en internet connection and you don\'t
+need to send confidential tekst through the internet to get a translation.
+
+If you want to quickly try it out there are zero-install Java web start applets
+
+
+
+<h3>Need help creating your own offline translation service?</h3>
+There is a lively voluntarily driven community, ready to help developers
+and end users. Please see http://wiki.apertium.org for how to get in touch.
+
+Commercial services for special needs, like machine translation for specific
+domains are also offered.
+
+
+<h2>Developer info</h2>
+
+<h3>Want to make your own offline translation service?</h3>
+This app is an open source showcase of how to do offline translation.
+We encourage you to copy it and modify as you like.
+
+<h3>Something missing? Want to make your own language pair?</h3>
+
+It takes around 3 months of full time work to create a language pair from scratch.
+We at Apertium will help you, of course, and if you are a student you could consider
+engaging in Apertium work being sponsored by the Google Summer of Code open souce program
+
+Google Summer of Code™ (GSoC) has brought together thousands of students with hundrets of open
+source projects to create millions of lines of code. In short the deal is that if you
+apply for GSoC and work for us making a language pair or other imrovements to Apertium, then Google
+will send a check with around 5000$ in your direction.
+
+
+<h2>Authors and contributors</h2>
+This app would not haved been possible without the support of GSoC stipends.
+<pre>
+2012 Arink Verma arinkverma@gmail.com
+Created this Android app during GSOC
+
+2012 Mikel Artetxe artetxem@gmail.com
+Making Java port embeddable during GSOC
+
+2010 Stephen Tigner stephen.tigner@gmail.com
+http://stephentigner.com/
+Java port of the Apertium C++ library during GSOC
+
+2009 Raphaël Laurent raphal.laurent@gmail.com
+Java port of the Apertium C++ library during GSOC
+
+2008 by Nic Cottrell
+Initial draft of Java port
+
+2009-2012 Jacob Nordfalk jacob.nordfalk@gmail.com
+Maintainer and GSOC mentor 2010 and 2012
+</pre>
+
+]]>
+  </string>
+
 </resources>
