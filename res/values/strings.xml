@@ -83,7 +83,7 @@
 	<string name="enableCache">Enable Cache</string>
 	<string name="enableCacheDescription">For quick translation enable</string>
 	<string name="installInternet">Install from Internet</string>
-	<string name="installInternetDescription">Download and Install directly from internet</string>
+	<string name="installInternetDescription">Download and Install directly from Internet</string>
 	<string name="installLocal">Install from SDcard</string>
 	<string name="installLocalDescription">localy downloaded package</string>
 	<string name="installPackage">Install Package</string>
@@ -100,61 +100,51 @@
   <string name="about">About</string>
   <string name="aboutText"><![CDATA[
 <html><body>
-This app is a free, open source, offline machine translation app which offers
+This is a free/open-source, offline machine translation app which offers
 most of the language directions from Apertium.<br>
 
-Apertium is a rule based, open source, machine translation project and platform.
+Apertium is a rule-based, free/open-source, machine translation project and platform.
 
 Apertium can, like this app, be installed on your own machine.
 
-That means that you don\'t need en internet connection and you don\'t
-need to send confidential tekst through the internet to get a translation.
+That means that you don\'t need an Internet connection and you don\'t
+need to send confidential text through the Internet to get a translation.
 
-If you want to quickly try it out there are zero-install Java web start applets
-
-
+If you want to quickly try it out there are zero-install Java web start applets 
+(see <a href="http://wiki.apertium.org/wiki/Apertium-Caffeine">http://wiki.apertium.org/wiki/Apertium-Caffeine</a>)
 
 <h3>Need help creating your own offline translation service?</h3>
-There is a lively voluntarily driven community, ready to help developers
-and end users. Please see http://wiki.apertium.org for how to get in touch.
-
-Commercial services for special needs, like machine translation for specific
-domains are also offered.
-
-
-<h2>Developer info</h2>
-
-<h3>Want to make your own offline translation service?</h3>
 This app is an open source showcase of how to do offline translation.
 We encourage you to copy it and modify as you like.
+There is a lively volunteer-driven community, ready to help developers
+and end users. Please see
+<a href="http://wiki.apertium.org">http://wiki.apertium.org</a> 
+for how to get in touch.
+
 
 <h3>Something missing? Want to make your own language pair?</h3>
 
 It takes around 3 months of full time work to create a language pair from scratch.
 We at Apertium will help you, of course, and if you are a student you could consider
-engaging in Apertium work being sponsored by the Google Summer of Code open souce program
-
-Google Summer of Code™ (GSoC) has brought together thousands of students with hundrets of open
-source projects to create millions of lines of code. In short the deal is that if you
-apply for GSoC and work for us making a language pair or other imrovements to Apertium, then Google
-will send a check with around 5000$ in your direction.
-
+engaging in Apertium work being sponsored by the Google Summer of Code free/open-source 
+program (see <a href="http://code.google.com/intl/ca/soc/">http://code.google.com/intl/ca/soc/</a>).
+Contact us for details.
 
 <h2>Authors and contributors</h2>
-This app would not haved been possible without the support of GSoC stipends.
+This app would not have been possible without the support of Google Summer of Code (GSoC) stipends.
 <pre>
 2012 Arink Verma arinkverma@gmail.com
-Created this Android app during GSOC
+Created this Android app during GSoC 2012
 
 2012 Mikel Artetxe artetxem@gmail.com
-Making Java port embeddable during GSOC
+Making Java port embeddable during GSoC 2012
 
 2010 Stephen Tigner stephen.tigner@gmail.com
 http://stephentigner.com/
-Java port of the Apertium C++ library during GSOC
+Java port of the Apertium C++ library during GSoC 2010
 
 2009 Raphaël Laurent raphal.laurent@gmail.com
-Java port of the Apertium C++ library during GSOC
+Java port of the Apertium C++ library during GSoC 2009
 
 2008 by Nic Cottrell
 Initial draft of Java port
