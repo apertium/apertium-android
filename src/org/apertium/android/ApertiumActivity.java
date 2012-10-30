@@ -537,7 +537,6 @@ public class ApertiumActivity extends Activity implements OnClickListener{
               builder.setTitle(getString(R.string.about));
               WebView wv = new WebView(this);
               Log.d(TAG, getString(R.string.aboutText));
-              wv = null;
               wv.loadData(getString(R.string.aboutText), "text/html", "utf-8");
               builder.setView(wv);
               AlertDialog alert = builder.create();
