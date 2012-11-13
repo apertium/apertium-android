@@ -27,8 +27,8 @@ import android.content.Context;
 
 //@TargetApi(11)
 public class ClipboardHandler {
-	private Activity activity;
-	public ClipboardHandler(Activity thisActivity){
+	private Context activity;
+	public ClipboardHandler(Context thisActivity){
 		activity = thisActivity;
 
 	}

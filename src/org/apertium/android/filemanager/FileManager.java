@@ -47,43 +47,6 @@ public class FileManager {
 
 	static String TAG = "FileManager";
 
-/* unused
- 	public static void  CopyAssets(String target,Context ctx) {
-	    AssetManager assetManager = ctx.getAssets();
-	    String[] files = null;
-	    try {
-	        files = assetManager.list("");
-	    } catch (IOException e) {
-	        Log.e("tag", e.getMessage());
-          e.printStackTrace();
-	    }
-	    for(String filename : files) {
-	        InputStream in = null;
-	        OutputStream out = null;
-	        try {
-	          in = assetManager.open(filename);
-	          out = new FileOutputStream(target);
-	          copyFile(in, out);
-	          in.close();
-	          in = null;
-	          out.flush();
-	          out.close();
-	          out = null;
-	        } catch(Exception e) {
-	            Log.e("tag", e.getMessage());
-              e.printStackTrace();
-	        }
-	    }
-	}
-*/
-
-	private static void copyFile(InputStream in, OutputStream out) throws IOException {
-	    byte[] buffer = new byte[1024];
-	    int read;
-	    while((read = in.read(buffer)) != -1){
-	      out.write(buffer, 0, read);
-	    }
-	}
 
 	public static void copyFile(String Src, String Target) throws IOException {
 

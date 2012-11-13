@@ -31,7 +31,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import dalvik.system.DexClassLoader;
 
-public class RulesHandler extends SecureClassLoader{
+public class RulesHandler extends SecureClassLoader {
 	String  TAG = "RulesHandler";
 
 	private File _tmpDIR;

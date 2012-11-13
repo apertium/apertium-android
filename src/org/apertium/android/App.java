@@ -14,8 +14,11 @@ import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import java.io.File;
 import java.io.IOException;
+import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.filemanager.FileManager;
+import org.apertium.android.helper.ClipboardHandler;
 import org.apertium.android.helper.Prefs;
+import org.apertium.android.languagepair.RulesHandler;
 import org.apertium.utils.IOUtils;
 
 public class App extends Application {
@@ -25,6 +28,10 @@ public class App extends Application {
   public static App instance;
 
   private Handler forgrundstråd;
+  public static DatabaseHandler databaseHandler;
+  public static ClipboardHandler clipboardHandler;
+  public static RulesHandler rulesHandler;
+  public static Handler handler;
 
 
   @Override
@@ -55,6 +62,12 @@ public class App extends Application {
 
 
     FileManager.setDIR();
+
+    databaseHandler     = new DatabaseHandler(this);
+    rulesHandler        = new RulesHandler(this);
+    clipboardHandler    = new ClipboardHandler(this);
+    handler             = new Handler();
+
 
     try {
       Class.forName("android.os.AsyncTask"); // Fix for http://code.google.com/p/android/issues/detail?id=20915

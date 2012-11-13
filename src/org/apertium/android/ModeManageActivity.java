@@ -62,15 +62,10 @@ public class ModeManageActivity extends ListActivity {
 	/* List of installed modes*/
 	private List<TranslationMode> listTranslationMode = null;
 
-    /*Data Handler
-     * Data which persist */
-	private DatabaseHandler dataHandler = null;
-	private RulesHandler rulesHandler = null;
 	private String PrefToSet = null;
 
     /*Process Handler*/
 	private static ProgressDialog progressDialog = null;
-	private static Handler handler = null;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -83,10 +78,7 @@ public class ModeManageActivity extends ListActivity {
 	    	PrefToSet = extras.getString("PrefToSet");
 		}
 
-		dataHandler = new DatabaseHandler(thisActivity);
-		rulesHandler = new RulesHandler(thisActivity);
-		handler = new Handler();
-	    listTranslationMode = dataHandler.getAllModes();
+	    listTranslationMode = App.databaseHandler.getAllModes();
 
 	    int len = listTranslationMode.size();
 	    final String[] ModeTitle = new String[len];
@@ -124,12 +116,12 @@ public class ModeManageActivity extends ListActivity {
 	            final AlertDialog.Builder b = new AlertDialog.Builder(ModeManageActivity.this);
 	            b.setIcon(android.R.drawable.ic_dialog_alert);
 
-	            final TranslationMode tobeRemove = dataHandler.getMode(ModeId[pos]);
+	            final TranslationMode tobeRemove = App.databaseHandler.getMode(ModeId[pos]);
 
 	            final String pack = tobeRemove.getPackage();
 	            b.setTitle(getString(R.string.confirm_packageRemove));
 	            String message = "";
-	            List<TranslationMode> removeModes =  dataHandler.getModes(pack);
+	            List<TranslationMode> removeModes =  App.databaseHandler.getModes(pack);
 	            for(int i=0;i<removeModes.size();i++){
 	            	message += ((TranslationMode) removeModes.get(i)).getTitle()+"\n";
 	            }
@@ -140,11 +132,11 @@ public class ModeManageActivity extends ListActivity {
 
 	                    	FileRemoveRun();
 
-	                    	String currentPackage = rulesHandler.getCurrentPackage();
+	                    	String currentPackage =App.rulesHandler.getCurrentPackage();
 
 	                    	Log.i(TAG,"PacketToRemove = "+packagetoRemove+", CurrentPackage = "+currentPackage);
 	        	            if(currentPackage!=null && packagetoRemove.equals(currentPackage)){
-	        	            	rulesHandler.clearCurrentMode();
+	        	            	App.rulesHandler.clearCurrentMode();
 	        	            }
 
 	                    }
@@ -179,7 +171,7 @@ public class ModeManageActivity extends ListActivity {
 					e.printStackTrace();
 				}
 
-	        	handler.post(new Runnable() {
+	        	App.handler.post(new Runnable() {
                     @Override
                     public void run() {
                       	DB_EntriesRemoveRun();
@@ -197,11 +189,11 @@ public class ModeManageActivity extends ListActivity {
 	        @Override
 	        public void run() {
 	        	try {
-	        		dataHandler.deletePackage(packagetoRemove);
+	        		App.databaseHandler.deletePackage(packagetoRemove);
 	        	} catch (Exception e) {
 					e.printStackTrace();
 				}
-	        	handler.post(new Runnable() {
+	        	App.handler.post(new Runnable() {
                     @Override
                     public void run() {
                     	progressDialog.dismiss();
@@ -223,15 +215,15 @@ public class ModeManageActivity extends ListActivity {
 			Log.i("CurrentMode", MODE);
 		}else{
 	    	try {
-	    		String currentPackage = rulesHandler.getCurrentPackage();
-	    		String PackageTOLoad = rulesHandler.findPackage(MODE);
+	    		String currentPackage =App.rulesHandler.getCurrentPackage();
+	    		String PackageTOLoad =App.rulesHandler.findPackage(MODE);
 	    		Log.i(TAG,"CurrentPackage ="+currentPackage+", PackageToLoad="+PackageTOLoad+", ModeToset="+MODE);
 
-    			rulesHandler.setCurrentMode(MODE);
+    			App.rulesHandler.setCurrentMode(MODE);
 	    		if(!PackageTOLoad.equals(currentPackage)){
-	    			Log.i(TAG,"BASE ="+rulesHandler.getClassLoader()+"path = "+rulesHandler.ExtractPathCurrentPackage());
+	    			Log.i(TAG,"BASE ="+App.rulesHandler.getClassLoader()+"path = "+App.rulesHandler.ExtractPathCurrentPackage());
 
-	    			Translator.setBase(rulesHandler.ExtractPathCurrentPackage(), rulesHandler.getClassLoader());
+	    			Translator.setBase(App.rulesHandler.ExtractPathCurrentPackage(),App.rulesHandler.getClassLoader());
 
 	          		Translator.setDelayedNodeLoadingEnabled(true);
 	        		Translator.setMemmappingEnabled(true);
@@ -239,7 +231,7 @@ public class ModeManageActivity extends ListActivity {
 
 
 				Translator.setMode(MODE);
-				Log.e("CurrentMode",rulesHandler.getCurrentMode());
+				Log.e("CurrentMode", App.rulesHandler.getCurrentMode());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -69,16 +69,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 	private String FileName = null;
 
 
-    /*Data Handler
-     * Data which persist */
-	private DatabaseHandler dataBaseHandler;
 
-	/*Process Handlers */
-	/* Lint warning
-	 * This Handler class should be static or leaks might occur
-	 * Android Lint Problem
-	 */
-	private static Handler handler = null;
 	private ProgressDialog progressDialog = null;
 
 
@@ -89,8 +80,6 @@ public class InstallActivity extends Activity implements OnClickListener {
 	    thisActivity = this;
 	    getExtrasData();
 
-	    handler = new Handler();
-	    dataBaseHandler = new DatabaseHandler(thisActivity);
 
 		try {
 			languagePackage = new LanguagePackage(this.FilePath,this.packageID);
@@ -151,7 +140,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 		cancelButton = (Button) findViewById(R.id.discardButton);
 		submitButton.setText(R.string.install);
 
-		LanguagePackage installedPackage = dataBaseHandler.getPackage(this.packageID);
+		LanguagePackage installedPackage = App.databaseHandler.getPackage(this.packageID);
 		if(installedPackage!=null){
 			String installedDate = installedPackage.ModifiedDate();
 			if(this.lastModified == null || installedDate == null || this.lastModified.equals(installedDate)){
@@ -209,14 +198,14 @@ public class InstallActivity extends Activity implements OnClickListener {
 		        	try {
 		        		File file = new File(Prefs.JAR_DIR+"/"+languagePackage.PackageID());
 		        		FileManager.remove(file);
-		        		dataBaseHandler.deletePackage(languagePackage.PackageID());
+		        		App.databaseHandler.deletePackage(languagePackage.PackageID());
 		        	} catch (Exception e) {
 						heading.setText(getString(R.string.error));
 						info1.setText(R.string.error_removing_old);
 						e.printStackTrace();
 					}
 
-		        	handler.post(new Runnable() {
+		        	App.handler.post(new Runnable() {
 		        		@Override
 						public void run() {
 							ExtractRun();
@@ -243,7 +232,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 					e.printStackTrace();
 				}
 
-	        	handler.post(new Runnable() {
+	        	App.handler.post(new Runnable() {
 	        		@Override
 					public void run() {
 						FileCopyRun();
@@ -267,7 +256,7 @@ public class InstallActivity extends Activity implements OnClickListener {
 
 				try {
 					FileManager.copyFile(FilePath,Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/"+languagePackage.PackageID()+".jar");
-	        	handler.post(new Runnable() {
+	        	App.handler.post(new Runnable() {
 	        		@Override
 					public void run() {
 						DataBaseWriteRun();
@@ -291,9 +280,9 @@ public class InstallActivity extends Activity implements OnClickListener {
 	    Thread t = new Thread() {
 	        @Override
 	        public void run() {
-	        	dataBaseHandler.addLanuagepair(languagePackage);
+	        	App.databaseHandler.addLanuagepair(languagePackage);
 
-	        	handler.post(new Runnable() {
+	        	App.handler.post(new Runnable() {
 	        		@Override
 					public void run() {
 						RemoveOtherFileRun();
