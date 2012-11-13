@@ -60,6 +60,8 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
+import org.apertium.utils.IOUtils;
 
 
 public class ApertiumActivity extends Activity implements OnClickListener{
@@ -133,7 +135,6 @@ public class ApertiumActivity extends Activity implements OnClickListener{
                 Log.i(TAG,"ExtractPath ="+rulesHandler.ExtractPathCurrentPackage()+", Jar= "+rulesHandler.PathCurrentPackage());
                 Translator.setBase(rulesHandler.ExtractPathCurrentPackage(), rulesHandler.getClassLoader());
                 Translator.setDelayedNodeLoadingEnabled(true);
-                Translator.setMemmappingEnabled(true);
                 Translator.setParallelProcessingEnabled(false);
                 Translator.setCacheEnabled(Prefs.isCacheEnabled());
             } catch (Exception e) {
@@ -277,12 +278,14 @@ public class ApertiumActivity extends Activity implements OnClickListener{
                 Log.i(TAG,"BaseChanged ="+rulesHandler.getClassLoader()+"path = "+rulesHandler.ExtractPathCurrentPackage());
                 Translator.setBase(rulesHandler.ExtractPathCurrentPackage(), rulesHandler.getClassLoader());
                 Translator.setDelayedNodeLoadingEnabled(true);
-                Translator.setMemmappingEnabled(true);
                 Translator.setParallelProcessingEnabled(false);
                 Translator.setCacheEnabled(Prefs.isCacheEnabled());
             }
 
+            IOUtils.timing = new org.apertium.utils.Timing("setMode");
             Translator.setMode(currentMode);
+            IOUtils.timing.report();
+            IOUtils.timing = null;
 
             translationMode = databaseHandler.getMode(currentMode);
             fromLanguage    = translationMode.getFrom();
@@ -390,6 +393,9 @@ public class ApertiumActivity extends Activity implements OnClickListener{
                 if (!TextUtils.isEmpty(inputText)) {
                     outputText = "";
 
+                Runtime rt = Runtime.getRuntime();
+                  Log.d(TAG, "start mem f="+rt.freeMemory()/1000000+"  t="+rt.totalMemory()/1000000+" m="+rt.maxMemory()/1000000);
+                    IOUtils.timing = new org.apertium.utils.Timing("overall");
                     try {
                         Translator.setCacheEnabled(Prefs.isCacheEnabled());
                         Log.i(TAG,"Translator Run Cache ="+Prefs.isCacheEnabled()+", Mark ="+Prefs.isDisplayMarkEnabled()+ ", MODE = "+currentMode);
@@ -400,10 +406,13 @@ public class ApertiumActivity extends Activity implements OnClickListener{
                         	clipboardHandler.putText(outputText);
                         }
 
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         Log.e(TAG,"ApertiumActivity.TranslationRun MODE ="+currentMode+";InputText = "+inputEditText.getText());
                         e.printStackTrace();
                     }
+                    IOUtils.timing.report();
+                    IOUtils.timing = null;
+                  Log.d(TAG, "start mem f="+rt.freeMemory()/1000000+"  t="+rt.totalMemory()/1000000+" m="+rt.maxMemory()/1000000);
                 }
 
                 handler.post(new Runnable() {
@@ -541,6 +550,18 @@ public class ApertiumActivity extends Activity implements OnClickListener{
               builder.setView(wv);
               AlertDialog alert = builder.create();
               alert.show();
+
+              try {
+                ArrayList al = new ArrayList();
+                Runtime rt = Runtime.getRuntime();
+                while (true) {
+                  al.add(new byte[1000000]);
+                  Log.d(TAG, "al "+al.size()+"M f="+rt.freeMemory()/1000000+"  t="+rt.totalMemory()/1000000+" m="+rt.maxMemory()/1000000);
+                }
+              } catch (Throwable t) {
+                t.printStackTrace();
+              }
+
 	            return true;
             default:
                 return super.onOptionsItemSelected(item);

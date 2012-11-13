@@ -12,9 +12,11 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
+import java.io.File;
 import java.io.IOException;
 import org.apertium.android.filemanager.FileManager;
 import org.apertium.android.helper.Prefs;
+import org.apertium.utils.IOUtils;
 
 public class App extends Application {
   public static boolean isSdk() {
@@ -43,6 +45,8 @@ public class App extends Application {
       Log.d("TAG", "No bugsense keyfile found");
     }
 
+    IOUtils.cacheDir = new File(getCacheDir(),"apertium-cache/");
+    Log.i("TAG", "IOUtils.cacheDir set to "+IOUtils.cacheDir);
 
     instance = this;
     forgrundstråd = new Handler();

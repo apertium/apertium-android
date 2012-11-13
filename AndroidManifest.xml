@@ -11,7 +11,9 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_SMS" />
 
+    <!-- Note the use of android:largeHeap as offline machine translation is memory intensive -->
     <application
+        android:largeHeap="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:name="org.apertium.android.App"
