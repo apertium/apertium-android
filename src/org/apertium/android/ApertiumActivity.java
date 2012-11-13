@@ -550,7 +550,7 @@ public class ApertiumActivity extends Activity implements OnClickListener{
               builder.setView(wv);
               AlertDialog alert = builder.create();
               alert.show();
-
+/*
               try {
                 ArrayList al = new ArrayList();
                 Runtime rt = Runtime.getRuntime();
@@ -561,7 +561,7 @@ public class ApertiumActivity extends Activity implements OnClickListener{
               } catch (Throwable t) {
                 t.printStackTrace();
               }
-
+*/
 	            return true;
             default:
                 return super.onOptionsItemSelected(item);
