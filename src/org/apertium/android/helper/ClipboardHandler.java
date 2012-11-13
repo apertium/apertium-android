@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-
 package org.apertium.android.helper;
 
 //import android.annotation.TargetApi;
@@ -27,39 +26,39 @@ import android.content.Context;
 
 //@TargetApi(11)
 public class ClipboardHandler {
-	private Context activity;
-	public ClipboardHandler(Context thisActivity){
-		activity = thisActivity;
+  private Context activity;
 
-	}
+  public ClipboardHandler(Context thisActivity) {
+    activity = thisActivity;
 
-	@SuppressWarnings("deprecation")
-	public void putText(String text){
-		 int sdk = android.os.Build.VERSION.SDK_INT;
-		 if(sdk < 11) {
-			 android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-			 clipboard.setText(text);
-		 } else {
-			 android.content.ClipboardManager clipboard = (android.content.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-			 android.content.ClipData clip = ClipData.newPlainText("simple text",text);
-			 clipboard.setPrimaryClip(clip);
-		 }
-	}
+  }
 
-	@SuppressWarnings("deprecation")
-	public String getText(){
-		String text = null;
-		 int sdk = android.os.Build.VERSION.SDK_INT;
-		 if(sdk < 11) {
-			 android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-			 text =  clipboard.getText().toString();
-		 } else {
-			 android.content.ClipboardManager clipboard = (android.content.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-			 if(clipboard.getText()!=null){
-				 text =  clipboard.getText().toString();
-			 }
-		 }
-		return text;
-	}
+  @SuppressWarnings("deprecation")
+  public void putText(String text) {
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    if (sdk < 11) {
+      android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+      clipboard.setText(text);
+    } else {
+      android.content.ClipboardManager clipboard = (android.content.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+      android.content.ClipData clip = ClipData.newPlainText("simple text", text);
+      clipboard.setPrimaryClip(clip);
+    }
+  }
 
+  @SuppressWarnings("deprecation")
+  public String getText() {
+    String text = null;
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    if (sdk < 11) {
+      android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+      text = clipboard.getText().toString();
+    } else {
+      android.content.ClipboardManager clipboard = (android.content.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+      if (clipboard.getText() != null) {
+        text = clipboard.getText().toString();
+      }
+    }
+    return text;
+  }
 }

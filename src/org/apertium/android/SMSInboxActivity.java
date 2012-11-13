@@ -16,16 +16,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-
 /**
- * SMSInboxActivity.java
- * Open SMS inbox list view
- * @author Arink Verma
- *
+ SMSInboxActivity.java Open SMS inbox list view
+
+ @author Arink Verma
+
  */
-
 package org.apertium.android;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,69 +43,71 @@ import android.view.View;
 import android.widget.ListView;
 
 public class SMSInboxActivity extends ListActivity {
-	String TAG = "SMSInboxActivity";
-	private SmsArrayAdapter adapter;
-	private SMSobject smsObj;
+  String TAG = "SMSInboxActivity";
+  private SmsArrayAdapter adapter;
+  private SMSobject smsObj;
+  ContentResolver mContentResolver = null;
 
-	ContentResolver mContentResolver = null;
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    mContentResolver = getContentResolver();
+  /**
+   Called when the activity is first created.
+   */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    mContentResolver = getContentResolver();
 
-		fill();
-	}
+    fill();
+  }
 
-	private void fill() {
-         this.setTitle(getString(R.string.inbox));
-         List<SMSobject>dir = getSms();
+  private void fill() {
+    this.setTitle(getString(R.string.inbox));
+    List<SMSobject> dir = getSms();
 
-         Comparator<Object> comparator = Collections.reverseOrder();
-         Collections.sort(dir,comparator);
+    Comparator<Object> comparator = Collections.reverseOrder();
+    Collections.sort(dir, comparator);
 
-         adapter = new SmsArrayAdapter(SMSInboxActivity.this,R.layout.sms_layout,dir);
-		 this.setListAdapter(adapter);
-    }
+    adapter = new SmsArrayAdapter(SMSInboxActivity.this, R.layout.sms_layout, dir);
+    this.setListAdapter(adapter);
+  }
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		smsObj = adapter.getItem(position);
+  @Override
+  protected void onListItemClick(ListView l, View v, int position, long id) {
+    super.onListItemClick(l, v, position, id);
+    smsObj = adapter.getItem(position);
 
-		Intent intent = getIntent();
-    	intent.putExtra("input", smsObj.getBody());
-	    setResult(RESULT_OK, intent);
-	    finish();
-	}
+    Intent intent = getIntent();
+    intent.putExtra("input", smsObj.getBody());
+    setResult(RESULT_OK, intent);
+    finish();
+  }
 
-	public List<SMSobject> getSms() {
-		Log.i(TAG, "getSMS");
-        Uri mSmsQueryUri = Uri.parse("content://sms/inbox");
-        List<SMSobject> messages = new ArrayList<SMSobject>();
-        Cursor cursor = null;
-        try {
+  public List<SMSobject> getSms() {
+    Log.i(TAG, "getSMS");
+    Uri mSmsQueryUri = Uri.parse("content://sms/inbox");
+    List<SMSobject> messages = new ArrayList<SMSobject>();
+    Cursor cursor = null;
+    try {
 
-			cursor = mContentResolver.query(mSmsQueryUri, null, null, null, null);
-            if (cursor == null) {
-                Log.i(TAG, "cursor is null. uri: " + mSmsQueryUri);
-                return messages;
-            }
-
-            for (boolean hasData = cursor.moveToFirst(); hasData; hasData = cursor.moveToNext()) {
-                final String body = cursor.getString(cursor.getColumnIndexOrThrow("body"));
-                final String sender = cursor.getString(cursor.getColumnIndexOrThrow("address"));
-                final Long date = cursor.getLong(cursor.getColumnIndexOrThrow("date"));
-
-                SMSobject s = new SMSobject(body,sender,date);
-                messages.add(s);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            e.printStackTrace();
-        } finally {
-            cursor.close();
-        }
+      cursor = mContentResolver.query(mSmsQueryUri, null, null, null, null);
+      if (cursor == null) {
+        Log.i(TAG, "cursor is null. uri: " + mSmsQueryUri);
         return messages;
+      }
+
+      for (boolean hasData = cursor.moveToFirst(); hasData; hasData = cursor.moveToNext()) {
+        final String body = cursor.getString(cursor.getColumnIndexOrThrow("body"));
+        final String sender = cursor.getString(cursor.getColumnIndexOrThrow("address"));
+        final Long date = cursor.getLong(cursor.getColumnIndexOrThrow("date"));
+
+        SMSobject s = new SMSobject(body, sender, date);
+        messages.add(s);
+      }
+    } catch (Exception e) {
+      Log.e(TAG, e.getMessage());
+      e.printStackTrace();
+    } finally {
+      cursor.close();
     }
+    return messages;
+  }
 }

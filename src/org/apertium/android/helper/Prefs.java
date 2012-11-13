@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-
 package org.apertium.android.helper;
 
 import java.io.File;
@@ -29,133 +28,118 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+public class Prefs {
+  private static final String TAG = "AppPreference";
+  //Directories path
+  public static final String BASE_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium";
+  public static final String JAR_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium/jars";
+  public static final String TEMP_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium/temp";
+  public static final String MANIFEST_FILE = "Manifest";
+  public static final String SVN_MANIFEST_ADDRESS = "http://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
+  public static final String SUPPORT_MAIL = "arinkverma@gmail.com";
+  //Preferences name
+  public static final String PREFERENCE_NAME = "ore.apertium.Pref";
+  private static SharedPreferences prefs = null;
 
-public class Prefs   {
-	private static final String TAG = "AppPreference";
+  public static void init(Context ctx) {
+    prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+  }
 
-	//Directories path
-	public static final String BASE_DIR = Environment.getExternalStorageDirectory().toString() +"/apertium";
-	public static final String JAR_DIR = Environment.getExternalStorageDirectory().toString() +"/apertium/jars";
-	public static final String TEMP_DIR  = Environment.getExternalStorageDirectory().toString() +"/apertium/temp";
-	public static final String MANIFEST_FILE  = "Manifest";
-	public static final String SVN_MANIFEST_ADDRESS = "http://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
+  /*Cache Preference*/
+  public static final String cacheEnabled = "CachePref";
 
-	public static final String SUPPORT_MAIL = "arinkverma@gmail.com";
+  public static boolean isCacheEnabled() {
+    return prefs.getBoolean(cacheEnabled, false);
+  }
+  /*DisplayMark Preference*/
+  public static final String displayMark = "MarkPref";
 
-	//Preferences name
-	public static final String PREFERENCE_NAME = "ore.apertium.Pref";
-
-	private static SharedPreferences prefs = null;
-
-	public static void init(Context ctx){
-		prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-	}
-
-/*Cache Preference*/
-	public static final String cacheEnabled = "CachePref";
-
-	public static boolean isCacheEnabled(){
-        return prefs.getBoolean(cacheEnabled, false);
-	}
-
-
-/*DisplayMark Preference*/
-	public static final String displayMark = "MarkPref";
-
-	public static void setDisplayMark(boolean y){
+  public static void setDisplayMark(boolean y) {
     Editor editor = prefs.edit();
-		 editor.putBoolean(displayMark, y);
-		 editor.commit();
-	}
+    editor.putBoolean(displayMark, y);
+    editor.commit();
+  }
 
-	public static boolean isDisplayMarkEnabled(){
-		return prefs.getBoolean(displayMark, false);
-	}
+  public static boolean isDisplayMarkEnabled() {
+    return prefs.getBoolean(displayMark, false);
+  }
+  /*ClipBoardPush Preference*/
+  public static final String clipBoardGet = "ClipGetPref";
+  public static final String clipBoardPush = "ClipPushPref";
 
-
-/*ClipBoardPush Preference*/
-	public static final String clipBoardGet = "ClipGetPref";
-	public static final String clipBoardPush = "ClipPushPref";
-
-	public static void setClipBoardPush(boolean y){
+  public static void setClipBoardPush(boolean y) {
     Editor editor = prefs.edit();
-		 editor.putBoolean(clipBoardPush, y);
-		 editor.commit();
-	}
+    editor.putBoolean(clipBoardPush, y);
+    editor.commit();
+  }
 
-	public static boolean isClipBoardPushEnabled(){
-		return prefs.getBoolean(clipBoardPush, false);
-	}
+  public static boolean isClipBoardPushEnabled() {
+    return prefs.getBoolean(clipBoardPush, false);
+  }
 
-	public static void setClipBoardGet(boolean y){
+  public static void setClipBoardGet(boolean y) {
     Editor editor = prefs.edit();
-		 editor.putBoolean(clipBoardGet, y);
-		 editor.commit();
-	}
+    editor.putBoolean(clipBoardGet, y);
+    editor.commit();
+  }
 
-	public static boolean isClipBoardGetEnabled(){
-		return prefs.getBoolean(clipBoardGet, false);
-	}
+  public static boolean isClipBoardGetEnabled() {
+    return prefs.getBoolean(clipBoardGet, false);
+  }
+  /*Crash Preference*/
+  public static final String CrashPref = "CrashPref";
 
-
-/*Crash Preference*/
-	public static final String CrashPref = "CrashPref";
-
-	public static void reportCrash(String y){
+  public static void reportCrash(String y) {
     Editor editor = prefs.edit();
-		 editor.putString(CrashPref, y);
-		 editor.commit();
-	}
+    editor.putString(CrashPref, y);
+    editor.commit();
+  }
 
-	public static String getCrashReport(){
-		return prefs.getString(CrashPref, null);
-	}
+  public static String getCrashReport() {
+    return prefs.getString(CrashPref, null);
+  }
 
-	public static void clearCrashReport(){
+  public static void clearCrashReport() {
     Editor editor = prefs.edit();
-		editor.putString(CrashPref, null);
-		editor.commit();
-	}
+    editor.putString(CrashPref, null);
+    editor.commit();
+  }
+  //Last state
+  private static final String LocalePref = "LocalePref";
+  private static final String LastJARDirChangedPref = "LastJARDirChangedPref";
 
+  public static boolean isStateChanged() {
+    String lastLocale = prefs.getString(LocalePref, "");
+    String currentLocale = Locale.getDefault().getDisplayLanguage();
 
+    Log.i(TAG, "lastLocale = " + lastLocale + ", currentLocale = " + currentLocale);
+    if (!lastLocale.equals(currentLocale)) {
+      return true;
+    }
 
-	//Last state
-	private static final String LocalePref = "LocalePref";
-	private static final String LastJARDirChangedPref = "LastJARDirChangedPref";
+    File f = new File(JAR_DIR);
 
+    String LastModified = f.lastModified() + "";
+    String SavedLastModified = prefs.getString(LastJARDirChangedPref, "");
 
-	public static boolean isStateChanged(){
-		String lastLocale = prefs.getString(LocalePref, "");
-		String currentLocale = Locale.getDefault().getDisplayLanguage();
+    Log.i(TAG, "LastModified = " + LastModified + ", SavedLastModified = " + SavedLastModified);
+    if (!LastModified.equals(SavedLastModified)) {
+      return true;
+    }
 
-		Log.i(TAG,"lastLocale = "+lastLocale+", currentLocale = "+currentLocale);
-		if(!lastLocale.equals(currentLocale)){
-			return true;
-		}
+    return false;
 
-		File f = new File(JAR_DIR);
+  }
 
-		String LastModified = f.lastModified()+"";
-		String SavedLastModified = prefs.getString(LastJARDirChangedPref,"");
-
-		Log.i(TAG,"LastModified = "+LastModified+", SavedLastModified = "+SavedLastModified);
-		if(!LastModified.equals(SavedLastModified)){
-			return true;
-		}
-
-		return false;
-
-	}
-
-	public static void saveState(){
+  public static void saveState() {
     Editor editor = prefs.edit();
-		editor.putString(LocalePref, Locale.getDefault().getDisplayLanguage());
+    editor.putString(LocalePref, Locale.getDefault().getDisplayLanguage());
 
-		File f = new File(JAR_DIR);
-		editor.putString(LastJARDirChangedPref,f.lastModified()+"");
+    File f = new File(JAR_DIR);
+    editor.putString(LastJARDirChangedPref, f.lastModified() + "");
 
-		Log.i(TAG,"lastLocale = "+Locale.getDefault().getDisplayLanguage()+", LastJARDirChanged = "+f.lastModified());
-		editor.commit();
+    Log.i(TAG, "lastLocale = " + Locale.getDefault().getDisplayLanguage() + ", LastJARDirChanged = " + f.lastModified());
+    editor.commit();
 
-	}
+  }
 }

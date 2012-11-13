@@ -16,13 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-
 /**
- * DownloadActivity.java
- * Download package List from SVN as well as package
- *  @author Arink Verma
- */
+ DownloadActivity.java Download package List from SVN as well as package
 
+ @author Arink Verma
+ */
 package org.apertium.android;
 
 import java.io.File;
@@ -54,211 +52,203 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DownloadActivity extends Activity  implements OnClickListener{
-	public static final String TAG = "DownloadActivity";
+public class DownloadActivity extends Activity implements OnClickListener {
+  public static final String TAG = "DownloadActivity";
+  ProgressDialog progressDialog;
+  private DownloadActivity thisActivity;
+  private final int HTML_PARSING_DONE = 2;
+  private boolean isListLoaded = false;
+  private ListView listView;
+  private int FILE_SIZE = 0;
+  private String ModifiedSince = null;
+  private InternetManifest internetManifest = null;
+  private ManifestRow toDownload = null;
+  private Button _reloadButton;
 
-    ProgressDialog progressDialog;
-    private DownloadActivity thisActivity;
+  /**
+   Called when the activity is first created.
+   */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.download_layout);
+    FileManager.setDIR();
 
-    private final int HTML_PARSING_DONE = 2;
+    listView = (ListView) findViewById(R.id.listView1);
+    thisActivity = this;
 
-    private boolean isListLoaded = false;
+    _reloadButton = (Button) findViewById(R.id.reloadButton);
+    _reloadButton.setOnClickListener(this);
 
-    private ListView listView;
-    private int FILE_SIZE = 0;
-    private String ModifiedSince = null;
-    private InternetManifest internetManifest = null;
-    private ManifestRow toDownload = null;
+    progressDialog = new ProgressDialog(thisActivity);
+    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+    progressDialog.setTitle(getString(R.string.downloading) + "\n" + getString(R.string.package_list));
 
-    private Button _reloadButton;
+    progressDialog.setCancelable(false);
+    progressDialog.show();
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.download_layout);
-		FileManager.setDIR();
+    File svnCache = new File(Prefs.TEMP_DIR + "/" + Prefs.MANIFEST_FILE);
+    if (!svnCache.exists()) {
+      FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS, Prefs.TEMP_DIR + "/" + Prefs.MANIFEST_FILE, thisActivity.handler);
+    } else {
+      progressDialog.setMessage("Generating view");
+      ParseHtmlRun();
+      isListLoaded = true;
+    }
+  }
 
-	    listView  = (ListView) findViewById(R.id.listView1);
-	    thisActivity = this;
+  private void ParseHtmlRun() {
+    Thread t = new Thread() {
+      @Override
+      public void run() {
+        try {
+          internetManifest = new InternetManifest(Prefs.TEMP_DIR + "/" + Prefs.MANIFEST_FILE);
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }
+        Message msg = Message.obtain();
+        msg.what = HTML_PARSING_DONE;
+        handler.sendMessage(msg);
+      }
+    };
+    t.start();
+  }
+  /* Waiting for Acknowledgement from threads running */
+  private final Handler handler = new Handler() {
+    @Override
+    public void handleMessage(Message msg) {
+      switch (msg.what) {
+        //HTTP connection started
+        case FileManager.MESSAGE_CONNECTING_STARTED:
+          Log.i(TAG, "Connecting Started");
+          break;
 
-	    _reloadButton = (Button) findViewById(R.id.reloadButton);
-	    _reloadButton.setOnClickListener(this);
+        //Download started
+        case FileManager.MESSAGE_DOWNLOAD_STARTED:
+          FILE_SIZE = (int) msg.arg1;
+          ModifiedSince = (String) msg.obj;
 
-	    progressDialog = new ProgressDialog(thisActivity);
-	    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-	    progressDialog.setTitle(getString(R.string.downloading)+"\n"+getString(R.string.package_list));
+          Log.d("Download", "Lastmodified =" + ModifiedSince);
+          SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+          Date resultdate = new Date(Long.parseLong(ModifiedSince));
+          if (isListLoaded == false) {
+            progressDialog.setTitle(getString(R.string.downloading) + "\n" + getString(R.string.package_list));
+            progressDialog.setMessage(getString(R.string.lastmodified) + " " + sdf.format(resultdate) + "\n" + getString(R.string.downloading) + " [" + FILE_SIZE + "kb]");
+          } else {
 
-	    progressDialog.setCancelable(false);
-	    progressDialog.show();
-
-	    File svnCache = new File(Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE);
-	    if(!svnCache.exists()){
-	    	FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS,Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE,thisActivity.handler);
-	    }else{
-	    	progressDialog.setMessage("Generating view");
-        	ParseHtmlRun();
-        	isListLoaded = true;
-	    }
-	}
-
-
-	private void ParseHtmlRun(){
-	    Thread t = new Thread() {
-	        @Override
-	        public void run() {
-	        	try {
-	        		internetManifest = new InternetManifest(Prefs.TEMP_DIR+"/"+Prefs.MANIFEST_FILE);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-	            Message msg = Message.obtain();
-	            msg.what = HTML_PARSING_DONE;
-	            handler.sendMessage(msg);
-	        }
-	    };
-	    t.start();
-	}
-
-
-	/* Waiting for Acknowledgement from threads running */
-	private final Handler handler = new Handler(){
-	    @Override
-	    public void handleMessage(Message msg) {
-	        switch(msg.what){
-	        //HTTP connection started
-		        case   FileManager.MESSAGE_CONNECTING_STARTED :
-		        	Log.i(TAG,"Connecting Started");
-		        	break;
-
-		    //Download started
-		        case   FileManager.MESSAGE_DOWNLOAD_STARTED :
-		        	FILE_SIZE = (int)msg.arg1;
-		        	ModifiedSince = (String) msg.obj;
-
-		        	Log.d("Download","Lastmodified ="+ModifiedSince);
-		        	SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-		        	Date resultdate = new Date(Long.parseLong(ModifiedSince));
-		        	if(isListLoaded == false){
-		        		progressDialog.setTitle(getString(R.string.downloading)+"\n"+getString(R.string.package_list));
-		        		progressDialog.setMessage(getString(R.string.lastmodified)+" "+sdf.format(resultdate)+"\n"+getString(R.string.downloading)+" ["+ FILE_SIZE+"kb]");
-		        	}else{
-
-		        		progressDialog.setTitle(getString(R.string.downloading)+"\n"+Translator.getTitle(toDownload.getpackageMode())+" ("+FILE_SIZE+"KB)");
-		        	}
+            progressDialog.setTitle(getString(R.string.downloading) + "\n" + Translator.getTitle(toDownload.getpackageMode()) + " (" + FILE_SIZE + "KB)");
+          }
 
 
 
-		        	Log.i(TAG,"Download started "+ FILE_SIZE+"kb");
-		        	break;
+          Log.i(TAG, "Download started " + FILE_SIZE + "kb");
+          break;
 
-		    //Getting progress
-		        case   FileManager.MESSAGE_UPDATE_PROGRESS_BAR :
-		        	int currentProgress = msg.arg1;
-		        	int percent = 0;
-		        	if(FILE_SIZE>0){
-		        		percent = (100*currentProgress)/FILE_SIZE;
-		        		if(progressDialog.isShowing()){
-		        			progressDialog.setProgress(percent);
-		        		}else{
-		        			FileManager.DownloadCancel();
-		        		}
-		        	}
-	                Log.i(TAG,"Progessbar "+currentProgress+"kb ,"+percent+"%");
-	                break;
+        //Getting progress
+        case FileManager.MESSAGE_UPDATE_PROGRESS_BAR:
+          int currentProgress = msg.arg1;
+          int percent = 0;
+          if (FILE_SIZE > 0) {
+            percent = (100 * currentProgress) / FILE_SIZE;
+            if (progressDialog.isShowing()) {
+              progressDialog.setProgress(percent);
+            } else {
+              FileManager.DownloadCancel();
+            }
+          }
+          Log.i(TAG, "Progessbar " + currentProgress + "kb ," + percent + "%");
+          break;
 
-            //Download cancel by user
-		        case   FileManager.MESSAGE_DOWNLOAD_CANCELED :
-		        	progressDialog.dismiss();
-		        	Log.i(TAG,"Download cancel");
-		        	break;
+        //Download cancel by user
+        case FileManager.MESSAGE_DOWNLOAD_CANCELED:
+          progressDialog.dismiss();
+          Log.i(TAG, "Download cancel");
+          break;
 
-		    //Download cancel by Error
-		        case   FileManager.MESSAGE_ENCOUNTERED_ERROR :
-		        	progressDialog.dismiss();
-		        	String error = (String)msg.obj;
-		        	Log.e(TAG,error);
+        //Download cancel by Error
+        case FileManager.MESSAGE_ENCOUNTERED_ERROR:
+          progressDialog.dismiss();
+          String error = (String) msg.obj;
+          Log.e(TAG, error);
 
-		            final AlertDialog.Builder ErrorDialog = new AlertDialog.Builder(thisActivity);
-		            ErrorDialog.setIcon(android.R.drawable.ic_dialog_alert);
-		            ErrorDialog.setTitle(getString(R.string.error));
-		            ErrorDialog.setMessage(error);
-		            ErrorDialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-	                    public void onClick(DialogInterface dialog, int whichButton) {
-	                    	thisActivity.finish();
-	                    }
-		            });
+          final AlertDialog.Builder ErrorDialog = new AlertDialog.Builder(thisActivity);
+          ErrorDialog.setIcon(android.R.drawable.ic_dialog_alert);
+          ErrorDialog.setTitle(getString(R.string.error));
+          ErrorDialog.setMessage(error);
+          ErrorDialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+              thisActivity.finish();
+            }
+          });
 
-		            ErrorDialog.show();
+          ErrorDialog.show();
 
-		            break;
+          break;
 
-		    //Download Completed  call install activity if package downloaded
-		    //parse html if svn list download
-	        case   FileManager.MESSAGE_DOWNLOAD_COMPLETE :
-	        	if(isListLoaded == false){
-		        	progressDialog.setMessage(getString(R.string.loading));
-		        	ParseHtmlRun();
-		        	Log.i(TAG,"Download complete");
-		        	isListLoaded = true;
-	        	}else{
-		        	progressDialog.dismiss();
-		        	Intent myIntent = new Intent(thisActivity, InstallActivity.class);
-		        	myIntent.putExtra("filename",toDownload.getJarFileName());
-			    	myIntent.putExtra("filepath",Prefs.TEMP_DIR+"/"+toDownload.getJarFileName());
-			    	myIntent.putExtra("filedate",ModifiedSince);
-			    	startActivity(myIntent);
-	        	}
-	        	break;
-
-
-	       //Generate List View after parsing
-	        case HTML_PARSING_DONE:
-	        	progressDialog.dismiss();
-	        	ArrayAdapter<String> adapter = new ArrayAdapter<String>(thisActivity,android.R.layout.simple_list_item_1, android.R.id.text1, internetManifest.PackageTitleList());
-	        	listView.setAdapter(adapter);
-	        	listView.setTextFilterEnabled(true);
-	    	    //Set current mode on click
-	        	listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-	    	        @Override
-	    	        public void onItemClick(AdapterView<?> av, View view, int position, final long id) {
-	    				TextView v = (TextView) view;
-	    				Toast.makeText(getApplicationContext(), v.getText(),   Toast.LENGTH_SHORT).show();
-	    				toDownload = internetManifest.get(position);
-						// start the download immediately
-	    			    startDownload();
-
-	    			    return;
-	    			}
-	    	    });
-	     	    break;
-	        }
-	    }
-	};
+        //Download Completed  call install activity if package downloaded
+        //parse html if svn list download
+        case FileManager.MESSAGE_DOWNLOAD_COMPLETE:
+          if (isListLoaded == false) {
+            progressDialog.setMessage(getString(R.string.loading));
+            ParseHtmlRun();
+            Log.i(TAG, "Download complete");
+            isListLoaded = true;
+          } else {
+            progressDialog.dismiss();
+            Intent myIntent = new Intent(thisActivity, InstallActivity.class);
+            myIntent.putExtra("filename", toDownload.getJarFileName());
+            myIntent.putExtra("filepath", Prefs.TEMP_DIR + "/" + toDownload.getJarFileName());
+            myIntent.putExtra("filedate", ModifiedSince);
+            startActivity(myIntent);
+          }
+          break;
 
 
-	private void startDownload() {
-		progressDialog = new ProgressDialog(thisActivity);
-		progressDialog.setTitle(getString(R.string.downloading)+"\n"+Translator.getTitle(toDownload.getpackageMode()));
-		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		progressDialog.setCancelable(true);
-		progressDialog.show();
-		FileManager.DownloadRun(toDownload.getJarURL(),Prefs.TEMP_DIR+"/"+toDownload.getJarFileName(),thisActivity.handler);
-	}
+        //Generate List View after parsing
+        case HTML_PARSING_DONE:
+          progressDialog.dismiss();
+          ArrayAdapter<String> adapter = new ArrayAdapter<String>(thisActivity, android.R.layout.simple_list_item_1, android.R.id.text1, internetManifest.PackageTitleList());
+          listView.setAdapter(adapter);
+          listView.setTextFilterEnabled(true);
+          //Set current mode on click
+          listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> av, View view, int position, final long id) {
+              TextView v = (TextView) view;
+              Toast.makeText(getApplicationContext(), v.getText(), Toast.LENGTH_SHORT).show();
+              toDownload = internetManifest.get(position);
+              // start the download immediately
+              startDownload();
 
+              return;
+            }
+          });
+          break;
+      }
+    }
+  };
 
-	@Override
-	public void onClick(View v) {
-		if (v.equals(_reloadButton)){
-			isListLoaded = false;
-			progressDialog = new ProgressDialog(thisActivity);
-		    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			progressDialog.setTitle(getString(R.string.downloading)+"\n"+getString(R.string.package_list));
-		    progressDialog.setCancelable(false);
-		    progressDialog.show();
-			FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS,Prefs.TEMP_DIR+"/svn.html",thisActivity.handler);
+  private void startDownload() {
+    progressDialog = new ProgressDialog(thisActivity);
+    progressDialog.setTitle(getString(R.string.downloading) + "\n" + Translator.getTitle(toDownload.getpackageMode()));
+    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+    progressDialog.setCancelable(true);
+    progressDialog.show();
+    FileManager.DownloadRun(toDownload.getJarURL(), Prefs.TEMP_DIR + "/" + toDownload.getJarFileName(), thisActivity.handler);
+  }
 
-		}
+  @Override
+  public void onClick(View v) {
+    if (v.equals(_reloadButton)) {
+      isListLoaded = false;
+      progressDialog = new ProgressDialog(thisActivity);
+      progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+      progressDialog.setTitle(getString(R.string.downloading) + "\n" + getString(R.string.package_list));
+      progressDialog.setCancelable(false);
+      progressDialog.show();
+      FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS, Prefs.TEMP_DIR + "/svn.html", thisActivity.handler);
 
-	}
+    }
+
+  }
 }

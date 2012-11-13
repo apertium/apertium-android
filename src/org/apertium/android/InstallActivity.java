@@ -16,13 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-
 /**
- * InstallActivity.java
- * Install jar language package
- * @author Arink Verma
- */
+ InstallActivity.java Install jar language package
 
+ @author Arink Verma
+ */
 package org.apertium.android;
 
 import java.io.File;
@@ -50,295 +48,283 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class InstallActivity extends Activity implements OnClickListener {
-	private final String TAG = "InstallActivity";
-	private Activity thisActivity = null;
+  private final String TAG = "InstallActivity";
+  private Activity thisActivity = null;
 
-	/*Layout variable*/
-	//Buttons
-	private Button submitButton,cancelButton;
-	//Text view
-	private TextView heading,info1,info2;
+  /*Layout variable*/
+  //Buttons
+  private Button submitButton, cancelButton;
+  //Text view
+  private TextView heading, info1, info2;
 
-	/*Mode related variable*/
-	private List<TranslationMode> translationModes;
-	//To pharse and manage Config.json
-	private LanguagePackage languagePackage;
-	private String FilePath = null;
-	private String packageID =  null;
-	private String lastModified = null;
-	private String FileName = null;
+  /*Mode related variable*/
+  private List<TranslationMode> translationModes;
+  //To pharse and manage Config.json
+  private LanguagePackage languagePackage;
+  private String FilePath = null;
+  private String packageID = null;
+  private String lastModified = null;
+  private String FileName = null;
+  private ProgressDialog progressDialog = null;
 
-
-
-	private ProgressDialog progressDialog = null;
-
-
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    thisActivity = this;
-	    getExtrasData();
+  /**
+   Called when the activity is first created.
+   */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    thisActivity = this;
+    getExtrasData();
 
 
-		try {
-			languagePackage = new LanguagePackage(this.FilePath,this.packageID);
-			languagePackage.setModifiedDate(this.lastModified);
-			/* Finding the mode present in the package */
-			translationModes = languagePackage.getAvailableModes();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    try {
+      languagePackage = new LanguagePackage(this.FilePath, this.packageID);
+      languagePackage.setModifiedDate(this.lastModified);
+      /* Finding the mode present in the package */
+      translationModes = languagePackage.getAvailableModes();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
-	    initView();
-	}
+    initView();
+  }
 
-	void getExtrasData(){
-	    Bundle extras = getIntent().getExtras();
-	    this.FilePath = extras.getString("filepath");
-	    this.FileName = extras.getString("filename");
-	    this.lastModified = extras.getString("filedate");
+  void getExtrasData() {
+    Bundle extras = getIntent().getExtras();
+    this.FilePath = extras.getString("filepath");
+    this.FileName = extras.getString("filename");
+    this.lastModified = extras.getString("filedate");
 
-	    Log.i(TAG,"getExtrasData filename ="+FileName+", path = "+FilePath+", LastDate="+lastModified);
+    Log.i(TAG, "getExtrasData filename =" + FileName + ", path = " + FilePath + ", LastDate=" + lastModified);
 
-	    if(!isPackageValid()){
-	        final AlertDialog.Builder b = new AlertDialog.Builder(this);
-	        b.setIcon(android.R.drawable.ic_dialog_alert);
-	        b.setCancelable(false);
-	        b.setMessage(this.FileName+"\n"+getString(R.string.invalid_jar));
-	        b.setNegativeButton(getString(R.string.back), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                	thisActivity.finish();
-                }
-	        });
-	        b.show();
-	    }
+    if (!isPackageValid()) {
+      final AlertDialog.Builder b = new AlertDialog.Builder(this);
+      b.setIcon(android.R.drawable.ic_dialog_alert);
+      b.setCancelable(false);
+      b.setMessage(this.FileName + "\n" + getString(R.string.invalid_jar));
+      b.setNegativeButton(getString(R.string.back), new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int whichButton) {
+          thisActivity.finish();
+        }
+      });
+      b.show();
+    }
 
-	    this.packageID =  this.FileName.substring(0, this.FileName.length() - 4);
-	}
-
-
-	/* Init View,
-	 * Initialing view */
-	private void initView() {
-		Log.i(TAG,"InitView Started");
-	    setContentView(R.layout.install_package);
-	    /*Sub Heading Titles*/
-		heading = (TextView) findViewById(R.id.textView1);
-		info1 = (TextView) findViewById(R.id.textView2);
-		info2 = (TextView) findViewById(R.id.textView4);
-		info1.setText(this.FilePath);
-		info2.setText("");
-		for (int i=0; i<this.translationModes.size(); i++) {
-			TranslationMode M = this.translationModes.get(i);
-			info2.append((i+1)+". "+Translator.getTitle(M.getID())+"\n");
-		}
+    this.packageID = this.FileName.substring(0, this.FileName.length() - 4);
+  }
 
 
-		/*Action Button*/
-		submitButton = (Button) findViewById(R.id.installButton);
-		cancelButton = (Button) findViewById(R.id.discardButton);
-		submitButton.setText(R.string.install);
-
-		LanguagePackage installedPackage = App.databaseHandler.getPackage(this.packageID);
-		if(installedPackage!=null){
-			String installedDate = installedPackage.ModifiedDate();
-			if(this.lastModified == null || installedDate == null || this.lastModified.equals(installedDate)){
-				submitButton.setText(R.string.update);
-			}else{
-				submitButton.setText(R.string.reinstall);
-			}
-		}
-
-		submitButton.setOnClickListener(this);
-		cancelButton.setOnClickListener(this);
-
-	}
+  /* Init View,
+   * Initialing view */
+  private void initView() {
+    Log.i(TAG, "InitView Started");
+    setContentView(R.layout.install_package);
+    /*Sub Heading Titles*/
+    heading = (TextView) findViewById(R.id.textView1);
+    info1 = (TextView) findViewById(R.id.textView2);
+    info2 = (TextView) findViewById(R.id.textView4);
+    info1.setText(this.FilePath);
+    info2.setText("");
+    for (int i = 0; i < this.translationModes.size(); i++) {
+      TranslationMode M = this.translationModes.get(i);
+      info2.append((i + 1) + ". " + Translator.getTitle(M.getID()) + "\n");
+    }
 
 
+    /*Action Button*/
+    submitButton = (Button) findViewById(R.id.installButton);
+    cancelButton = (Button) findViewById(R.id.discardButton);
+    submitButton.setText(R.string.install);
 
-	@Override
-	public void onClick(View v) {
-		if (v.equals(submitButton)){
-			String Action =  (String) submitButton.getText();
+    LanguagePackage installedPackage = App.databaseHandler.getPackage(this.packageID);
+    if (installedPackage != null) {
+      String installedDate = installedPackage.ModifiedDate();
+      if (this.lastModified == null || installedDate == null || this.lastModified.equals(installedDate)) {
+        submitButton.setText(R.string.update);
+      } else {
+        submitButton.setText(R.string.reinstall);
+      }
+    }
 
-			progressDialog = ProgressDialog.show(this, getString(R.string.installing)+"...", Action, true,false);
+    submitButton.setOnClickListener(this);
+    cancelButton.setOnClickListener(this);
 
-			if(Action.equals(getString(R.string.install))){
-				//Zero run to remove previous package
-				ExtractRun();
-			}else if(Action.equals(getString(R.string.update)) || Action.equals(getString(R.string.reinstall))){
-				//First run to copy new package
-				RemoveOldRun();
-			}else{
-				finish();
-			}
-		}else if(v.equals(cancelButton)){
-			finish();
-		}
-	}
+  }
 
+  @Override
+  public void onClick(View v) {
+    if (v.equals(submitButton)) {
+      String Action = (String) submitButton.getText();
 
+      progressDialog = ProgressDialog.show(this, getString(R.string.installing) + "...", Action, true, false);
 
-/*** Installation in 3 steps
- * Step 0 (if updatating) RemoveOldRun()
- * Step 1 ExtractRun()
- * Step 2 FileCopyRun()
- * Step 3 DataBaseWriteRun()
- * Step 4 RemoveOtherFileRun()
- * */
+      if (Action.equals(getString(R.string.install))) {
+        //Zero run to remove previous package
+        extractRun();
+      } else if (Action.equals(getString(R.string.update)) || Action.equals(getString(R.string.reinstall))) {
+        //First run to copy new package
+        RemoveOldRun();
+      } else {
+        finish();
+      }
+    } else if (v.equals(cancelButton)) {
+      finish();
+    }
+  }
 
+  /**
+   * Installation in 3 steps Step 0 (if updatating) RemoveOldRun() Step 1 ExtractRun() Step 2 FileCopyRun() Step 3
+   DataBaseWriteRun() Step 4 RemoveOtherFileRun()
+ *
+   */
 //Step 0
 //Removing old files and data
-		private void RemoveOldRun(){
-			progressDialog.setMessage(getString(R.string.removing_old));
-			Thread t = new Thread() {
-		        @Override
-		        public void run() {
-		        	try {
-		        		File file = new File(Prefs.JAR_DIR+"/"+languagePackage.PackageID());
-		        		FileManager.remove(file);
-		        		App.databaseHandler.deletePackage(languagePackage.PackageID());
-		        	} catch (Exception e) {
-						heading.setText(getString(R.string.error));
-						info1.setText(R.string.error_removing_old);
-						e.printStackTrace();
-					}
+  private void RemoveOldRun() {
+    progressDialog.setMessage(getString(R.string.removing_old));
+    Thread t = new Thread() {
+      @Override
+      public void run() {
+        try {
+          File file = new File(Prefs.JAR_DIR + "/" + languagePackage.PackageID());
+          FileManager.remove(file);
+          App.databaseHandler.deletePackage(languagePackage.PackageID());
+        } catch (Exception e) {
+          heading.setText(getString(R.string.error));
+          info1.setText(R.string.error_removing_old);
+          e.printStackTrace();
+        }
 
-		        	App.handler.post(new Runnable() {
-		        		@Override
-						public void run() {
-							ExtractRun();
-						}
-                    });
-		        }
-		    };
-		    t.start();
-		}
-
+        App.handler.post(new Runnable() {
+          @Override
+          public void run() {
+            extractRun();
+          }
+        });
+      }
+    };
+    t.start();
+  }
 
 //Step 1
 //Unziping file in temp dir
-	private void ExtractRun(){
-		progressDialog.setMessage(getString(R.string.unziping));
-	    Thread t = new Thread() {
-	        @Override
-	        public void run() {
+  private void extractRun() {
+    progressDialog.setMessage(getString(R.string.unziping));
+    Thread t = new Thread() {
+      @Override
+      public void run() {
 
-				try {
-					FileManager.unzip(FilePath,Prefs.TEMP_DIR+"/"+packageID);
-				} catch (IOException e) {
-					Log.e(TAG,e+"");
-					e.printStackTrace();
-				}
+        try {
+          FileManager.unzip(FilePath, Prefs.TEMP_DIR + "/" + packageID);
+        } catch (IOException e) {
+          Log.e(TAG, e + "");
+          e.printStackTrace();
+        }
 
-	        	App.handler.post(new Runnable() {
-	        		@Override
-					public void run() {
-						FileCopyRun();
-					}
-                });
-	        }
-	    };
-	    t.start();
-	}
+        App.handler.post(new Runnable() {
+          @Override
+          public void run() {
+            fileCopyRun();
+          }
+        });
+      }
+    };
+    t.start();
+  }
 
 //Step 2
 //Installing..", "Copying files
-	private void FileCopyRun(){
-		progressDialog.setMessage(getString(R.string.copying));
-	    Thread t = new Thread() {
-	        @Override
-	        public void run() {
+  private void fileCopyRun() {
+    progressDialog.setMessage(getString(R.string.copying));
+    Thread t = new Thread() {
+      @Override
+      public void run() {
 
 
-				FileManager.move(Prefs.TEMP_DIR+"/"+languagePackage.PackageID(),Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/extract");
+        FileManager.move(Prefs.TEMP_DIR + "/" + languagePackage.PackageID(), Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/extract");
 
-				try {
-					FileManager.copyFile(FilePath,Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/"+languagePackage.PackageID()+".jar");
-	        	App.handler.post(new Runnable() {
-	        		@Override
-					public void run() {
-						DataBaseWriteRun();
-					}
-                });
-				} catch (IOException e) {
-					Log.e(TAG,e+"");
-					e.printStackTrace();
+        try {
+          FileManager.copyFile(FilePath, Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/" + languagePackage.PackageID() + ".jar");
+          App.handler.post(new Runnable() {
+            @Override
+            public void run() {
+              dataBaseWriteRun();
+            }
+          });
+        } catch (IOException e) {
+          Log.e(TAG, e + "");
+          e.printStackTrace();
           App.langToast(e.getLocalizedMessage());
-				}
+        }
 
-	        }
-	    };
-	    t.start();
-	}
+      }
+    };
+    t.start();
+  }
 
 //Step 3
 //Writing database
-	private void DataBaseWriteRun(){
-		progressDialog.setMessage(getString(R.string.writing_db));
-	    Thread t = new Thread() {
-	        @Override
-	        public void run() {
-	        	App.databaseHandler.addLanuagepair(languagePackage);
+  private void dataBaseWriteRun() {
+    progressDialog.setMessage(getString(R.string.writing_db));
+    Thread t = new Thread() {
+      @Override
+      public void run() {
+        App.databaseHandler.addLanuagepair(languagePackage);
 
-	        	App.handler.post(new Runnable() {
-	        		@Override
-					public void run() {
-						RemoveOtherFileRun();
-					}
-                });
+        App.handler.post(new Runnable() {
+          @Override
+          public void run() {
+            removeOtherFileRun();
+          }
+        });
 
-	        }
-	    };
-	    t.start();
-	}
+      }
+    };
+    t.start();
+  }
 
-	//Step 4
-	//Removing  temp files
-	private void RemoveOtherFileRun(){
-		progressDialog.setMessage(getString(R.string.removing_temp));
-	    Thread t = new Thread() {
-	        @Override
-	        public void run() {
-	        	File file = new File(Prefs.JAR_DIR+"/"+languagePackage.PackageID()+"/extract");
-	        	File[] childfiles = file.listFiles();
-	        	for(int i=0;i<childfiles.length;i++){
-	        		if(childfiles[i].isDirectory()){
-	        			if(!childfiles[i].getName().equalsIgnoreCase("data")){
-	        				FileManager.remove(childfiles[i]);
-	        			}
-	        		}
-	        	}
+  //Step 4
+  //Removing  temp files
+  private void removeOtherFileRun() {
+    progressDialog.setMessage(getString(R.string.removing_temp));
+    Thread t = new Thread() {
+      @Override
+      public void run() {
+        File file = new File(Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/extract");
+        File[] childfiles = file.listFiles();
+        for (int i = 0; i < childfiles.length; i++) {
+          if (childfiles[i].isDirectory()) {
+            if (!childfiles[i].getName().equalsIgnoreCase("data")) {
+              FileManager.remove(childfiles[i]);
+            }
+          }
+        }
 
-	           	progressDialog.dismiss();
-	        	Intent myIntent1 = new Intent(InstallActivity.this,ModeManageActivity.class);
-	        	InstallActivity.this.startActivity(myIntent1);
-	        	finish();
+        progressDialog.dismiss();
+        Intent myIntent1 = new Intent(InstallActivity.this, ModeManageActivity.class);
+        InstallActivity.this.startActivity(myIntent1);
+        finish();
 
-	        }
-	    };
-	    t.start();
-	}
+      }
+    };
+    t.start();
+  }
 
-
-	boolean isPackageValid(){
-		boolean isValid = true;
-		String extn = this.FileName.substring(this.FileName.length() - 3, this.FileName.length());
-		if(!extn.equalsIgnoreCase("jar")){
-			isValid = false;
-		}else{
-			try {
-				Translator.setBase(this.FilePath);
-			} catch (Exception e) {
-				e.printStackTrace();
-				isValid = false;
-			}
-			if(Translator.getAvailableModes()==null || Translator.getAvailableModes().length ==0){
-				isValid = false;
-			}
-		}
-		return isValid;
-	}
-
+  boolean isPackageValid() {
+    boolean isValid = true;
+    String extn = this.FileName.substring(this.FileName.length() - 3, this.FileName.length());
+    if (!extn.equalsIgnoreCase("jar")) {
+      isValid = false;
+    } else {
+      try {
+        Translator.setBase(this.FilePath);
+      } catch (Exception e) {
+        e.printStackTrace();
+        isValid = false;
+      }
+      if (Translator.getAvailableModes() == null || Translator.getAvailableModes().length == 0) {
+        isValid = false;
+      }
+    }
+    return isValid;
+  }
 }

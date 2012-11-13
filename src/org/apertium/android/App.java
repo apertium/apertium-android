@@ -26,13 +26,11 @@ public class App extends Application {
     return Build.PRODUCT.contains("sdk");//.equals(Build.PRODUCT) || "google_sdk".equals(Build.PRODUCT);
   }
   public static App instance;
-
   private Handler forgrundstråd;
   public static DatabaseHandler databaseHandler;
   public static ClipboardHandler clipboardHandler;
   public static RulesHandler rulesHandler;
   public static Handler handler;
-
 
   @Override
   public void onCreate() {
@@ -46,14 +44,14 @@ public class App extends Application {
       int n = getAssets().open("bugsense.txt").read(buffer);
       String key = new String(buffer, 0, n).trim();
 
-      Log.d("TAG", "Using bugsense key '"+key+"'");
+      Log.d("TAG", "Using bugsense key '" + key + "'");
       BugSenseHandler.initAndStartSession(this, key);
     } catch (IOException e) {
       Log.d("TAG", "No bugsense keyfile found");
     }
 
-    IOUtils.cacheDir = new File(getCacheDir(),"apertium-cache/");
-    Log.i("TAG", "IOUtils.cacheDir set to "+IOUtils.cacheDir);
+    IOUtils.cacheDir = new File(getCacheDir(), "apertium-cache/");
+    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
 
     instance = this;
     forgrundstråd = new Handler();
@@ -63,10 +61,10 @@ public class App extends Application {
 
     FileManager.setDIR();
 
-    databaseHandler     = new DatabaseHandler(this);
-    rulesHandler        = new RulesHandler(this);
-    clipboardHandler    = new ClipboardHandler(this);
-    handler             = new Handler();
+    databaseHandler = new DatabaseHandler(this);
+    rulesHandler = new RulesHandler(this);
+    clipboardHandler = new ClipboardHandler(this);
+    handler = new Handler();
 
 
     try {
@@ -75,8 +73,6 @@ public class App extends Application {
       e.printStackTrace();
     }
   }
-
-
 
   public static void langToast(final String txt) {
     //new Throwable(txt).printStackTrace();
@@ -100,10 +96,8 @@ public class App extends Application {
 
 
   /* Version fra http://developer.android.com/training/basics/network-ops/managing.html */
-	public static boolean isOnline()
-	{
-    ConnectivityManager connMgr = (ConnectivityManager)
-                instance.getSystemService(Context.CONNECTIVITY_SERVICE);
+  public static boolean isOnline() {
+    ConnectivityManager connMgr = (ConnectivityManager) instance.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
     return (networkInfo != null && networkInfo.isConnected());
   }
