@@ -60,7 +60,7 @@ public class InternetManifest {
   public String[] PackageTitleList() {
     String[] list = new String[manifestRowList.size()];
     for (int i = 0; i < manifestRowList.size(); i++) {
-      list[i] = Translator.getTitle(manifestRowList.get(i).getpackageMode());
+      list[i] = Translator.getTitle(manifestRowList.get(i).packageMode);
     }
     return list;
   }

@@ -136,7 +136,7 @@ public class DownloadActivity extends Activity implements OnClickListener {
             progressDialog.setMessage(getString(R.string.lastmodified) + " " + sdf.format(resultdate) + "\n" + getString(R.string.downloading) + " [" + FILE_SIZE + "kb]");
           } else {
 
-            progressDialog.setTitle(getString(R.string.downloading) + "\n" + Translator.getTitle(toDownload.getpackageMode()) + " (" + FILE_SIZE + "KB)");
+            progressDialog.setTitle(getString(R.string.downloading) + "\n" + Translator.getTitle(toDownload.packageMode) + " (" + FILE_SIZE + "KB)");
           }
 
 
@@ -230,11 +230,11 @@ public class DownloadActivity extends Activity implements OnClickListener {
 
   private void startDownload() {
     progressDialog = new ProgressDialog(thisActivity);
-    progressDialog.setTitle(getString(R.string.downloading) + "\n" + Translator.getTitle(toDownload.getpackageMode()));
+    progressDialog.setTitle(getString(R.string.downloading) + "\n" + Translator.getTitle(toDownload.packageMode));
     progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     progressDialog.setCancelable(true);
     progressDialog.show();
-    FileManager.DownloadRun(toDownload.getJarURL(), Prefs.TEMP_DIR + "/" + toDownload.getJarFileName(), thisActivity.handler);
+    FileManager.DownloadRun(toDownload.jarURL, Prefs.TEMP_DIR + "/" + toDownload.getJarFileName(), thisActivity.handler);
   }
 
   @Override
@@ -247,8 +247,6 @@ public class DownloadActivity extends Activity implements OnClickListener {
       progressDialog.setCancelable(false);
       progressDialog.show();
       FileManager.DownloadRun(Prefs.SVN_MANIFEST_ADDRESS, Prefs.TEMP_DIR + "/svn.html", thisActivity.handler);
-
     }
-
   }
 }

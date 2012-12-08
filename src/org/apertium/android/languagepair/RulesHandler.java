@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import dalvik.system.DexClassLoader;
+import org.apertium.android.App;
 
 public class RulesHandler extends SecureClassLoader {
   String TAG = "RulesHandler";
@@ -76,14 +77,12 @@ public class RulesHandler extends SecureClassLoader {
       return null;
     }
     Log.i(TAG, "getting package of mode = " + mode);
-    DatabaseHandler DB = new DatabaseHandler(this.CTX);
-    TranslationMode m = DB.getMode(mode);
+    TranslationMode m = App.databaseHandler.getMode(mode);
     return (m == null) ? null : m.getPackage();
   }
 
   public String findPackage(String M) {
-    DatabaseHandler DB = new DatabaseHandler(this.CTX);
-    TranslationMode m = DB.getMode(M);
+    TranslationMode m = App.databaseHandler.getMode(M);
     return (m == null) ? null : m.getPackage();
   }
 

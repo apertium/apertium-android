@@ -20,7 +20,7 @@
 /* used by FileArray */
 package org.apertium.android.filemanager;
 
-public class Option implements Comparable<Option> {
+class Option implements Comparable<Option> {
   private String name;
   private String data;
   private String path;

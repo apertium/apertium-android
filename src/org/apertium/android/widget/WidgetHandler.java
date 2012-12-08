@@ -24,6 +24,7 @@ import org.apertium.android.languagepair.TranslationMode;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import org.apertium.android.App;
 
 public class WidgetHandler {
   private Context CTX;
@@ -44,7 +45,7 @@ public class WidgetHandler {
   }
 
   public String[] getWidgetModes() {
-    UdateWidget();
+    udateWidget();
 
     String[] modes = new String[5];
     for (int i = 0; i < modes.length; i++) {
@@ -73,11 +74,10 @@ public class WidgetHandler {
     }
   }
 
-  private void UdateWidget() {
-    DatabaseHandler DB = new DatabaseHandler(this.CTX);
+  private void udateWidget() {
     for (int i = 0; i < 5; i++) {
       String mode = settings.getString("WidgetMode" + i, "+");
-      TranslationMode translationMode = DB.getMode(mode);
+      TranslationMode translationMode = App.databaseHandler.getMode(mode);
       if (translationMode == null || translationMode != null && !translationMode.isValid()) {
         setWidgetMode("+", i);
       }

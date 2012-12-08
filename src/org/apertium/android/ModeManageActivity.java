@@ -27,10 +27,8 @@ import java.io.File;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.filemanager.FileManager;
 import org.apertium.android.helper.Prefs;
-import org.apertium.android.languagepair.RulesHandler;
 import org.apertium.android.languagepair.TranslationMode;
 
 import android.app.Activity;
@@ -40,7 +38,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;

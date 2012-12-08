@@ -29,12 +29,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class FileArrayAdapter extends ArrayAdapter<Option> {
+class FileArrayAdapter extends ArrayAdapter<Option> {
   private Context c;
   private int id;
   private List<Option> items;
 
-  public FileArrayAdapter(Context context, int textViewResourceId,
+  FileArrayAdapter(Context context, int textViewResourceId,
       List<Option> objects) {
     super(context, textViewResourceId, objects);
     c = context;

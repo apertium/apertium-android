@@ -31,9 +31,9 @@ import android.util.Log;
 public class Prefs {
   private static final String TAG = "AppPreference";
   //Directories path
-  public static final String BASE_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium2";
-  public static final String JAR_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium2/jars";
-  public static final String TEMP_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium2/temp";
+  public static final String BASE_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium";
+  public static final String JAR_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium/jars";
+  public static final String TEMP_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium/temp";
   public static final String MANIFEST_FILE = "Manifest";
   public static final String SVN_MANIFEST_ADDRESS = "http://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
   public static final String SUPPORT_MAIL = "arinkverma@gmail.com";

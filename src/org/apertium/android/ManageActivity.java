@@ -110,8 +110,7 @@ public class ManageActivity extends PreferenceActivity {
         Thread t = new Thread() {
           @Override
           public void run() {
-            DatabaseHandler DB = new DatabaseHandler(thisActivity);
-            DB.updateDB();
+            App.databaseHandler.updateDB();
 
             handler.post(new Runnable() {
               @Override

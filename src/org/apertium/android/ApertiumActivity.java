@@ -27,11 +27,7 @@ package org.apertium.android;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.apertium.Translator;
-import org.apertium.android.database.DatabaseHandler;
-import org.apertium.android.filemanager.FileManager;
 import org.apertium.android.helper.Prefs;
-import org.apertium.android.helper.ClipboardHandler;
-import org.apertium.android.languagepair.RulesHandler;
 import org.apertium.android.languagepair.TranslationMode;
 
 import android.app.Activity;
@@ -41,8 +37,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -54,10 +48,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.ArrayList;
 import org.apertium.utils.IOUtils;
 
 public class ApertiumActivity extends Activity implements OnClickListener {

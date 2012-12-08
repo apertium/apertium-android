@@ -20,7 +20,6 @@ package org.apertium.android.widget;
 
 import org.apertium.android.ModeManageActivity;
 import org.apertium.android.R;
-import org.apertium.android.database.DatabaseHandler;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
