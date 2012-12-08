@@ -17,6 +17,7 @@ import java.io.IOException;
 import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.filemanager.FileManager;
 import org.apertium.android.helper.ClipboardHandler;
+import org.apertium.android.helper.ClipboardHandlerV11;
 import org.apertium.android.helper.Prefs;
 import org.apertium.android.languagepair.RulesHandler;
 import org.apertium.utils.IOUtils;
@@ -63,7 +64,12 @@ public class App extends Application {
 
     databaseHandler = new DatabaseHandler(this);
     rulesHandler = new RulesHandler(this);
-    clipboardHandler = new ClipboardHandler(this);
+    int sdk = android.os.Build.VERSION.SDK_INT;
+    if (sdk < 11) {
+      clipboardHandler = new ClipboardHandler(this);
+    } else {
+      clipboardHandler = new ClipboardHandlerV11(this);
+    }
     handler = new Handler();
 
 
