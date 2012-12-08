@@ -134,7 +134,7 @@ public class WidgetConfigActivity extends Activity implements OnClickListener {
         _modeButton[i].setText("+");
         remoteViews.setViewVisibility(ModeButtonCode[i], View.GONE);
       } else {
-        String modeTitle = App.databaseHandler.getMode(Modes[i]).getTitle();
+        String modeTitle = App.databaseHandler.getMode(Modes[i]).title;
         _modeButton[i].setText(modeTitle);
         remoteViews.setViewVisibility(ModeButtonCode[i], View.VISIBLE);
       }

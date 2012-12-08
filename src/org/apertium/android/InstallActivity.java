@@ -125,7 +125,7 @@ public class InstallActivity extends Activity implements OnClickListener {
     info2.setText("");
     for (int i = 0; i < this.translationModes.size(); i++) {
       TranslationMode M = this.translationModes.get(i);
-      info2.append((i + 1) + ". " + Translator.getTitle(M.getID()) + "\n");
+      info2.append((i + 1) + ". " + Translator.getTitle(M.id) + "\n");
     }
 
 

@@ -32,7 +32,7 @@ import org.apertium.android.helper.Prefs;
 public class InternetManifest {
   private List<ManifestRow> manifestRowList = null;
 
-  public InternetManifest(String ManifestFile) throws IOException {
+  public InternetManifest() throws IOException {
     manifestRowList = new ArrayList<ManifestRow>();
     InputStream is = new FileInputStream(Prefs.TEMP_DIR + "/" + Prefs.MANIFEST_FILE);
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -41,9 +41,9 @@ public class InternetManifest {
       while ((input = reader.readLine()) != null) {
         /*PairName	JarURL FileName ModeID
          * apertium-af-nl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-af-nl/apertium-af-nl.jar	file:apertium-af-nl-0.2.0.tar.gz	af-nl, nl-af*/
-        String[] Row = input.split("\t");
-        if (Row.length > 2) {
-          manifestRowList.add(new ManifestRow(Row[0], Row[1], Row[2], Row[3]));
+        String[] col = input.split("\t");
+        if (col.length > 2) {
+          manifestRowList.add(new ManifestRow(col[0], col[1], col[2], col[3]));
         }
       }
     }

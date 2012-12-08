@@ -102,7 +102,7 @@ public class DownloadActivity extends Activity implements OnClickListener {
       @Override
       public void run() {
         try {
-          internetManifest = new InternetManifest(Prefs.TEMP_DIR + "/" + Prefs.MANIFEST_FILE);
+          internetManifest = new InternetManifest();
         } catch (IOException e1) {
           e1.printStackTrace();
         }

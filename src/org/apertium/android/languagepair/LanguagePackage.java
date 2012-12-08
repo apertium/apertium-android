@@ -65,7 +65,7 @@ public class LanguagePackage {
   public void setModes(List<TranslationMode> modeitems) {
     for (int i = 0; i < modeitems.size(); i++) {
       TranslationMode m = modeitems.get(i);
-      m.setPackage(this._package_id);
+      m.packageName=(this._package_id);
       _modes.add(m);
     }
   }

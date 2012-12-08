@@ -81,8 +81,8 @@ public class ModeManageActivity extends ListActivity {
 
     for (int i = 0; i < len; i++) {
       TranslationMode m = listTranslationMode.get(i);
-      ModeTitle[i] = m.getTitle();
-      ModeId[i] = m.getID();
+      ModeTitle[i] = m.title;
+      ModeId[i] = m.id;
     }
 
     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, ModeTitle);
@@ -113,12 +113,12 @@ public class ModeManageActivity extends ListActivity {
 
         final TranslationMode tobeRemove = App.databaseHandler.getMode(ModeId[pos]);
 
-        final String pack = tobeRemove.getPackage();
+        final String pack = tobeRemove.packageName;
         b.setTitle(getString(R.string.confirm_packageRemove));
         String message = "";
         List<TranslationMode> removeModes = App.databaseHandler.getModes(pack);
         for (int i = 0; i < removeModes.size(); i++) {
-          message += ((TranslationMode) removeModes.get(i)).getTitle() + "\n";
+          message += ((TranslationMode) removeModes.get(i)).title + "\n";
         }
         b.setMessage(message);
         b.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {

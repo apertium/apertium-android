@@ -78,12 +78,12 @@ public class RulesHandler extends SecureClassLoader {
     }
     Log.i(TAG, "getting package of mode = " + mode);
     TranslationMode m = App.databaseHandler.getMode(mode);
-    return (m == null) ? null : m.getPackage();
+    return (m == null) ? null : m.packageName;
   }
 
   public String findPackage(String M) {
     TranslationMode m = App.databaseHandler.getMode(M);
-    return (m == null) ? null : m.getPackage();
+    return (m == null) ? null : m.packageName;
   }
 
   public String PathCurrentPackage() {

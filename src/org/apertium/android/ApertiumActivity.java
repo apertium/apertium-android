@@ -266,8 +266,8 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       IOUtils.timing = null;
 
       translationMode = App.databaseHandler.getMode(currentMode);
-      fromLanguage = translationMode.getFrom();
-      toLanguage = translationMode.getTo();
+      fromLanguage = translationMode.fromLang;
+      toLanguage = translationMode.toLang;
 
       toButton.setText(toLanguage);
       fromButton.setText(fromLanguage);

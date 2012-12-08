@@ -77,8 +77,8 @@ public class DatabaseHandler {
     List<TranslationMode> TranslationModes = L.getAvailableModes();
     for (int i = 0; i < TranslationModes.size(); i++) {
       TranslationMode m = TranslationModes.get(i);
-      values.put(KEY_MODE_ID, m.getID());
-      values.put(KEY_MODE_TITLE, m.getTitle());
+      values.put(KEY_MODE_ID, m.id);
+      values.put(KEY_MODE_TITLE, m.title);
       values.put(KEY_MODE_PACKAGE, L.PackageID());
       db.insert(TABLE_MODE, null, values);
     }
@@ -110,7 +110,7 @@ public class DatabaseHandler {
         String t = cursor.getString(1);	//Title
         String p = cursor.getString(2);	//Package_id
         TranslationMode M = new TranslationMode(m, t);
-        M.setPackage(p);
+        M.packageName=(p);
         LangList.add(M);
       } while (cursor.moveToNext());
     }
@@ -142,8 +142,8 @@ public class DatabaseHandler {
 
     for (int i = 0; i < LangList.size(); i++) {
       TranslationMode m = LangList.get(i);
-      Log.i(TAG, m.getTitle());
-      String[] s = m.getTitle().split("\\s");
+      Log.i(TAG, m.title);
+      String[] s = m.title.split("\\s");
       if (!TitleList.contains(s[0])) {
         TitleList.add(s[0]);
       }
@@ -207,7 +207,7 @@ public class DatabaseHandler {
         String t = cursor.getString(1);	//Title
         String p = cursor.getString(2);	//Package_id
         TranslationMode M = new TranslationMode(m, t);
-        M.setPackage(p);
+        M.packageName=(p);
         LangList.add(M);
       } while (cursor.moveToNext());
     }
@@ -251,7 +251,7 @@ public class DatabaseHandler {
       String t = cursor.getString(1);	//Title
       String p = cursor.getString(2);	//Package_id
       M = new TranslationMode(m, t);
-      M.setPackage(p);
+      M.packageName=(p);
     }
     db.close();
     return M;
