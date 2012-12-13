@@ -18,7 +18,6 @@
  */
 package org.apertium.android.widget;
 
-import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.helper.Prefs;
 import org.apertium.android.languagepair.TranslationMode;
 

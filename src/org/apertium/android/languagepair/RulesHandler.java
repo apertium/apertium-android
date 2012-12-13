@@ -21,7 +21,6 @@ package org.apertium.android.languagepair;
 import java.io.File;
 import java.security.SecureClassLoader;
 
-import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.helper.Prefs;
 
 import android.content.Context;

@@ -22,7 +22,7 @@
  @author Arink Verma
 
  */
-package org.apertium.android;
+package org.apertium.android.SMS;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +41,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import org.apertium.android.R;
 
 public class SMSInboxActivity extends ListActivity {
   String TAG = "SMSInboxActivity";

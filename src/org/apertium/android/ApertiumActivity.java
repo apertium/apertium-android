@@ -24,6 +24,7 @@
  */
 package org.apertium.android;
 
+import org.apertium.android.SMS.SMSInboxActivity;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.apertium.Translator;
@@ -431,7 +432,7 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       Thread t = new Thread() {
         @Override
         public void run() {
-          App.databaseHandler.updateDB();
+          App.databaseHandler.reloadAll();
 
           App.handler.post(new Runnable() {
             @Override

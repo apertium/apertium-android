@@ -48,12 +48,12 @@
 
         </activity>
         <activity android:name=".filemanager.FileChooserActivity"></activity>
-        <activity android:name="ManageActivity" android:configChanges="orientation"></activity>
-        <activity android:name="InstallActivity" android:configChanges="orientation"></activity>
-        <activity android:name="ModeManageActivity" android:configChanges="orientation"></activity>
+        <activity android:name=".ManageActivity" android:configChanges="orientation"></activity>
+        <activity android:name=".InstallActivity" android:configChanges="orientation"></activity>
+        <activity android:name=".ModeManageActivity" android:configChanges="orientation"></activity>
         <activity android:name=".widget.WidgetConfigActivity"></activity>
         <activity android:name=".DownloadActivity" android:configChanges="orientation"></activity>
-        <activity android:name="SMSInboxActivity" android:configChanges="orientation"></activity>
+        <activity android:name=".SMS.SMSInboxActivity" android:configChanges="orientation"></activity>
 
     </application>
 

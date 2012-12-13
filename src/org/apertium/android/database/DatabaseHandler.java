@@ -280,16 +280,6 @@ public class DatabaseHandler {
     return L;
   }
 
-  // Get mode Count
-  public int getModesCount() {
-    String countQuery = "SELECT  * FROM " + TABLE_MODE;
-    OpenHelper openHelper = new OpenHelper(this.context);
-    SQLiteDatabase db = openHelper.getReadableDatabase();
-    Cursor cursor = db.rawQuery(countQuery, null);
-    cursor.close();
-    return cursor.getCount();
-  }
-
   // Deleting a package
   public void deletePackage(String PackageID) {
     OpenHelper openHelper = new OpenHelper(this.context);
@@ -300,7 +290,7 @@ public class DatabaseHandler {
   }
 
   //Updating DB entries
-  public void updateDB() {
+  public void reloadAll() {
     Log.i(TAG, "Update database");
     OpenHelper openHelper = new OpenHelper(this.context);
     SQLiteDatabase db = openHelper.getWritableDatabase();

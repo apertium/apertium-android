@@ -23,22 +23,17 @@
  */
 package org.apertium.android;
 
-import org.apertium.android.database.DatabaseHandler;
 import org.apertium.android.filemanager.FileChooserActivity;
-import org.apertium.android.helper.Prefs;
 import org.apertium.android.widget.WidgetConfigActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class ManageActivity extends PreferenceActivity {
   ProgressDialog progressDialog = null;
@@ -110,7 +105,7 @@ public class ManageActivity extends PreferenceActivity {
         Thread t = new Thread() {
           @Override
           public void run() {
-            App.databaseHandler.updateDB();
+            App.databaseHandler.reloadAll();
 
             handler.post(new Runnable() {
               @Override
