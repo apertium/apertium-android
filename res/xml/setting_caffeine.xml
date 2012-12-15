@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+        <PreferenceCategory
+                android:title="@string/applicationSetting">
+		<CheckBoxPreference
+		        android:title="@string/enableCache"
+		        android:defaultValue="true"
+		        android:summary="@string/enableCacheDescription"
+		        android:key="CachePref" />
+
+		<CheckBoxPreference
+		        android:title="@string/displayMark"
+		        android:defaultValue="false"
+		        android:summary="@string/displayMarkDescription"
+		        android:key="MarkPref" />
+
+		<CheckBoxPreference
+		        android:title="@string/clipBoardGet"
+		        android:defaultValue="false"
+		        android:summary="@string/clipBoardGetDescription"
+		        android:key="ClipGetPref" />
+
+		<CheckBoxPreference
+		        android:title="@string/clipBoardPush"
+		        android:defaultValue="false"
+		        android:summary="@string/clipBoardPushDescription"
+		        android:key="ClipPushPref" />
+
+        </PreferenceCategory>
+
+</PreferenceScreen>

@@ -97,6 +97,7 @@
 	<string name="widgetSettingDescription">Widgets such as shortcut for specific language</string>
 
 
+  <string name="apply">Apply</string>
   <string name="about">About</string>
   <string name="aboutText"><![CDATA[
 <html><body>
@@ -110,7 +111,7 @@ Apertium can, like this app, be installed on your own machine.
 That means that you don\'t need an Internet connection and you don\'t
 need to send confidential text through the Internet to get a translation.
 
-If you want to quickly try it out there are zero-install Java web start applets 
+If you want to quickly try it out there are zero-install Java web start applets
 (see <a href="http://wiki.apertium.org/wiki/Apertium-Caffeine">http://wiki.apertium.org/wiki/Apertium-Caffeine</a>)
 
 <h3>Need help creating your own offline translation service?</h3>
@@ -118,7 +119,7 @@ This app is an open source showcase of how to do offline translation.
 We encourage you to copy it and modify as you like.
 There is a lively volunteer-driven community, ready to help developers
 and end users. Please see
-<a href="http://wiki.apertium.org">http://wiki.apertium.org</a> 
+<a href="http://wiki.apertium.org">http://wiki.apertium.org</a>
 for how to get in touch.
 
 
@@ -126,7 +127,7 @@ for how to get in touch.
 
 It takes around 3 months of full time work to create a language pair from scratch.
 We at Apertium will help you, of course, and if you are a student you could consider
-engaging in Apertium work being sponsored by the Google Summer of Code free/open-source 
+engaging in Apertium work being sponsored by the Google Summer of Code free/open-source
 program (see <a href="http://code.google.com/intl/ca/soc/">http://code.google.com/intl/ca/soc/</a>).
 Contact us for details.
 

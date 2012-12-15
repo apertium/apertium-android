@@ -4,14 +4,14 @@
         <PreferenceCategory
                 android:title="@string/languagePackage"
                 >
-                
+
          <Preference
          		android:title="@string/listPackage"
                 android:summary="@string/listPackageDescription"
                 android:key="listPref" />
-              		
-         
-         
+
+
+
         <PreferenceScreen
                android:title="@string/installPackage"
          		android:summary="@string/installPackageDescription"
@@ -21,16 +21,16 @@
                         android:summary="@string/installInternetDescription"
                         android:title="Install from Internet"
                         android:key="installSVNPref" />
-                
+
                  <Preference
                         android:name="@string/installLocal"
                         android:summary="@string/installLocalDescription"
                         android:title="Install from SDcard"
                         android:key="installLocalPref" />
-        
+
         </PreferenceScreen>
-         
-         
+
+
         </PreferenceCategory>
         <PreferenceCategory
                 android:title="@string/applicationSetting">
@@ -39,35 +39,35 @@
 		        android:defaultValue="true"
 		        android:summary="@string/enableCacheDescription"
 		        android:key="CachePref" />
-		
+
 		<CheckBoxPreference
 		        android:title="@string/displayMark"
 		        android:defaultValue="false"
 		        android:summary="@string/displayMarkDescription"
 		        android:key="MarkPref" />
-		
+
 		<CheckBoxPreference
 		        android:title="@string/clipBoardGet"
 		        android:defaultValue="false"
 		        android:summary="@string/clipBoardGetDescription"
 		        android:key="ClipGetPref" />
-		
+
 		<CheckBoxPreference
 		        android:title="@string/clipBoardPush"
 		        android:defaultValue="false"
 		        android:summary="@string/clipBoardPushDescription"
 		        android:key="ClipPushPref" />
-        
+
         <Preference
                 android:title="@string/widgetSetting"
                 android:summary="@string/widgetSettingDescription"
                 android:key="WidgetPref" />
-        
+
         <Preference
                 android:title="@string/updateDatabase"
                 android:summary="@string/updateDatabaseDescription"
                 android:key="UpdateDBPref" />
-        
+
         </PreferenceCategory>
 
 </PreferenceScreen>
