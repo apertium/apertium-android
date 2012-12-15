@@ -21,10 +21,10 @@
 
  @author Arink Verma
  */
-package org.apertium.android;
+package org.apertium.android.extended;
 
-import org.apertium.android.filemanager.FileChooserActivity;
-import org.apertium.android.widget.WidgetConfigActivity;
+import org.apertium.android.extended.filemanager.FileChooserActivity;
+import org.apertium.android.extended.widget.WidgetConfigActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import org.apertium.android.R;
 
 public class ManageActivity extends PreferenceActivity {
   ProgressDialog progressDialog = null;
@@ -45,6 +46,7 @@ public class ManageActivity extends PreferenceActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Extended.init(this);
     thisActivity = this;
     addPreferencesFromResource(R.xml.setting);
     this.setTheme(R.style.PreferenceTheme);
@@ -105,7 +107,7 @@ public class ManageActivity extends PreferenceActivity {
         Thread t = new Thread() {
           @Override
           public void run() {
-            App.databaseHandler.reloadAll();
+            Extended.databaseHandler.reloadAll();
 
             handler.post(new Runnable() {
               @Override

@@ -21,7 +21,7 @@
 
  @author Arink Verma
  */
-package org.apertium.android;
+package org.apertium.android.extended;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apertium.Translator;
-import org.apertium.android.Internet.InternetManifest;
-import org.apertium.android.Internet.ManifestRow;
-import org.apertium.android.filemanager.FileManager;
-import org.apertium.android.helper.Prefs;
+import org.apertium.android.extended.Internet.InternetManifest;
+import org.apertium.android.extended.Internet.ManifestRow;
+import org.apertium.android.extended.filemanager.FileManager;
+import org.apertium.android.extended.helper.Prefs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,6 +51,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.apertium.android.R;
 
 public class DownloadActivity extends Activity implements OnClickListener {
   public static final String TAG = "DownloadActivity";
@@ -71,6 +72,7 @@ public class DownloadActivity extends Activity implements OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Extended.init(this);
     setContentView(R.layout.download_layout);
     FileManager.setDIR();
 

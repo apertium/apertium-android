@@ -21,17 +21,17 @@
 
  @author Arink Verma
  */
-package org.apertium.android;
+package org.apertium.android.extended;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.filemanager.FileManager;
-import org.apertium.android.helper.Prefs;
-import org.apertium.android.languagepair.LanguagePackage;
-import org.apertium.android.languagepair.TranslationMode;
+import org.apertium.android.extended.filemanager.FileManager;
+import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.extended.languagepair.LanguagePackage;
+import org.apertium.android.extended.languagepair.TranslationMode;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,6 +44,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import org.apertium.android.R;
+import org.apertium.android.simple.App;
 
 public class InstallActivity extends Activity implements OnClickListener {
   private final String TAG = "InstallActivity";
@@ -71,6 +73,7 @@ public class InstallActivity extends Activity implements OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Extended.init(this);
     thisActivity = this;
     getExtrasData();
 
@@ -134,7 +137,7 @@ public class InstallActivity extends Activity implements OnClickListener {
     cancelButton = (Button) findViewById(R.id.discardButton);
     submitButton.setText(R.string.install);
 
-    LanguagePackage installedPackage = App.databaseHandler.getPackage(this.packageID);
+    LanguagePackage installedPackage = Extended.databaseHandler.getPackage(this.packageID);
     if (installedPackage != null) {
       String installedDate = installedPackage.ModifiedDate();
       if (this.lastModified == null || installedDate == null || this.lastModified.equals(installedDate)) {
@@ -185,7 +188,7 @@ public class InstallActivity extends Activity implements OnClickListener {
         try {
           File file = new File(Prefs.JAR_DIR + "/" + languagePackage.PackageID());
           FileManager.remove(file);
-          App.databaseHandler.deletePackage(languagePackage.PackageID());
+          Extended.databaseHandler.deletePackage(languagePackage.PackageID());
         } catch (Exception e) {
           heading.setText(getString(R.string.error));
           info1.setText(R.string.error_removing_old);
@@ -266,7 +269,7 @@ public class InstallActivity extends Activity implements OnClickListener {
     Thread t = new Thread() {
       @Override
       public void run() {
-        App.databaseHandler.addLanuagepair(languagePackage);
+        Extended.databaseHandler.addLanuagepair(languagePackage);
 
         App.handler.post(new Runnable() {
           @Override

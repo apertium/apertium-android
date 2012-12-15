@@ -21,15 +21,15 @@
 
  @author Arink Verma
  */
-package org.apertium.android;
+package org.apertium.android.extended;
 
 import java.io.File;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.filemanager.FileManager;
-import org.apertium.android.helper.Prefs;
-import org.apertium.android.languagepair.TranslationMode;
+import org.apertium.android.extended.filemanager.FileManager;
+import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.extended.languagepair.TranslationMode;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,6 +46,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.apertium.android.R;
+import org.apertium.android.simple.App;
 
 public class ModeManageActivity extends ListActivity {
   String TAG = "ModeManageActivity";
@@ -66,6 +68,7 @@ public class ModeManageActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Extended.init(this);
     thisActivity = this;
     Intent intent = getIntent();
     Bundle extras = intent.getExtras();
@@ -73,7 +76,7 @@ public class ModeManageActivity extends ListActivity {
       PrefToSet = extras.getString("PrefToSet");
     }
 
-    listTranslationMode = App.databaseHandler.getAllModes();
+    listTranslationMode = Extended.databaseHandler.getAllModes();
 
     int len = listTranslationMode.size();
     final String[] ModeTitle = new String[len];
@@ -111,12 +114,12 @@ public class ModeManageActivity extends ListActivity {
         final AlertDialog.Builder b = new AlertDialog.Builder(ModeManageActivity.this);
         b.setIcon(android.R.drawable.ic_dialog_alert);
 
-        final TranslationMode tobeRemove = App.databaseHandler.getMode(ModeId[pos]);
+        final TranslationMode tobeRemove = Extended.databaseHandler.getMode(ModeId[pos]);
 
         final String pack = tobeRemove.packageName;
         b.setTitle(getString(R.string.confirm_packageRemove));
         String message = "";
-        List<TranslationMode> removeModes = App.databaseHandler.getModes(pack);
+        List<TranslationMode> removeModes = Extended.databaseHandler.getModes(pack);
         for (int i = 0; i < removeModes.size(); i++) {
           message += ((TranslationMode) removeModes.get(i)).title + "\n";
         }
@@ -127,11 +130,11 @@ public class ModeManageActivity extends ListActivity {
 
             FileRemoveRun();
 
-            String currentPackage = App.rulesHandler.getCurrentPackage();
+            String currentPackage = Extended.rulesHandler.getCurrentPackage();
 
             Log.i(TAG, "PacketToRemove = " + packagetoRemove + ", CurrentPackage = " + currentPackage);
             if (currentPackage != null && packagetoRemove.equals(currentPackage)) {
-              App.rulesHandler.clearCurrentMode();
+              Extended.rulesHandler.clearCurrentMode();
             }
 
           }
@@ -183,7 +186,7 @@ public class ModeManageActivity extends ListActivity {
       @Override
       public void run() {
         try {
-          App.databaseHandler.deletePackage(packagetoRemove);
+          Extended.databaseHandler.deletePackage(packagetoRemove);
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -207,15 +210,15 @@ public class ModeManageActivity extends ListActivity {
       Log.i("CurrentMode", MODE);
     } else {
       try {
-        String currentPackage = App.rulesHandler.getCurrentPackage();
-        String PackageTOLoad = App.rulesHandler.findPackage(MODE);
+        String currentPackage = Extended.rulesHandler.getCurrentPackage();
+        String PackageTOLoad = Extended.rulesHandler.findPackage(MODE);
         Log.i(TAG, "CurrentPackage =" + currentPackage + ", PackageToLoad=" + PackageTOLoad + ", ModeToset=" + MODE);
 
-        App.rulesHandler.setCurrentMode(MODE);
+        Extended.rulesHandler.setCurrentMode(MODE);
         if (!PackageTOLoad.equals(currentPackage)) {
-          Log.i(TAG, "BASE =" + App.rulesHandler.getClassLoader() + "path = " + App.rulesHandler.ExtractPathCurrentPackage());
+          Log.i(TAG, "BASE =" + Extended.rulesHandler.getClassLoader() + "path = " + Extended.rulesHandler.ExtractPathCurrentPackage());
 
-          Translator.setBase(App.rulesHandler.ExtractPathCurrentPackage(), App.rulesHandler.getClassLoader());
+          Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getClassLoader());
 
           Translator.setDelayedNodeLoadingEnabled(true);
           Translator.setMemmappingEnabled(true);
@@ -223,7 +226,7 @@ public class ModeManageActivity extends ListActivity {
 
 
         Translator.setMode(MODE);
-        Log.e("CurrentMode", App.rulesHandler.getCurrentMode());
+        Log.e("CurrentMode", Extended.rulesHandler.getCurrentMode());
       } catch (Exception e) {
         e.printStackTrace();
       }
