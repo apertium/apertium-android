@@ -18,6 +18,7 @@
  */
 package org.apertium.android.simple;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import java.io.File;
@@ -44,48 +45,24 @@ public class ApertiumCaffeine {
       return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?.jar");
     }
   };
-  private HashMap<String, String> titleToBase;
-  private HashMap<String, String> titleToMode;
-  private File packagesDir;
+  public static ApertiumCaffeine instance;
+  public HashMap<String, String> titleToBase;
+  public HashMap<String, String> titleToMode;
+  public static File packagesDir;
 
-  ApertiumCaffeine(App app) {
+  public static void init(Context ctx) {
+    if (instance!=null) return;
+    instance = new ApertiumCaffeine(App.instance);
+  }
+
+  public ApertiumCaffeine(App app) {
     prefs = PreferenceManager.getDefaultSharedPreferences(app);
     packagesDir = new File(app.getCacheDir(), "packages");
     packagesDir.mkdirs();
-  }
-
-  public void init() {
     Translator.setParallelProcessingEnabled(false);
-    initModes(packagesDir);
-    /*
-     if (modesComboBox.getItemCount() == 0 &&
-     JOptionPane.showConfirmDialog(null,
-     "You don't have any language pair installed yet.\n"
-     + "Would you like to install some now?",
-     "We need language pairs!", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-     try {
-     new InstallDialog((Frame)null, true) {
-     @Override
-     protected void initStrings() {
-     STR_TITLE = "Install language pairs";
-     STR_INSTRUCTIONS = "Check the language pairs to install.";
-     }
-     }.setVisible(true);
-     initModes(packagesDir);
-     } catch (IOException ex) {
-     Logger.getLogger(ApertiumCaffeine.class.getName()).log(Level.SEVERE, null, ex);
-     JOptionPane.showMessageDialog(null, ex, "Error", JOptionPane.ERROR_MESSAGE);
-     }
-     int idx = prefs.getInt("modesComboBox", 0);
-     if (idx < 0) idx = 0;
-     if (idx < modesComboBox.getItemCount())
-     modesComboBox.setSelectedIndex(idx);
-     */
-
-    boolean displayMarks = prefs.getBoolean("displayMarks", true);
   }
 
-  private void initModes(File packagesDir) {
+  public void initModes(File packagesDir) {
     titleToBase = new HashMap<String, String>();
     titleToMode = new HashMap<String, String>();
     File packages[] = packagesDir.listFiles(filter);
@@ -100,12 +77,9 @@ public class ApertiumCaffeine {
         }
       } catch (Exception ex) {
         //Perhaps the directory contained a file that wasn't a valid package...
-        Logger.getLogger(ApertiumCaffeine.class.getName()).log(Level.WARNING, null, ex);
+        ex.printStackTrace();
       }
     }
-    Object titles[] = titleToBase.keySet().toArray();
-    Arrays.sort(titles);
-//    modesComboBox.setModel(new DefaultComboBoxModel(titles));
   }
 /*
   private void modesComboBoxActionPerformed() {

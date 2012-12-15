@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,7 +54,6 @@ import org.apertium.Translator;
 import org.apertium.android.R;
 
 /**
-
  @author Mikel Artetxe, Jacob Nordfalk
  */
 public class InstallDialog extends Activity implements OnClickListener {
@@ -81,30 +81,12 @@ public class InstallDialog extends Activity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    try {
-      initPackages();
-    } catch (IOException ex) {
-      Logger.getLogger(InstallDialog.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    packagesToInstall = new boolean[packages.size()];
-    packagesToUninstall = new boolean[packages.size()];
-    initTableContent();
-    adapter = new ArrayAdapter(this, R.layout.simple_install_elem, R.id.name, tableContent)
-    {
-      @Override
-      public View getView(int position, View convertView, ViewGroup parent) {
-        View v = super.getView(position, convertView, parent);
-        CheckBox checkBox = (CheckBox) v.findViewById(R.id.checkBox);
-        TextView name = (TextView) v.findViewById(R.id.name);
-        TextView status = (TextView) v.findViewById(R.id.status);
-        checkBox.setChecked((Boolean)tableContent[position][0]);
-        name.setText(Html.fromHtml((String) tableContent[position][1]));
-        status.setText(Html.fromHtml((String) tableContent[position][2]));
-        return v;
-      }
-    };
+    setContentView(R.layout.simple_install);
+    findViewById(R.id.applyButton).setOnClickListener(this);
+    progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    progressTextView = (TextView) findViewById(R.id.progressTextView);
+    progressTextView.setText("Downloading package list, please wait...");
     listView = (ListView) findViewById(R.id.listView1);
-    listView.setAdapter(adapter);
     listView.setOnItemClickListener(new OnItemClickListener() {
       public void onItemClick(AdapterView<?> arg0, View arg1, int row, long arg3) {
         tableContent[row][0] = !((Boolean) tableContent[row][0]);
@@ -125,10 +107,43 @@ public class InstallDialog extends Activity implements OnClickListener {
         adapter.notifyDataSetChanged();
       }
     });
-    findViewById(R.id.applyButton).setOnClickListener(this);
-    progressBar = (ProgressBar) findViewById(R.id.progressBar);
-    progressTextView = (TextView) findViewById(R.id.progressTextView);
+    new DownloadTask().execute();
   }
+
+  class DownloadTask extends AsyncTask {
+    @Override
+    protected Object doInBackground(Object... arg0) {
+      try {
+        initPackages();
+      } catch (IOException ex) {
+        Logger.getLogger(InstallDialog.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      packagesToInstall = new boolean[packages.size()];
+      packagesToUninstall = new boolean[packages.size()];
+      initTableContent();
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Object result) {
+      adapter = new ArrayAdapter(InstallDialog.this, R.layout.simple_install_elem, R.id.name, tableContent)
+      {
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+          View v = super.getView(position, convertView, parent);
+          CheckBox checkBox = (CheckBox) v.findViewById(R.id.checkBox);
+          TextView name = (TextView) v.findViewById(R.id.name);
+          TextView status = (TextView) v.findViewById(R.id.status);
+          checkBox.setChecked((Boolean)tableContent[position][0]);
+          name.setText(Html.fromHtml((String) tableContent[position][1]));
+          status.setText(Html.fromHtml((String) tableContent[position][2]));
+          return v;
+        }
+      };
+      listView.setAdapter(adapter);
+    }
+  }
+
 
   private void initPackages() throws IOException {
     packages = new ArrayList<String>();
@@ -137,7 +152,7 @@ public class InstallDialog extends Activity implements OnClickListener {
     updatedPackages = new ArrayList<String>();
     packageToFilename = new HashMap<String, String>();
     packageToURL = new HashMap<String, URL>();
-    ArrayList<String> installedPackagesFilenames = new ArrayList<String>(Arrays.asList(new File(ApertiumCaffeine.prefs.getString("packagesPath", null)).list(ApertiumCaffeine.filter)));
+    ArrayList<String> installedPackagesFilenames = new ArrayList<String>(Arrays.asList(ApertiumCaffeine.packagesDir.list(ApertiumCaffeine.filter)));
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(REPO_URL).openStream()));
     String line;
@@ -193,8 +208,6 @@ public class InstallDialog extends Activity implements OnClickListener {
     }
   }
 
-  Handler handler = new Handler();
-
   class InstallTask extends AsyncTask {
     int length = 1;
     @Override
@@ -203,14 +216,17 @@ public class InstallDialog extends Activity implements OnClickListener {
       for (int i = 0; i < packagesToInstall.length; i++) {
         if (packagesToInstall[i]) {
           try {
-            length += packageToURL.get(tableContent[i][1]).openConnection().getContentLength();
-          } catch (IOException ex) {
+            String pkg = (String) originalTableContent[i][1];
+            URL url = packageToURL.get(pkg);
+            Log.d("", pkg +" " + url);
+            length += url.openConnection().getContentLength();
+          } catch (Exception ex) {
             ex.printStackTrace();
             return ex;
           }
         }
       }
-      handler.post(new Runnable() {
+      App.handler.post(new Runnable() {
         public void run() {
           progressBar.setMax(length);
         }
@@ -220,8 +236,12 @@ public class InstallDialog extends Activity implements OnClickListener {
         if (packagesToInstall[i]) {
           try {
             publishProgress(STR_INSTALLING + " " + tableContent[i][1] + "...");
-            BufferedInputStream in = new BufferedInputStream(packageToURL.get(tableContent[i][1]).openStream());
-            FileOutputStream fos = new FileOutputStream(new File(new File(ApertiumCaffeine.prefs.getString("packagesPath", "")), packageToFilename.get(tableContent[i][1])));
+            String fn = packageToFilename.get(originalTableContent[i][1]);
+            URL url = packageToURL.get(originalTableContent[i][1]);
+            URLConnection uc = url.openConnection();
+            long lastModified = uc.getLastModified();
+            BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
+            FileOutputStream fos = new FileOutputStream(new File(ApertiumCaffeine.packagesDir, fn));
             byte data[] = new byte[1024];
             int count;
             while ((count = in.read(data, 0, 1024)) != -1) {
@@ -231,7 +251,7 @@ public class InstallDialog extends Activity implements OnClickListener {
             }
             fos.close();
             in.close();
-            ApertiumCaffeine.prefs.edit().putLong("last_modified_" + packageToFilename.get(tableContent[i][1]), packageToURL.get(tableContent[i][1]).openConnection().getLastModified()).commit();
+            ApertiumCaffeine.prefs.edit().putLong("last_modified_" + fn, lastModified).commit();
           } catch (IOException ex) {
             ex.printStackTrace();
             return ex;
@@ -242,10 +262,11 @@ public class InstallDialog extends Activity implements OnClickListener {
       for (int i = 0; i < packagesToInstall.length; i++) {
         if (packagesToUninstall[i]) {
           publishProgress(STR_UNINSTALLING + " " + tableContent[i][1] + "...");
-          if (!new File(new File(ApertiumCaffeine.prefs.getString("packagesPath", "")), packageToFilename.get(tableContent[i][1])).delete()) {
+          String fn = packageToFilename.get(originalTableContent[i][1]);
+          if (!new File(new File(ApertiumCaffeine.prefs.getString("packagesPath", "")), fn).delete()) {
             Log.w("Error", "Unable to uninstall " + tableContent[i][1]);
           }
-          ApertiumCaffeine.prefs.edit().remove("last_modified_" + packageToFilename.get(tableContent[i][1])).commit();
+          ApertiumCaffeine.prefs.edit().remove("last_modified_" + fn).commit();
         }
       }
       return null;

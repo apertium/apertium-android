@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/share" android:title="@string/share" android:icon="@drawable/share"></item>
+    <item android:id="@+id/clear" android:title="@string/clear" android:icon="@drawable/discard"></item>
+    <item android:id="@+id/install" android:title="Download languages"></item>
+    <item android:id="@+id/manage" android:title="Settings" android:icon="@drawable/settings"></item>
+    <item android:id="@+id/about" android:title="@string/about"
+				android:icon="@android:drawable/ic_menu_help"
+				android:showAsAction="ifRoom|withText">
+    </item>
+</menu>

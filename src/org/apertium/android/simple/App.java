@@ -20,7 +20,6 @@ public class App extends Application {
   }
   public static App instance;
   public static Handler handler;
-  private ApertiumCaffeine data;
 
   @Override
   public void onCreate() {
@@ -40,8 +39,6 @@ public class App extends Application {
       Log.d("TAG", "No bugsense keyfile found");
     }
 
-    data = new ApertiumCaffeine(this);
-
     instance = this;
     handler = new Handler();
 
@@ -51,7 +48,6 @@ public class App extends Application {
       e.printStackTrace();
     }
 
-    data = new ApertiumCaffeine(this);
   }
 
   public static void langToast(final String txt) {

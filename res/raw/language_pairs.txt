@@ -1,0 +1,24 @@
+apertium-af-nl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-af-nl/apertium-af-nl.jar	file:apertium-af-nl-0.2.0.tar.gz	af-nl, nl-af
+apertium-ca-it	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-ca-it/apertium-ca-it.jar	file:apertium-ca-it-0.1.0.tar.gz	ca-it, it-ca
+apertium-en-ca	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-en-ca/apertium-en-ca.jar	file:apertium-en-ca-0.9.3.tar.gz	en-ca, ca-en, ca-en_US
+apertium-en-es	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-en-es/apertium-en-es.jar	file:apertium-en-es-0.8.0.tar.gz	en-es, es-en, es-en_US
+apertium-en-gl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-en-gl/apertium-en-gl.jar	file:apertium-en-gl-0.5.1.tar.gz	en-gl, gl-en
+apertium-eo-ca	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-eo-ca/apertium-eo-ca.jar	file:apertium-eo-ca-0.9.1.tar.gz	ca-eo, ca-eo-translit
+apertium-eo-en	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-eo-en/apertium-eo-en.jar	file:apertium-eo-en-1.0.0.tar.gz	eo-en, en-eo
+apertium-eo-es	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-eo-es/apertium-eo-es.jar	file:apertium-eo-es-1.0.0.tar.gz	es-eo, es-eo-translit
+apertium-eo-fr	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-eo-fr/apertium-eo-fr.jar	file:apertium-eo-fr-0.9.0.tar.gz	fr-eo
+apertium-es-an	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-es-an/apertium-es-an.jar	file:apertium-es-an-0.2.0.tar.gz	es-an, an-es
+apertium-es-ca	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-es-ca/apertium-es-ca.jar	file:apertium-es-ca-1.2.1.tar.gz	es-ca, ca-es, es-ca_valencia
+apertium-es-gl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-es-gl/apertium-es-gl.jar	file:apertium-es-gl-1.0.7.tar.gz	es-gl, gl-es
+apertium-es-pt	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-es-pt/apertium-es-pt.jar	file:apertium-es-pt-1.1.0.tar.gz	es-pt, pt-es, es-pt_BR
+apertium-es-ro	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-es-ro/apertium-es-ro.jar	file:apertium-es-ro-0.7.3.tar.gz	ro-es
+apertium-eu-en	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-eu-en/apertium-eu-en.jar	file:apertium-eu-en-0.3.1.tar.gz	eu-en
+apertium-eu-es	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-eu-es/apertium-eu-es.jar	file:apertium-eu-es-0.3.1.tar.gz	eu-es
+apertium-fr-ca	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-fr-ca/apertium-fr-ca.jar	file:apertium-fr-ca-1.0.2.tar.gz	fr-ca, ca-fr
+apertium-fr-es	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-fr-es/apertium-fr-es.jar	file:apertium-fr-es-0.9.2.tar.gz	fr-es, es-fr
+apertium-ht-en	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-ht-en/apertium-ht-en.jar	file:apertium-ht-en-0.1.0.tar.gz	ht-en
+apertium-oc-ca	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-oc-ca/apertium-oc-ca.jar	file:apertium-oc-ca-1.0.6.tar.gz	oc-ca, ca-oc, oc_aran-ca, ca-oc_aran
+apertium-oc-es	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-oc-es/apertium-oc-es.jar	file:apertium-oc-es-1.0.6.tar.gz	oc-es, es-oc, oc_aran-es, es-oc_aran
+apertium-pt-ca	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-pt-ca/apertium-pt-ca.jar	file:apertium-pt-ca-0.8.1.tar.gz	pt-ca, ca-pt
+apertium-pt-gl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-pt-gl/apertium-pt-gl.jar	file:apertium-pt-gl-0.9.2.tar.gz	pt-gl, gl-pt
+apertium-sv-da	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-sv-da/apertium-sv-da.jar	file:apertium-sv-da-0.5.0.tar.gz	sv-da

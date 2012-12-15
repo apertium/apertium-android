@@ -81,6 +81,8 @@ public class ApertiumActivity extends Activity implements OnClickListener {
     outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
 
+    ApertiumCaffeine.init(this);
+    ApertiumCaffeine.instance.initModes(ApertiumCaffeine.packagesDir);
 
     if (inputText != null) {
       inputEditText.setText(inputText);
@@ -125,14 +127,13 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
 
     } else if (v.equals(fromButton)) {
-      final String[] ModeTitle = {"eo", "sv", "da" };
-
+      final String[] modeTitle = ApertiumCaffeine.instance.titleToBase.keySet().toArray(new String[0]); //{"eo", "sv", "da" };
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setTitle(getString(R.string.translate_from));
-      builder.setItems(ModeTitle, new DialogInterface.OnClickListener() {
+      builder.setItems(modeTitle, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int position) {
-          Toast.makeText(getApplicationContext(), ModeTitle[position], Toast.LENGTH_SHORT).show();
-          fromLanguage = ModeTitle[position];
+          Toast.makeText(getApplicationContext(), modeTitle[position], Toast.LENGTH_SHORT).show();
+          fromLanguage = modeTitle[position];
           toLanguage = null;
           fromButton.setText(fromLanguage);
           toButton.setText(R.string.to);
@@ -202,12 +203,14 @@ public class ApertiumActivity extends Activity implements OnClickListener {
    **
    Option menu 1. share 2. inbox 3. manage 4. setting
    */
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.option_menu, menu);
+    inflater.inflate(R.menu.simple_option_menu, menu);
     return true;
   }
 
+  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     Intent intent = null;
     switch (item.getItemId()) {
@@ -219,11 +222,15 @@ public class ApertiumActivity extends Activity implements OnClickListener {
         intent = new Intent(ApertiumActivity.this, SMSInboxActivity.class);
         startActivityForResult(intent, 0);
         return true;
-      case R.id.manage:
-        intent = new Intent(ApertiumActivity.this, ManageActivity.class);
+        */
+      case R.id.install:
+        intent = new Intent(ApertiumActivity.this, InstallDialog.class);
         startActivity(intent);
         return true;
-        */
+      case R.id.manage:
+        intent = new Intent(ApertiumActivity.this, SettingsDialog.class);
+        startActivity(intent);
+        return true;
       case R.id.clear:
         inputEditText.setText("");
         outputTextView.setText("");
