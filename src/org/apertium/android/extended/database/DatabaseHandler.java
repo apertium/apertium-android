@@ -22,7 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apertium.android.extended.filemanager.FileManager;
+import org.apertium.android.simple.FileUtils;
 import org.apertium.android.extended.helper.Prefs;
 import org.apertium.android.extended.languagepair.LanguagePackage;
 import org.apertium.android.extended.languagepair.TranslationMode;
@@ -306,22 +306,22 @@ public class DatabaseHandler {
           languagePackage.setModifiedDate(files[i].lastModified() + "");
           List<TranslationMode> TranslationModes = languagePackage.getAvailableModes();
           if (TranslationModes.isEmpty()) {
-            FileManager.remove(files[i]);
+            FileUtils.remove(files[i]);
           } else {
             addLanuagepair(languagePackage);
           }
 
         } catch (Exception e) {
           e.printStackTrace();
-          FileManager.remove(files[i]);
+          FileUtils.remove(files[i]);
         }
       } else {
-        FileManager.remove(files[i]);
+        FileUtils.remove(files[i]);
       }
     }
 
     File TempDIR = new File(Prefs.TEMP_DIR);
-    FileManager.remove(TempDIR);
+    FileUtils.remove(TempDIR);
 
     db.close();
   }

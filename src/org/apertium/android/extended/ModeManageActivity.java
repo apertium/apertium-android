@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.extended.filemanager.FileManager;
+import org.apertium.android.simple.FileUtils;
 import org.apertium.android.extended.helper.Prefs;
 import org.apertium.android.extended.languagepair.TranslationMode;
 
@@ -163,7 +163,7 @@ public class ModeManageActivity extends ListActivity {
         try {
           Log.i(TAG, "removing file=" + Prefs.JAR_DIR + "/" + packagetoRemove);
           File file = new File(Prefs.JAR_DIR + "/" + packagetoRemove);
-          FileManager.remove(file);
+          FileUtils.remove(file);
         } catch (Exception e) {
           e.printStackTrace();
         }

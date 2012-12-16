@@ -31,7 +31,6 @@ import java.util.Date;
 import org.apertium.Translator;
 import org.apertium.android.extended.Internet.InternetManifest;
 import org.apertium.android.extended.Internet.ManifestRow;
-import org.apertium.android.extended.filemanager.FileManager;
 import org.apertium.android.extended.helper.Prefs;
 
 import android.app.Activity;
@@ -52,6 +51,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.apertium.android.R;
+import org.apertium.android.extended.filemanager.FileManager;
 
 public class DownloadActivity extends Activity implements OnClickListener {
   public static final String TAG = "DownloadActivity";

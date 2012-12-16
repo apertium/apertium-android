@@ -1,15 +1,12 @@
 package org.apertium.android.extended;
 
 import android.content.Context;
-import android.util.Log;
-import java.io.File;
 import org.apertium.android.extended.database.DatabaseHandler;
 import org.apertium.android.extended.filemanager.FileManager;
 import org.apertium.android.extended.helper.ClipboardHandler;
 import org.apertium.android.extended.helper.ClipboardHandlerV11;
 import org.apertium.android.extended.helper.Prefs;
 import org.apertium.android.extended.languagepair.RulesHandler;
-import org.apertium.utils.IOUtils;
 
 public class Extended {
   public static Extended instance;
@@ -19,9 +16,6 @@ public class Extended {
 
   public static void init(Context ctx) {
     if (databaseHandler!=null) return;
-
-    IOUtils.cacheDir = new File(ctx.getCacheDir(), "apertium-cache/");
-    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
 
     Prefs.init(ctx);
 

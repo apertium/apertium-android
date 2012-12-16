@@ -24,8 +24,6 @@
  */
 package org.apertium.android.simple;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
 import org.apertium.Translator;
 
 import android.app.Activity;
@@ -34,6 +32,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -42,12 +41,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bugsense.trace.BugSenseHandler;
 import org.apertium.android.R;
 
 public class ApertiumActivity extends Activity implements OnClickListener {
@@ -59,62 +60,37 @@ public class ApertiumActivity extends Activity implements OnClickListener {
   private TextView outputTextView;
   //Button
   private Button submitButton;
-  private Button toButton;
   private Button fromButton;
-  private Button dirButton;
 
   /*Mode related variable*/
   private String currentMode = null;
-  private String fromLanguage = null;
-  private String toLanguage = null;
-  private String outputText = null;
-  private String inputText = null;
-  private ProgressDialog progressDialog;
 
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_PROGRESS);
+    setProgressBarIndeterminate(true);
 
     Log.i(TAG, "ApertiumActivityInitView Started");
-    setContentView(R.layout.main_layout);
+    setContentView(R.layout.simple_layout);
     outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
 
     ApertiumCaffeine.init(this);
     ApertiumCaffeine.instance.initModes(ApertiumCaffeine.packagesDir);
 
-    if (inputText != null) {
-      inputEditText.setText(inputText);
-    }
-
     submitButton = (Button) findViewById(R.id.translateButton);
-    toButton = (Button) findViewById(R.id.toButton);
     fromButton = (Button) findViewById(R.id.fromButton);
-    dirButton = (Button) findViewById(R.id.modeSwitch);
 
     submitButton.setOnClickListener(this);
-    toButton.setOnClickListener(this);
     fromButton.setOnClickListener(this);
-    dirButton.setOnClickListener(this);
   }
 
   /* OnResume */
   @Override
   protected void onResume() {
     super.onResume();
-
-    if (inputText != null) {
-      inputEditText.setText(inputText);
-    }
-
-    /* updating if mode is changed */
-    Log.i(TAG, "Invalid mode");
-    toButton.setText(R.string.to);
-    fromButton.setText(R.string.from);
-
-    toLanguage = getString(R.string.to);
-    fromLanguage = getString(R.string.from);
   }
 
 
@@ -125,6 +101,12 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       //Hiding soft keypad
       InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
       inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
+      Translator.setCacheEnabled(true);
+      Translator.setDelayedNodeLoadingEnabled(true);
+      Translator.setCacheEnabled(true);
+      translationTask = new TranslationTask();
+      translationTask.execute(inputEditText.getText().toString());
+      updateGui();
 
     } else if (v.equals(fromButton)) {
       final String[] modeTitle = ApertiumCaffeine.instance.titleToBase.keySet().toArray(new String[0]); //{"eo", "sv", "da" };
@@ -132,70 +114,69 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       builder.setTitle(getString(R.string.translate_from));
       builder.setItems(modeTitle, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int position) {
-          Toast.makeText(getApplicationContext(), modeTitle[position], Toast.LENGTH_SHORT).show();
-          fromLanguage = modeTitle[position];
-          toLanguage = null;
-          fromButton.setText(fromLanguage);
-          toButton.setText(R.string.to);
+          currentMode = modeTitle[position];
+          fromButton.setText(currentMode);
+          try {
+            Translator.setBase(ApertiumCaffeine.instance.titleToBase.get(currentMode));
+            Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
+          } catch (Exception e) {
+            e.printStackTrace();
+            App.langToast(e.toString());
+            BugSenseHandler.sendException(e);
+          }
+          updateGui();
         }
       });
       AlertDialog alert = builder.create();
       alert.show();
-    } else if (v.equals(toButton)) {
-
-    } else if (v.equals(dirButton)) {
-      if (toLanguage == null) {
-        Toast.makeText(getApplicationContext(), getString(R.string.no_mode_to), Toast.LENGTH_SHORT).show();
-
-      } else {
-          String temp = fromLanguage;
-          fromLanguage = toLanguage;
-          toLanguage = temp;
-          //currentMode = reverseMode;
-      }
     }
-
   }
 
 
+  private void updateGui() {
+    boolean ready = translationTask==null;
+    submitButton.setEnabled(ready);
+    setProgressBarIndeterminateVisibility(!ready);
+  }
+
+
+  TranslationTask translationTask;
+
   /* Translation Thread,
    * Load translation rules and excute lttoolbox.jar */
-  private void TranslationRun() {
-    progressDialog = ProgressDialog.show(this, getString(R.string.translating), getString(R.string.working), true, true);
-    Thread t = new Thread() {
-      @Override
-      public void run() {
-        String inputText = inputEditText.getText().toString();
-        if (!TextUtils.isEmpty(inputText)) {
-          outputText = "";
+  class TranslationTask extends AsyncTask<String, Void, String> {
 
-          Runtime rt = Runtime.getRuntime();
-          Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
-          App.timing = new org.apertium.utils.Timing("overall");
-          try {
-            //Translator.setCacheEnabled(Prefs.isCacheEnabled());
-            //Log.i(TAG, "Translator Run Cache =" + Prefs.isCacheEnabled() + ", Mark =" + Prefs.isDisplayMarkEnabled() + ", MODE = " + currentMode);
-            //Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
-            outputText = Translator.translate(inputEditText.getText().toString());
-          } catch (Throwable e) {
-            Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + currentMode + ";InputText = " + inputEditText.getText());
-            e.printStackTrace();
-          }
-          App.timing.report();
-          App.timing = null;
-          Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
-        }
-
-        App.handler.post(new Runnable() {
-          @Override
-          public void run() {
-            outputTextView.setText(outputText);
-            progressDialog.dismiss();
-          }
-        });
+    @Override
+    protected String doInBackground(String... inputText) {
+      Runtime rt = Runtime.getRuntime();
+      Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
+      App.timing = new org.apertium.utils.Timing("overall");
+      try {
+        //Translator.setCacheEnabled(Prefs.isCacheEnabled());
+        //Log.i(TAG, "Translator Run Cache =" + Prefs.isCacheEnabled() + ", Mark =" + Prefs.isDisplayMarkEnabled() + ", MODE = " + currentMode);
+        //Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
+        String input = inputText[0];
+        Log.i(TAG, "Translator Run input " +input);
+        String output = Translator.translate(input);
+        Log.i(TAG, "Translator Run output " +output);
+        return output;
+      } catch (Throwable e) {
+        e.printStackTrace();
+        Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + currentMode + ";InputText = " + inputEditText.getText());
+        return "error: "+e;
+      } finally {
+        App.timing.report();
+        App.timing = null;
+        Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
       }
-    };
-    t.start();
+    }
+
+    @Override
+    protected void onPostExecute(String output) {
+      translationTask = null;
+      outputTextView.setText(output);
+      updateGui();
+    }
   }
 
 
@@ -234,8 +215,6 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       case R.id.clear:
         inputEditText.setText("");
         outputTextView.setText("");
-        inputText = "";
-        outputText = "";
         return true;
       case R.id.about:
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -271,13 +250,13 @@ public class ApertiumActivity extends Activity implements OnClickListener {
     Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
     sharingIntent.setType("text/plain");
     sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Apertium Translate");
-    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, outputText);
+    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, outputTextView.getText().toString());
     startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
   }
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    inputText = data.getStringExtra("input");
+    if (resultCode != RESULT_OK) return;
+    inputEditText.setText(data.getStringExtra("input"));
   }
 }

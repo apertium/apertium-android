@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import java.io.File;
 import java.io.IOException;
+import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
 
 public class App extends Application {
@@ -47,6 +48,9 @@ public class App extends Application {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    IOUtils.cacheDir = new File(getCacheDir(), "apertium-cache/");
+    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
 
   }
 

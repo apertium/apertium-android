@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.extended.filemanager.FileManager;
+import org.apertium.android.simple.FileUtils;
 import org.apertium.android.extended.helper.Prefs;
 import org.apertium.android.extended.languagepair.LanguagePackage;
 import org.apertium.android.extended.languagepair.TranslationMode;
@@ -187,7 +187,7 @@ public class InstallActivity extends Activity implements OnClickListener {
       public void run() {
         try {
           File file = new File(Prefs.JAR_DIR + "/" + languagePackage.PackageID());
-          FileManager.remove(file);
+          FileUtils.remove(file);
           Extended.databaseHandler.deletePackage(languagePackage.PackageID());
         } catch (Exception e) {
           heading.setText(getString(R.string.error));
@@ -215,7 +215,7 @@ public class InstallActivity extends Activity implements OnClickListener {
       public void run() {
 
         try {
-          FileManager.unzip(FilePath, Prefs.TEMP_DIR + "/" + packageID);
+          FileUtils.unzip(FilePath, Prefs.TEMP_DIR + "/" + packageID);
         } catch (IOException e) {
           Log.e(TAG, e + "");
           e.printStackTrace();
@@ -241,10 +241,10 @@ public class InstallActivity extends Activity implements OnClickListener {
       public void run() {
 
 
-        FileManager.move(Prefs.TEMP_DIR + "/" + languagePackage.PackageID(), Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/extract");
+        FileUtils.move(Prefs.TEMP_DIR + "/" + languagePackage.PackageID(), Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/extract");
 
         try {
-          FileManager.copyFile(FilePath, Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/" + languagePackage.PackageID() + ".jar");
+          FileUtils.copyFile(FilePath, Prefs.JAR_DIR + "/" + languagePackage.PackageID() + "/" + languagePackage.PackageID() + ".jar");
           App.handler.post(new Runnable() {
             @Override
             public void run() {
@@ -295,7 +295,7 @@ public class InstallActivity extends Activity implements OnClickListener {
         for (int i = 0; i < childfiles.length; i++) {
           if (childfiles[i].isDirectory()) {
             if (!childfiles[i].getName().equalsIgnoreCase("data")) {
-              FileManager.remove(childfiles[i]);
+              FileUtils.remove(childfiles[i]);
             }
           }
         }

@@ -21,16 +21,10 @@ package org.apertium.android.simple;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apertium.Translator;
 
 /**
@@ -72,6 +66,7 @@ public class ApertiumCaffeine {
         Translator.setBase(base);
         for (String mode : Translator.getAvailableModes()) {
           String title = Translator.getTitle(mode);
+          Log.d("", mode+"  "+title+"  "+base);
           titleToBase.put(title, base);
           titleToMode.put(title, mode);
         }
@@ -81,15 +76,4 @@ public class ApertiumCaffeine {
       }
     }
   }
-/*
-  private void modesComboBoxActionPerformed() {
-    try {
-      Translator.setBase(titleToBase.get(modesComboBox.getSelectedItem()));
-      Translator.setMode(titleToMode.get(modesComboBox.getSelectedItem()));
-      update();
-    } catch (Exception ex) {
-      Logger.getLogger(ApertiumCaffeine.class.getName()).log(Level.SEVERE, null, ex);
-    }
-  }
-  */
 }

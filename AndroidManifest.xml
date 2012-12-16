@@ -17,9 +17,10 @@
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
     android:name="org.apertium.android.simple.App"
-    android:theme="@style/MainAppTheme">
+>
     <!--
     android:configChanges="orientation|keyboardHidden">
+    android:theme="@style/MainAppTheme">
 -->
 
 
