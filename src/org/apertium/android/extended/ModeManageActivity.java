@@ -216,9 +216,9 @@ public class ModeManageActivity extends ListActivity {
 
         Extended.rulesHandler.setCurrentMode(MODE);
         if (!PackageTOLoad.equals(currentPackage)) {
-          Log.i(TAG, "BASE =" + Extended.rulesHandler.getClassLoader() + "path = " + Extended.rulesHandler.ExtractPathCurrentPackage());
+          Log.i(TAG, "BASE =" + Extended.rulesHandler.getDexClassLoader() + "path = " + Extended.rulesHandler.ExtractPathCurrentPackage());
 
-          Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getClassLoader());
+          Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getDexClassLoader());
 
           Translator.setDelayedNodeLoadingEnabled(true);
           Translator.setMemmappingEnabled(true);

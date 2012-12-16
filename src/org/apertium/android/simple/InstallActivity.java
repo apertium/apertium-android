@@ -56,7 +56,7 @@ import org.apertium.android.R;
 /**
  @author Mikel Artetxe, Jacob Nordfalk
  */
-public class InstallDialog extends Activity implements OnClickListener {
+public class InstallActivity extends Activity implements OnClickListener {
   static final String REPO_URL = "https://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
   ArrayList<String> packages;
   ArrayList<String> installedPackages;
@@ -116,7 +116,7 @@ public class InstallDialog extends Activity implements OnClickListener {
       try {
         initPackages();
       } catch (IOException ex) {
-        Logger.getLogger(InstallDialog.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(InstallActivity.class.getName()).log(Level.SEVERE, null, ex);
       }
       packagesToInstall = new boolean[packages.size()];
       packagesToUninstall = new boolean[packages.size()];
@@ -126,7 +126,7 @@ public class InstallDialog extends Activity implements OnClickListener {
 
     @Override
     protected void onPostExecute(Object result) {
-      adapter = new ArrayAdapter(InstallDialog.this, R.layout.simple_install_elem, R.id.name, tableContent)
+      adapter = new ArrayAdapter(InstallActivity.this, R.layout.simple_install_elem, R.id.name, tableContent)
       {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -164,10 +164,10 @@ public class InstallDialog extends Activity implements OnClickListener {
         URL url = new URL(columns[1]);
         packageToURL.put(p, url);
         packageToFilename.put(p, columns[0] + ".jar");
-        if (installedPackagesFilenames.contains(columns[0] + ".jar")) {
-          installedPackagesFilenames.remove(columns[0] + ".jar");
+        if (installedPackagesFilenames.contains(columns[0])) {
+          installedPackagesFilenames.remove(columns[0]);
           installedPackages.add(p);
-          long localLastModified = ApertiumCaffeine.prefs.getLong("last_modified_" + columns[0] + ".jar", -1);
+          long localLastModified = new File(ApertiumCaffeine.packagesDir, columns[0]).lastModified();
           long onlineLastModified = url.openConnection().getLastModified();
           if (onlineLastModified > localLastModified) {
             updatablePackages.add(p);
@@ -236,12 +236,13 @@ public class InstallDialog extends Activity implements OnClickListener {
         if (packagesToInstall[i]) {
           try {
             publishProgress(STR_INSTALLING + " " + tableContent[i][1] + "...");
-            String fn = packageToFilename.get(originalTableContent[i][1]);
+            String fn_jar = packageToFilename.get(originalTableContent[i][1]);
             URL url = packageToURL.get(originalTableContent[i][1]);
             URLConnection uc = url.openConnection();
             long lastModified = uc.getLastModified();
             BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
-            FileOutputStream fos = new FileOutputStream(new File(ApertiumCaffeine.packagesDir, fn));
+            File jarfile = new File(ApertiumCaffeine.packagesDir, fn_jar);
+            FileOutputStream fos = new FileOutputStream(jarfile);
             byte data[] = new byte[1024];
             int count;
             while ((count = in.read(data, 0, 1024)) != -1) {
@@ -251,7 +252,10 @@ public class InstallDialog extends Activity implements OnClickListener {
             }
             fos.close();
             in.close();
-            ApertiumCaffeine.prefs.edit().putLong("last_modified_" + fn, lastModified).commit();
+            File dir = new File(ApertiumCaffeine.packagesDir, ApertiumCaffeine.stripJar(fn_jar));
+            FileUtils.unzip(jarfile.getPath(), dir.getPath());
+            dir.setLastModified(lastModified);
+            // TODO: Remove all unneeded stuff from jarfile // jarfile.delete();
           } catch (IOException ex) {
             ex.printStackTrace();
             return ex;
@@ -263,10 +267,9 @@ public class InstallDialog extends Activity implements OnClickListener {
         if (packagesToUninstall[i]) {
           publishProgress(STR_UNINSTALLING + " " + tableContent[i][1] + "...");
           String fn = packageToFilename.get(originalTableContent[i][1]);
-          if (!new File(new File(ApertiumCaffeine.prefs.getString("packagesPath", "")), fn).delete()) {
+          if (!new File(ApertiumCaffeine.packagesDir, fn).delete()) {
             Log.w("Error", "Unable to uninstall " + tableContent[i][1]);
           }
-          ApertiumCaffeine.prefs.edit().remove("last_modified_" + fn).commit();
         }
       }
       return null;
@@ -279,7 +282,7 @@ public class InstallDialog extends Activity implements OnClickListener {
         progressBar.setProgress((Integer) v);
         //progress.setString(value * 100 / length + "%");
       } else {
-        progressTextView.setText(String.valueOf(v));
+        progressTextView.setText(Html.fromHtml(String.valueOf(v)));
       }
     }
 
@@ -291,6 +294,7 @@ public class InstallDialog extends Activity implements OnClickListener {
         finish();
       }
     }
+
   }
 
   public void onClick(View arg0) {

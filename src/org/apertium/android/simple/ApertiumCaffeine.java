@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import dalvik.system.DexClassLoader;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
@@ -36,13 +37,19 @@ public class ApertiumCaffeine {
   protected static final FilenameFilter filter = new FilenameFilter() {
     @Override
     public boolean accept(File dir, String name) {
-      return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?.jar");
+      /*
+      return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?")
+          || name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?.jar");
+      */
+      //return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?.jar");
+      return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?");
     }
   };
   public static ApertiumCaffeine instance;
   public HashMap<String, String> titleToBase;
   public HashMap<String, String> titleToMode;
   public static File packagesDir;
+  public static File dexOutputDir;
 
   public static void init(Context ctx) {
     if (instance!=null) return;
@@ -53,6 +60,8 @@ public class ApertiumCaffeine {
     prefs = PreferenceManager.getDefaultSharedPreferences(app);
     packagesDir = new File(app.getCacheDir(), "packages");
     packagesDir.mkdirs();
+    dexOutputDir = new File(app.getCacheDir(), "dex");
+    dexOutputDir.mkdirs();
     Translator.setParallelProcessingEnabled(false);
   }
 
@@ -61,9 +70,10 @@ public class ApertiumCaffeine {
     titleToMode = new HashMap<String, String>();
     File packages[] = packagesDir.listFiles(filter);
     for (File p : packages) {
+      String base = p.getPath();
       try {
-        String base = p.getPath();
-        Translator.setBase(base);
+        DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
+        Translator.setBase(base, cl);
         for (String mode : Translator.getAvailableModes()) {
           String title = Translator.getTitle(mode);
           Log.d("", mode+"  "+title+"  "+base);
@@ -73,7 +83,12 @@ public class ApertiumCaffeine {
       } catch (Exception ex) {
         //Perhaps the directory contained a file that wasn't a valid package...
         ex.printStackTrace();
+        Log.e("", base, ex);
       }
     }
+  }
+
+  public static String stripJar(String fn_jar) {
+    return fn_jar.substring(0, fn_jar.length()-4); // strip '.jar'
   }
 }

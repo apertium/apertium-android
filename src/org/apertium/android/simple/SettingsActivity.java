@@ -24,9 +24,9 @@ import org.apertium.android.R;
 
 /**
  *
- * @author Mikel Artetxe, Jacob Nordfalk
+ * @author Jacob Nordfalk
  */
-public class SettingsDialog extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
   @SuppressWarnings("deprecation")
   @Override
   protected void onCreate(Bundle savedInstanceState) {

@@ -8,4 +8,5 @@
 				android:icon="@android:drawable/ic_menu_help"
 				android:showAsAction="ifRoom|withText">
     </item>
+    <item android:id="@+id/extended" android:title="Show extended example"></item>
 </menu>

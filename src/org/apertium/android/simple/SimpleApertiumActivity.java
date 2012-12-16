@@ -17,7 +17,7 @@
  * 02111-1307, USA.
  */
 /**
- ApertiumActivity.java Main Launcher Activity of application
+ SimpleApertiumActivity.java Main Launcher Activity of application
 
  @author Arink Verma, Jacob Nordfalk
 
@@ -49,9 +49,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
+import dalvik.system.DexClassLoader;
+import java.io.File;
 import org.apertium.android.R;
+import org.apertium.android.extended.Extended;
+import org.apertium.android.extended.ExtendedApertiumActivity;
 
-public class ApertiumActivity extends Activity implements OnClickListener {
+public class SimpleApertiumActivity extends Activity implements OnClickListener {
   private final String TAG = "ApertiumActiviy";
 
   /*Layout variable*/
@@ -69,8 +73,8 @@ public class ApertiumActivity extends Activity implements OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    requestWindowFeature(Window.FEATURE_PROGRESS);
-    setProgressBarIndeterminate(true);
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setProgressBarIndeterminateVisibility(true);
 
     Log.i(TAG, "ApertiumActivityInitView Started");
     setContentView(R.layout.simple_layout);
@@ -103,6 +107,7 @@ public class ApertiumActivity extends Activity implements OnClickListener {
       inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
       Translator.setCacheEnabled(true);
       Translator.setDelayedNodeLoadingEnabled(true);
+      Translator.setParallelProcessingEnabled(false);
       Translator.setCacheEnabled(true);
       translationTask = new TranslationTask();
       translationTask.execute(inputEditText.getText().toString());
@@ -117,7 +122,12 @@ public class ApertiumActivity extends Activity implements OnClickListener {
           currentMode = modeTitle[position];
           fromButton.setText(currentMode);
           try {
-            Translator.setBase(ApertiumCaffeine.instance.titleToBase.get(currentMode));
+            //Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getDexClassLoader());
+            // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
+            String base = ApertiumCaffeine.instance.titleToBase.get(currentMode);
+            Log.d(TAG, "new DexClassLoader(" + base+".jar");
+            DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
+            Translator.setBase(base, cl);
             Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
           } catch (Exception e) {
             e.printStackTrace();
@@ -200,16 +210,20 @@ public class ApertiumActivity extends Activity implements OnClickListener {
         return true;
         /*
       case R.id.inbox:
-        intent = new Intent(ApertiumActivity.this, SMSInboxActivity.class);
+        intent = new Intent(SimpleApertiumActivity.this, SMSInboxActivity.class);
         startActivityForResult(intent, 0);
         return true;
         */
+      case R.id.extended:
+        intent = new Intent(SimpleApertiumActivity.this, ExtendedApertiumActivity.class);
+        startActivity(intent);
+        return true;
       case R.id.install:
-        intent = new Intent(ApertiumActivity.this, InstallDialog.class);
+        intent = new Intent(SimpleApertiumActivity.this, InstallActivity.class);
         startActivity(intent);
         return true;
       case R.id.manage:
-        intent = new Intent(ApertiumActivity.this, SettingsDialog.class);
+        intent = new Intent(SimpleApertiumActivity.this, SettingsActivity.class);
         startActivity(intent);
         return true;
       case R.id.clear:

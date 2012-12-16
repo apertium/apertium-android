@@ -17,7 +17,7 @@
  * 02111-1307, USA.
  */
 /**
- ApertiumActivity.java Main Launcher Activity of application
+ ExtendedApertiumActivity.java Main Launcher Activity of application
 
  @author Arink Verma
 
@@ -55,7 +55,7 @@ import org.apertium.android.R;
 import org.apertium.android.simple.App;
 import org.apertium.utils.IOUtils;
 
-public class ApertiumActivity extends Activity implements OnClickListener {
+public class ExtendedApertiumActivity extends Activity implements OnClickListener {
   private final String TAG = "ApertiumActiviy";
   private Activity thisActivity = null;
 
@@ -107,7 +107,7 @@ public class ApertiumActivity extends Activity implements OnClickListener {
     if (translationMode != null && translationMode.isValid()) {
       try {
         Log.i(TAG, "ExtractPath =" + Extended.rulesHandler.ExtractPathCurrentPackage() + ", Jar= " + Extended.rulesHandler.PathCurrentPackage());
-        Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getClassLoader());
+        Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getDexClassLoader());
         Translator.setDelayedNodeLoadingEnabled(true);
         Translator.setParallelProcessingEnabled(false);
         Translator.setCacheEnabled(Prefs.isCacheEnabled());
@@ -234,7 +234,7 @@ public class ApertiumActivity extends Activity implements OnClickListener {
     if (currentMode == null) {
       if (Extended.databaseHandler.getAllModes().isEmpty()) {
         // No modes, go to download
-        startActivity(new Intent(ApertiumActivity.this, DownloadActivity.class));
+        startActivity(new Intent(ExtendedApertiumActivity.this, DownloadActivity.class));
       }
       toButton.setText(R.string.to);
       toButton.setText(R.string.from);
@@ -257,8 +257,8 @@ public class ApertiumActivity extends Activity implements OnClickListener {
 
       //If package is changed
       if (currentPackage == null || !currentPackage.equals(PackageTOLoad)) {
-        Log.i(TAG, "BaseChanged =" + Extended.rulesHandler.getClassLoader() + "path = " + Extended.rulesHandler.ExtractPathCurrentPackage());
-        Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getClassLoader());
+        Log.i(TAG, "BaseChanged =" + Extended.rulesHandler.getDexClassLoader() + "path = " + Extended.rulesHandler.ExtractPathCurrentPackage());
+        Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getDexClassLoader());
         Translator.setDelayedNodeLoadingEnabled(true);
         Translator.setParallelProcessingEnabled(false);
         Translator.setCacheEnabled(Prefs.isCacheEnabled());
@@ -297,7 +297,7 @@ public class ApertiumActivity extends Activity implements OnClickListener {
 
       if (Extended.databaseHandler.getAllModes().isEmpty()) {
         // No modes, go to download
-        startActivity(new Intent(ApertiumActivity.this, DownloadActivity.class));
+        startActivity(new Intent(ExtendedApertiumActivity.this, DownloadActivity.class));
         return;
       }
 
@@ -320,7 +320,7 @@ public class ApertiumActivity extends Activity implements OnClickListener {
 
       if (Extended.databaseHandler.getAllModes().isEmpty()) {
         // No modes, go to download
-        startActivity(new Intent(ApertiumActivity.this, DownloadActivity.class));
+        startActivity(new Intent(ExtendedApertiumActivity.this, DownloadActivity.class));
         return;
       }
 
@@ -477,8 +477,8 @@ public class ApertiumActivity extends Activity implements OnClickListener {
 
       alertDialog.setButton2(getString(R.string.setting), new DialogInterface.OnClickListener() {
         public void onClick(final DialogInterface dialog, final int which) {
-          final Intent myIntent = new Intent(ApertiumActivity.this, ManageActivity.class);
-          ApertiumActivity.this.startActivity(myIntent);
+          final Intent myIntent = new Intent(ExtendedApertiumActivity.this, ManageActivity.class);
+          ExtendedApertiumActivity.this.startActivity(myIntent);
         }
       });
       alertDialog.show();
@@ -502,11 +502,11 @@ public class ApertiumActivity extends Activity implements OnClickListener {
         share_text();
         return true;
       case R.id.inbox:
-        intent = new Intent(ApertiumActivity.this, SMSInboxActivity.class);
+        intent = new Intent(ExtendedApertiumActivity.this, SMSInboxActivity.class);
         startActivityForResult(intent, 0);
         return true;
       case R.id.manage:
-        intent = new Intent(ApertiumActivity.this, ManageActivity.class);
+        intent = new Intent(ExtendedApertiumActivity.this, ManageActivity.class);
         startActivity(intent);
         return true;
       case R.id.clear:

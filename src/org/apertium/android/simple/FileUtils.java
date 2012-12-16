@@ -33,6 +33,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import android.util.Log;
+import java.io.FilenameFilter;
 
 public class FileUtils {
   static String TAG = "FileUtils";
@@ -61,6 +62,14 @@ public class FileUtils {
   }
 
   static public void unzip(String zipFile, String to) throws ZipException, IOException {
+    unzip(zipFile, to, new FilenameFilter() {
+      public boolean accept(File arg0, String arg1) {
+        return true;
+      }
+    });
+  }
+
+  static public void unzip(String zipFile, String to, FilenameFilter filter) throws ZipException, IOException {
     Log.i(TAG, zipFile);
     int BUFFER = 2048;
     File file = new File(zipFile);
@@ -70,7 +79,6 @@ public class FileUtils {
     String newPath = to;
 
     Log.i(TAG, "new path =" + newPath);
-    new File(newPath).mkdir();
     Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
 
     // Process each entry
@@ -81,6 +89,8 @@ public class FileUtils {
       File destFile = new File(newPath, currentEntry);
       //destFile = new File(newPath, destFile.getName());
       File destinationParent = destFile.getParentFile();
+
+      if (!filter.accept(destinationParent, destFile.getName())) continue;
 
       // create the parent directory structure if needed
       destinationParent.mkdirs();
@@ -104,56 +114,6 @@ public class FileUtils {
         dest.flush();
         dest.close();
         is.close();
-      }
-
-    }
-  }
-
-  static public void unzip(String Source, String Target, String Filter) throws ZipException, IOException {
-    Log.i(TAG, Source);
-    int BUFFER = 2048;
-    File file = new File(Source);
-
-    ZipFile zip = new ZipFile(file);
-    //removing extention name
-    String newPath = Target;
-
-    Log.i(TAG, "new path =" + newPath);
-    new File(newPath).mkdir();
-    Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
-
-    // Process each entry
-    while (zipFileEntries.hasMoreElements()) {
-      // grab a zip file entry
-      ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-      String currentEntry = entry.getName();
-      if (currentEntry.contains(Filter)) {
-        File destFile = new File(newPath, currentEntry);
-        //destFile = new File(newPath, destFile.getName());
-        File destinationParent = destFile.getParentFile();
-
-        // create the parent directory structure if needed
-        destinationParent.mkdirs();
-
-        if (!entry.isDirectory()) {
-          BufferedInputStream is = new BufferedInputStream(zip
-              .getInputStream(entry));
-          int currentByte;
-          // establish buffer for writing file
-          byte data[] = new byte[BUFFER];
-
-          // write the current file to disk
-          FileOutputStream fos = new FileOutputStream(destFile);
-          BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
-
-          // read and write until last byte is encountered
-          while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
-            dest.write(data, 0, currentByte);
-          }
-          dest.flush();
-          dest.close();
-          is.close();
-        }
       }
 
     }

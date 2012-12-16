@@ -17,15 +17,15 @@
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
     android:name="org.apertium.android.simple.App"
->
-    <!--
-    android:configChanges="orientation|keyboardHidden">
     android:theme="@style/MainAppTheme">
+    <!--
+>
+    android:configChanges="orientation|keyboardHidden">
 -->
 
 
     <activity
-      android:name=".simple.ApertiumActivity"
+      android:name=".simple.SimpleApertiumActivity"
       android:label="@string/app_name"
       android:windowSoftInputMode="stateHidden">
       <intent-filter>
@@ -33,13 +33,13 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name=".simple.InstallDialog"/>
-    <activity android:name=".simple.SettingsDialog"/>
+    <activity android:name=".simple.InstallActivity"/>
+    <activity android:name=".simple.SettingsActivity"/>
 
 
 
     <activity
-      android:name=".extended.ApertiumActivity"
+      android:name=".extended.ExtendedApertiumActivity"
       android:label="@string/app_name"
       android:configChanges="orientation"
       android:windowSoftInputMode="stateHidden">

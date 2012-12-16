@@ -29,8 +29,8 @@ import android.util.Log;
 import dalvik.system.DexClassLoader;
 import org.apertium.android.extended.Extended;
 
-public class RulesHandler extends SecureClassLoader {
-  String TAG = "RulesHandler";
+public class RulesHandler {
+  private final static String TAG = "RulesHandler";
   private File _tmpDIR;
   private Context CTX;
   private final String _CurrentMode = "currentmode";
@@ -93,8 +93,15 @@ public class RulesHandler extends SecureClassLoader {
     return PathCurrentPackage() + "/extract";
   }
 
-  public DexClassLoader getClassLoader() {
+  public DexClassLoader getDexClassLoader() {
     Log.d(TAG, "PathCurrentPackage =" + PathCurrentPackage() + "/" + getCurrentPackage() + ".jar, ODEX path=" + this._tmpDIR.getAbsolutePath());
-    return new DexClassLoader(PathCurrentPackage() + "/" + getCurrentPackage() + ".jar", this._tmpDIR.getAbsolutePath(), null, this.getClass().getClassLoader());
+    //return new DexClassLoader(PathCurrentPackage() + "/" + getCurrentPackage() + ".jar", this._tmpDIR.getAbsolutePath(), null, this.getClass().getDexClassLoader());
+    return getDexClassLoader(PathCurrentPackage() + "/" + getCurrentPackage() + ".jar", this._tmpDIR.getAbsolutePath(), null, this.getClass().getClassLoader());
   }
+
+  public static DexClassLoader getDexClassLoader(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
+    Log.d(TAG, "new DexClassLoader(" + dexPath + "," + optimizedDirectory + ", " + libraryPath+ ", "+parent);
+    return new DexClassLoader(dexPath, optimizedDirectory, libraryPath, parent);
+  }
+
 }
