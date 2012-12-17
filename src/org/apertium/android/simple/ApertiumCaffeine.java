@@ -19,8 +19,6 @@
 package org.apertium.android.simple;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import dalvik.system.DexClassLoader;
 import java.io.File;
@@ -29,11 +27,10 @@ import java.util.HashMap;
 import org.apertium.Translator;
 
 /**
- @author Mikel Artetxe, Jacob Nordfalk
+ @author Mikel Artetxe, Jacob NordfalkPref
  */
 public class ApertiumCaffeine {
 
-  public static SharedPreferences prefs;
   protected static final FilenameFilter filter = new FilenameFilter() {
     @Override
     public boolean accept(File dir, String name) {
@@ -57,7 +54,6 @@ public class ApertiumCaffeine {
   }
 
   public ApertiumCaffeine(App app) {
-    prefs = PreferenceManager.getDefaultSharedPreferences(app);
     packagesDir = new File(app.getCacheDir(), "packages");
     packagesDir.mkdirs();
     dexOutputDir = new File(app.getCacheDir(), "dex");

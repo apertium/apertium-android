@@ -39,26 +39,26 @@ public class FileUtils {
   static String TAG = "FileUtils";
 
   public static void copyFile(String Src, String Target) throws IOException {
-
     InputStream in = new FileInputStream(Src);
     OutputStream out = new FileOutputStream(Target);
+    copyStream(in, out);
+  }
+
+  public static void copyStream(InputStream in, OutputStream out) throws IOException {
     byte[] buffer = new byte[1024];
     int read;
     while ((read = in.read(buffer)) != -1) {
       out.write(buffer, 0, read);
     }
+    in.close();
+    out.close();
   }
 
   public static void downloadFile(String source, String target) throws IOException {
     BufferedInputStream in = new BufferedInputStream(new URL(source).openStream());
     java.io.FileOutputStream fos = new java.io.FileOutputStream(target);
     java.io.BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
-    byte data[] = new byte[1024];
-    while (in.read(data, 0, 1024) >= 0) {
-      bout.write(data);
-    }
-    bout.close();
-    in.close();
+    copyStream(in, bout);
   }
 
   static public void unzip(String zipFile, String to) throws ZipException, IOException {
@@ -96,26 +96,14 @@ public class FileUtils {
       destinationParent.mkdirs();
 
       if (!entry.isDirectory()) {
-        BufferedInputStream is = new BufferedInputStream(zip
-            .getInputStream(entry));
-        int currentByte;
-        // establish buffer for writing file
-        byte data[] = new byte[BUFFER];
+        BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry));
 
         // write the current file to disk
         FileOutputStream fos = new FileOutputStream(destFile);
-        BufferedOutputStream dest = new BufferedOutputStream(fos,
-            BUFFER);
+        BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
 
-        // read and write until last byte is encountered
-        while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
-          dest.write(data, 0, currentByte);
-        }
-        dest.flush();
-        dest.close();
-        is.close();
+        copyStream(is, dest);
       }
-
     }
   }
 

@@ -49,6 +49,7 @@ public class App extends Application {
       e.printStackTrace();
     }
 
+    // Set where the app will keep cached indexes
     IOUtils.cacheDir = new File(getCacheDir(), "apertium-cache/");
     Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
 

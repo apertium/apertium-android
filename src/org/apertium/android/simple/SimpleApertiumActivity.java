@@ -32,8 +32,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -54,9 +56,10 @@ import java.io.File;
 import org.apertium.android.R;
 import org.apertium.android.extended.Extended;
 import org.apertium.android.extended.ExtendedApertiumActivity;
+import org.apertium.android.extended.helper.Prefs;
 
 public class SimpleApertiumActivity extends Activity implements OnClickListener {
-  private final String TAG = "ApertiumActiviy";
+  private static final String TAG = "ApertiumActiviy";
 
   /*Layout variable*/
   //Text Fields
@@ -76,7 +79,6 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setProgressBarIndeterminateVisibility(true);
 
-    Log.i(TAG, "ApertiumActivityInitView Started");
     setContentView(R.layout.simple_layout);
     outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
@@ -89,12 +91,19 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
 
     submitButton.setOnClickListener(this);
     fromButton.setOnClickListener(this);
+
+    // Connect asynctask to the correct activity
+    if (translationTask!=null) translationTask.activity = this;
   }
 
   /* OnResume */
   @Override
   protected void onResume() {
     super.onResume();
+    if (!ApertiumCaffeine.instance.titleToBase.containsKey(currentMode)) {
+      currentMode = null;
+    }
+    if (currentMode!=null) fromButton.setText(currentMode);
   }
 
 
@@ -105,11 +114,25 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
       //Hiding soft keypad
       InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
       inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
-      Translator.setCacheEnabled(true);
+      Prefs.init(this);
+      Translator.setCacheEnabled(Prefs.isCacheEnabled());
+      Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
       Translator.setDelayedNodeLoadingEnabled(true);
       Translator.setParallelProcessingEnabled(false);
-      Translator.setCacheEnabled(true);
+      try {
+        // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
+        String base = ApertiumCaffeine.instance.titleToBase.get(currentMode);
+        Log.d(TAG, "new DexClassLoader(" + base+".jar");
+        DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
+        Translator.setBase(base, cl);
+        Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
+      } catch (Exception e) {
+        e.printStackTrace();
+        App.langToast(e.toString());
+        BugSenseHandler.sendException(e);
+      }
       translationTask = new TranslationTask();
+      translationTask.activity = this;
       translationTask.execute(inputEditText.getText().toString());
       updateGui();
 
@@ -121,19 +144,6 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
         public void onClick(DialogInterface dialog, int position) {
           currentMode = modeTitle[position];
           fromButton.setText(currentMode);
-          try {
-            //Translator.setBase(Extended.rulesHandler.ExtractPathCurrentPackage(), Extended.rulesHandler.getDexClassLoader());
-            // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
-            String base = ApertiumCaffeine.instance.titleToBase.get(currentMode);
-            Log.d(TAG, "new DexClassLoader(" + base+".jar");
-            DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
-            Translator.setBase(base, cl);
-            Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
-          } catch (Exception e) {
-            e.printStackTrace();
-            App.langToast(e.toString());
-            BugSenseHandler.sendException(e);
-          }
           updateGui();
         }
       });
@@ -154,7 +164,8 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
 
   /* Translation Thread,
    * Load translation rules and excute lttoolbox.jar */
-  class TranslationTask extends AsyncTask<String, Void, String> {
+  static class TranslationTask extends AsyncTask<String, Void, String> {
+    private SimpleApertiumActivity activity;
 
     @Override
     protected String doInBackground(String... inputText) {
@@ -172,7 +183,7 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
         return output;
       } catch (Throwable e) {
         e.printStackTrace();
-        Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + currentMode + ";InputText = " + inputEditText.getText());
+        Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + activity.currentMode + ";InputText = " + activity.inputEditText.getText());
         return "error: "+e;
       } finally {
         App.timing.report();
@@ -183,9 +194,9 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
 
     @Override
     protected void onPostExecute(String output) {
-      translationTask = null;
-      outputTextView.setText(output);
-      updateGui();
+      activity.translationTask = null;
+      activity.outputTextView.setText(output);
+      activity.updateGui();
     }
   }
 

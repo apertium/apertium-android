@@ -49,7 +49,7 @@ public class Prefs {
   public static final String cacheEnabled = "CachePref";
 
   public static boolean isCacheEnabled() {
-    return prefs.getBoolean(cacheEnabled, false);
+    return prefs.getBoolean(cacheEnabled, true);
   }
   /*DisplayMark Preference*/
   public static final String displayMark = "MarkPref";
@@ -61,7 +61,7 @@ public class Prefs {
   }
 
   public static boolean isDisplayMarkEnabled() {
-    return prefs.getBoolean(displayMark, false);
+    return prefs.getBoolean(displayMark, true);
   }
   /*ClipBoardPush Preference*/
   public static final String clipBoardGet = "ClipGetPref";
