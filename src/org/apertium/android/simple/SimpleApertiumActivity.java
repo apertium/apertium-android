@@ -62,12 +62,10 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
   private static final String TAG = "ApertiumActiviy";
 
   /*Layout variable*/
-  //Text Fields
   private EditText inputEditText;
   private TextView outputTextView;
-  //Button
-  private Button submitButton;
   private Button fromButton;
+  private Button submitButton;
 
   /*Mode related variable*/
   private String currentMode = null;
@@ -109,34 +107,12 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
 
   @Override
   public void onClick(View v) {
+    if (ApertiumCaffeine.instance.titleToBase.isEmpty()) {
+      startActivity(new Intent(this, InstallActivity.class));
+      return;
+    }
 
-    if (v.equals(submitButton)) {
-      //Hiding soft keypad
-      InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-      inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
-      Prefs.init(this);
-      Translator.setCacheEnabled(Prefs.isCacheEnabled());
-      Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
-      Translator.setDelayedNodeLoadingEnabled(true);
-      Translator.setParallelProcessingEnabled(false);
-      try {
-        // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
-        String base = ApertiumCaffeine.instance.titleToBase.get(currentMode);
-        Log.d(TAG, "new DexClassLoader(" + base+".jar");
-        DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
-        Translator.setBase(base, cl);
-        Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
-      } catch (Exception e) {
-        e.printStackTrace();
-        App.langToast(e.toString());
-        BugSenseHandler.sendException(e);
-      }
-      translationTask = new TranslationTask();
-      translationTask.activity = this;
-      translationTask.execute(inputEditText.getText().toString());
-      updateGui();
-
-    } else if (v.equals(fromButton)) {
+    if (v.equals(fromButton)) {
       final String[] modeTitle = ApertiumCaffeine.instance.titleToBase.keySet().toArray(new String[0]); //{"eo", "sv", "da" };
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setTitle(getString(R.string.translate_from));
@@ -149,6 +125,32 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
       });
       AlertDialog alert = builder.create();
       alert.show();
+    }
+    else if (v.equals(submitButton)) {
+      //Hiding soft keypad
+      InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+      inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
+
+      Translator.setCacheEnabled(Prefs.isCacheEnabled());
+      Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
+      Translator.setDelayedNodeLoadingEnabled(true);
+      Translator.setParallelProcessingEnabled(false);
+      try {
+        // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
+        String base = ApertiumCaffeine.instance.titleToBase.get(currentMode);
+        Log.d(TAG, "new DexClassLoader(" + base+".jar");
+        DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
+        Translator.setBase(base, cl);
+        Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
+        translationTask = new TranslationTask();
+        translationTask.activity = this;
+        translationTask.execute(inputEditText.getText().toString());
+      } catch (Exception e) {
+        e.printStackTrace();
+        App.langToast(e.toString());
+        BugSenseHandler.sendException(e);
+      }
+      updateGui();
     }
   }
 
@@ -221,20 +223,20 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
         return true;
         /*
       case R.id.inbox:
-        intent = new Intent(SimpleApertiumActivity.this, SMSInboxActivity.class);
+        intent = new Intent(this, SMSInboxActivity.class);
         startActivityForResult(intent, 0);
         return true;
         */
       case R.id.extended:
-        intent = new Intent(SimpleApertiumActivity.this, ExtendedApertiumActivity.class);
+        intent = new Intent(this, ExtendedApertiumActivity.class);
         startActivity(intent);
         return true;
       case R.id.install:
-        intent = new Intent(SimpleApertiumActivity.this, InstallActivity.class);
+        intent = new Intent(this, InstallActivity.class);
         startActivity(intent);
         return true;
       case R.id.manage:
-        intent = new Intent(SimpleApertiumActivity.this, SettingsActivity.class);
+        intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
         return true;
       case R.id.clear:

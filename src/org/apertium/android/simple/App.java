@@ -2,10 +2,12 @@ package org.apertium.android.simple;
 
 import android.app.*;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
@@ -21,10 +23,26 @@ public class App extends Application {
   }
   public static App instance;
   public static Handler handler;
+  public static SharedPreferences prefs;
+  /*Cache Preference*/
+  public static final String cacheEnabled = "CachePref";
+  /*DisplayMark Preference*/
+  public static final String displayMark = "MarkPref";
+  /*ClipBoardPush Preference*/
+  public static final String clipBoardGet = "ClipGetPref";
+  public static final String clipBoardPush = "ClipPushPref";
+
+  static void reportError(Exception ex) {
+    ex.printStackTrace();
+    langToast("Error: "+ex);
+    langToast("The error will be reported to the developers. sorry for the inconvenience.");
+    BugSenseHandler.sendException(ex);
+  }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     // If you want to use BugSense for your fork, register with
     // them and place your API key in /assets/bugsense.txt

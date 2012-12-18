@@ -27,6 +27,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import org.apertium.android.simple.App;
 
 public class Prefs {
   private static final String TAG = "AppPreference";
@@ -39,68 +40,56 @@ public class Prefs {
   public static final String SUPPORT_MAIL = "arinkverma@gmail.com";
   //Preferences name
   public static final String PREFERENCE_NAME = "ore.apertium.Pref";
-  private static SharedPreferences prefs = null;
 
-  public static void init(Context ctx) {
-    prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-  }
-
-  /*Cache Preference*/
-  public static final String cacheEnabled = "CachePref";
 
   public static boolean isCacheEnabled() {
-    return prefs.getBoolean(cacheEnabled, true);
+    return App.prefs.getBoolean(App.cacheEnabled, true);
   }
-  /*DisplayMark Preference*/
-  public static final String displayMark = "MarkPref";
 
   public static void setDisplayMark(boolean y) {
-    Editor editor = prefs.edit();
-    editor.putBoolean(displayMark, y);
+    Editor editor = App.prefs.edit();
+    editor.putBoolean(App.displayMark, y);
     editor.commit();
   }
 
   public static boolean isDisplayMarkEnabled() {
-    return prefs.getBoolean(displayMark, true);
+    return App.prefs.getBoolean(App.displayMark, true);
   }
-  /*ClipBoardPush Preference*/
-  public static final String clipBoardGet = "ClipGetPref";
-  public static final String clipBoardPush = "ClipPushPref";
 
   public static void setClipBoardPush(boolean y) {
-    Editor editor = prefs.edit();
-    editor.putBoolean(clipBoardPush, y);
+    Editor editor = App.prefs.edit();
+    editor.putBoolean(App.clipBoardPush, y);
     editor.commit();
   }
 
   public static boolean isClipBoardPushEnabled() {
-    return prefs.getBoolean(clipBoardPush, false);
+    return App.prefs.getBoolean(App.clipBoardPush, false);
   }
 
   public static void setClipBoardGet(boolean y) {
-    Editor editor = prefs.edit();
-    editor.putBoolean(clipBoardGet, y);
+    Editor editor = App.prefs.edit();
+    editor.putBoolean(App.clipBoardGet, y);
     editor.commit();
   }
 
   public static boolean isClipBoardGetEnabled() {
-    return prefs.getBoolean(clipBoardGet, false);
+    return App.prefs.getBoolean(App.clipBoardGet, false);
   }
   /*Crash Preference*/
   public static final String CrashPref = "CrashPref";
 
   public static void reportCrash(String y) {
-    Editor editor = prefs.edit();
+    Editor editor = App.prefs.edit();
     editor.putString(CrashPref, y);
     editor.commit();
   }
 
   public static String getCrashReport() {
-    return prefs.getString(CrashPref, null);
+    return App.prefs.getString(CrashPref, null);
   }
 
   public static void clearCrashReport() {
-    Editor editor = prefs.edit();
+    Editor editor = App.prefs.edit();
     editor.putString(CrashPref, null);
     editor.commit();
   }
@@ -109,7 +98,7 @@ public class Prefs {
   private static final String LastJARDirChangedPref = "LastJARDirChangedPref";
 
   public static boolean isStateChanged() {
-    String lastLocale = prefs.getString(LocalePref, "");
+    String lastLocale = App.prefs.getString(LocalePref, "");
     String currentLocale = Locale.getDefault().getDisplayLanguage();
 
     Log.i(TAG, "lastLocale = " + lastLocale + ", currentLocale = " + currentLocale);
@@ -120,7 +109,7 @@ public class Prefs {
     File f = new File(JAR_DIR);
 
     String LastModified = f.lastModified() + "";
-    String SavedLastModified = prefs.getString(LastJARDirChangedPref, "");
+    String SavedLastModified = App.prefs.getString(LastJARDirChangedPref, "");
 
     Log.i(TAG, "LastModified = " + LastModified + ", SavedLastModified = " + SavedLastModified);
     if (!LastModified.equals(SavedLastModified)) {
@@ -132,7 +121,7 @@ public class Prefs {
   }
 
   public static void saveState() {
-    Editor editor = prefs.edit();
+    Editor editor = App.prefs.edit();
     editor.putString(LocalePref, Locale.getDefault().getDisplayLanguage());
 
     File f = new File(JAR_DIR);

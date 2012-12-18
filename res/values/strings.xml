@@ -99,6 +99,7 @@
 
   <string name="apply">Apply</string>
   <string name="about">About</string>
+	<string name="choose_languages">&lt;choose languages&gt;</string>
   <string name="aboutText"><![CDATA[
 <html><body>
 This is a free/open-source, offline machine translation app which offers

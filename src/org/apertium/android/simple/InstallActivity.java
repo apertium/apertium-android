@@ -59,7 +59,10 @@ import org.apertium.android.R;
  */
 public class InstallActivity extends Activity implements OnItemClickListener, OnClickListener {
   static final String REPO_URL = "https://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
-  private Button applyButton;
+
+  private static String STR_INSTRUCTIONS = "Check the language pairs to install and uncheck the ones to uninstall.";
+  private static String STR_INSTALLING = "Installing";
+  private static String STR_UNINSTALLING = "Uninstalling";
 
 
   /** Data regarding the install activity.
@@ -73,19 +76,18 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     HashMap<String, URL> packageToURL = new HashMap<String, URL>();
     HashSet<String> packagesToInstall = new HashSet<String>();
     HashSet<String> packagesToUninstall = new HashSet<String>();
-    private File cachedRepoFile;
+    File cachedRepoFile;
+    DownloadAsyncTask downloadTask;
+    InstallAsyncTask installTask;
+    String progressText;
   }
+
   private static InstallData d;
 
-  private static DownloadAsyncTask downloadTask;
-  private static InstallAsyncTask installTask;
-
-  private String STR_INSTRUCTIONS = "Check the language pairs to install and uncheck the ones to uninstall.";
-  private String STR_INSTALLING = "Installing";
-  private String STR_UNINSTALLING = "Uninstalling";
   private ListView listView;
   private ProgressBar progressBar;
   private TextView progressTextView;
+  private Button applyButton;
   private LanguagePairAdapter adapter = new LanguagePairAdapter();
 
   @Override
@@ -97,24 +99,30 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     applyButton.setOnClickListener(this);
     progressBar = (ProgressBar) findViewById(R.id.progressBar);
     progressTextView = (TextView) findViewById(R.id.progressTextView);
-    progressTextView.setText("Downloading package list, please wait...");
     listView = (ListView) findViewById(R.id.listView1);
     listView.setOnItemClickListener(this);
-
+    listView.setAdapter(adapter);
 
     if (d == null) {
       d = new InstallData();
       d.cachedRepoFile = new File(getCacheDir(), new File(REPO_URL).getName());
-      downloadTask = new DownloadAsyncTask();
-      setProgressBarIndeterminateVisibility(true);
-      downloadTask.activity = this;
-      downloadTask.execute();
+      d.progressText = "Downloading package list, please wait...";
+      d.downloadTask = new DownloadAsyncTask();
+      d.downloadTask.activity = this;
+      d.downloadTask.execute();
     }
-    if (downloadTask!=null) downloadTask.activity = this;
+    if (d.downloadTask!=null) d.downloadTask.activity = this;
 
-
-    listView.setAdapter(adapter);
+    updateUI();
   }
+
+
+  private void updateUI() {
+    setProgressBarIndeterminateVisibility(d.downloadTask!=null);
+    progressTextView.setText(d.progressText);
+    progressBar.setVisibility(d.installTask!=null?View.VISIBLE:View.GONE);
+  }
+
 
 
   private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
@@ -159,6 +167,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
   private static class DownloadAsyncTask extends AsyncTask {
     private InstallActivity activity;
+
     @Override
     protected Object doInBackground(Object... arg0) {
       try {
@@ -172,10 +181,16 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         // Then make the check over the network
         FileUtils.copyStream(new URL(REPO_URL).openStream(), new FileOutputStream(d.cachedRepoFile));
         initPackages(new FileInputStream(d.cachedRepoFile), true);
-        publishProgress();
+        d.progressText = STR_INSTRUCTIONS;
       } catch (IOException ex) {
         ex.printStackTrace();
+        d.progressText = ex.toString();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        d.progressText = ex.toString();
+        App.reportError(ex);
       }
+      publishProgress();
       return null;
     }
 
@@ -183,14 +198,13 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     protected void onProgressUpdate(Object... values) {
       if (activity==null) return;
       activity.adapter.notifyDataSetChanged();
+      activity.updateUI();
     }
 
     @Override
     protected void onPostExecute(Object result) {
-      downloadTask = null;
+      d.downloadTask = null;
       if (activity==null) return;
-      activity.progressTextView.setText(activity.STR_INSTRUCTIONS);
-      activity.setProgressBarIndeterminateVisibility(false);
       activity = null;
     }
   }
@@ -198,6 +212,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   private class LanguagePairAdapter extends BaseAdapter
   {
     public int getCount() {
+      if (d==null) return 0;
       return d.packages.size();
     }
 
@@ -343,7 +358,8 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         activity.progressBar.setProgress((Integer) v);
         //progress.setString(value * 100 / length + "%");
       } else {
-        activity.progressTextView.setText(Html.fromHtml(String.valueOf(v)));
+        d.progressText = String.valueOf(v);
+        activity.updateUI();
       }
     }
 
@@ -351,7 +367,8 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     protected void onPostExecute(Object result) {
       if (activity==null) return;
       if (result!=null) {
-        activity.progressTextView.setText(""+result);
+        d.progressText = String.valueOf(""+result);
+        activity.updateUI();
       } else {
         activity.finish();
       }
@@ -359,17 +376,19 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   }
 
   public void onClick(View arg0) {
+    d.progressText = "Preparing...";
+    updateUI();
     //progressTextView.setText(STR_INSTALLING + "...");
-    progressTextView.setText("Preparing...");
-    installTask = new InstallAsyncTask();
-    installTask.activity = this;
-    progressBar.setVisibility(View.VISIBLE);
-    installTask.execute();
+    d.installTask = new InstallAsyncTask();
+    d.installTask.activity = this;
+    d.installTask.execute();
+    updateUI();
   }
 
   @Override
   public void finish() {
     super.finish();
-    if (downloadTask!=null) downloadTask.cancel(false);
+    if (d.downloadTask!=null) d.downloadTask.cancel(false);
+    d = null;
   }
 }

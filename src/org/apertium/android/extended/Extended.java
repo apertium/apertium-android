@@ -17,8 +17,6 @@ public class Extended {
   public static void init(Context ctx) {
     if (databaseHandler!=null) return;
 
-    Prefs.init(ctx);
-
 
     FileManager.setDIR();
 
