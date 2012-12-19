@@ -47,12 +47,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.bugsense.trace.BugSenseHandler;
 import dalvik.system.DexClassLoader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import org.apertium.android.R;
 import org.apertium.android.extended.ExtendedApertiumActivity;
 import org.apertium.android.extended.helper.Prefs;
+import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
 
@@ -188,31 +191,43 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
 
   /* Translation Thread,
    * Load translation rules and excute lttoolbox.jar */
-  static class TranslationTask extends AsyncTask<String, Void, String> {
+  static class TranslationTask extends AsyncTask<String, Object, String> implements Translator.TranslationProgressListener {
     private SimpleApertiumActivity activity;
 
     @Override
     protected String doInBackground(String... inputText) {
       Runtime rt = Runtime.getRuntime();
       Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
-      App.timing = new org.apertium.utils.Timing("overall");
+      IOUtils.timing = new org.apertium.utils.Timing("overall");
       try {
         String input = inputText[0];
         Log.i(TAG, "Translator Run input " +input);
         Timing timing = new Timing("Translator.translate()");
-        String output = Translator.translate(input);
+        //String output = Translator.translate(input);
+        StringWriter output = new StringWriter();
+        String format = "txt";
+        Translator.translate(new StringReader(input), output, new Program("apertium-des" + format), new Program("apertium-re" + format), this);
         timing.report();
         Log.i(TAG, "Translator Run output " +output);
-        return output;
+        return output.toString();
       } catch (Throwable e) {
         e.printStackTrace();
         Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + activity.currentModeTitle + ";InputText = " + activity.inputEditText.getText());
         return "error: "+e;
       } finally {
-        App.timing.report();
-        App.timing = null;
+        IOUtils.timing.report();
+        IOUtils.timing = null;
         Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
       }
+    }
+
+    public void onTranslationProgress(String task, int progress, int progressMax) {
+      publishProgress(task, progress, progressMax);
+    }
+
+    @Override
+    protected void onProgressUpdate(Object... v) {
+      activity.outputTextView.setText(v[0]+" "+v[1]+"/"+v[2]);
     }
 
     @Override

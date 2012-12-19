@@ -17,7 +17,6 @@ import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
 
 public class App extends Application {
-  static Timing timing;
   public static boolean isSdk() {
     return Build.PRODUCT.contains("sdk");//.equals(Build.PRODUCT) || "google_sdk".equals(Build.PRODUCT);
   }

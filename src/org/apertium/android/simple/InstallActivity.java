@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -72,10 +71,10 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     HashSet<String> installedPackages = new HashSet<String>();
     HashSet<String> updatablePackages = new HashSet<String>();
     HashSet<String> updatedPackages = new HashSet<String>();
-    HashMap<String, String> packageToJarfile = new HashMap<String, String>();
-    HashMap<String, URL> packageToURL = new HashMap<String, URL>();
     HashSet<String> packagesToInstall = new HashSet<String>();
     HashSet<String> packagesToUninstall = new HashSet<String>();
+    HashMap<String, String> packageToTitle = new HashMap<String, String>();
+    HashMap<String, URL> packageToURL = new HashMap<String, URL>();
     File cachedRepoFile;
     RepoAsyncTask repoTask;
     InstallRemoveAsyncTask installTask;
@@ -130,39 +129,41 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
 
   private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
-    ArrayList<String> installedPackagesFilenames = new ArrayList<String>(Arrays.asList(ApertiumInstallation.packagesDir.list(ApertiumInstallation.apertiumDirectoryFilter)));
     ArrayList<String> packages = new ArrayList<String>();
+    HashSet<String> installedPackages = ApertiumInstallation.instance.getInstalledPackages();
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     String line;
     while ((line = reader.readLine()) != null) {
       String[] columns = line.split("\t");
       if (columns.length > 3) {
-        String modeTitle = Translator.getTitle(columns[3]);
-        packages.add(modeTitle);
+        // apertium-af-nl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-af-nl/apertium-af-nl.jar	file:apertium-af-nl-0.2.0.tar.gz	af-nl, nl-af
+        // apertium-ca-it	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-ca-it/apertium-ca-it.jar	file:apertium-ca-it-0.1.0.tar.gz	ca-it, it-ca
+        String pkg = columns[0];
+        packages.add(pkg);
         URL url = new URL(columns[1]);
-        d.packageToURL.put(modeTitle, url);
-        d.packageToJarfile.put(modeTitle, columns[0] + ".jar");
-        if (installedPackagesFilenames.contains(columns[0])) {
-          installedPackagesFilenames.remove(columns[0]);
-          d.installedPackages.add(modeTitle);
+        d.packageToURL.put(pkg, url);
+        String modeTitle = Translator.getTitle(columns[3]);
+        d.packageToTitle.put(pkg, modeTitle);
+        if (installedPackages.contains(pkg)) {
+          installedPackages.remove(pkg);
+          d.installedPackages.add(pkg);
           if (useNetwork) {
-            long localLastModified = new File(ApertiumInstallation.packagesDir, columns[0]).lastModified();
+            long localLastModified = new File(ApertiumInstallation.packagesDir, pkg).lastModified();
             long onlineLastModified = url.openConnection().getLastModified();
             if (onlineLastModified > localLastModified) {
-              d.updatablePackages.add(modeTitle);
+              d.updatablePackages.add(pkg);
             } else {
-              d.updatedPackages.add(modeTitle);
+              d.updatedPackages.add(pkg);
             }
           }
         }
       }
     }
 
-    for (String code : installedPackagesFilenames) {
-      packages.add(code);
-      d.installedPackages.add(code);
-      d.packageToJarfile.put(code, code);
+    for (String pkg : installedPackages) {
+      packages.add(pkg);
+      d.installedPackages.add(pkg);
     }
 
     Collections.sort(packages);
@@ -243,17 +244,18 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       TextView status = (TextView) v.findViewById(R.id.status);
 
       String pkg = d.packages.get(row);
+      String pkgTitle = d.packageToTitle.get(pkg);
       boolean isChecked = isChecked(pkg);
       checkBox.setChecked(isChecked);
 
       if (d.packagesToInstall.contains(pkg)) {
-        name.setText(Html.fromHtml("<html><b>" + pkg + "</b></html>"));
+        name.setText(Html.fromHtml("<html><b>" + pkgTitle + "</b></html>"));
         status.setText(Html.fromHtml("<html><b>Marked to install</b></html>"));
       } else if (d.packagesToUninstall.contains(pkg)) {
-        name.setText(Html.fromHtml("<html><b>" + pkg + "</b></html>"));
+        name.setText(Html.fromHtml("<html><b>" + pkgTitle + "</b></html>"));
         status.setText(Html.fromHtml("<html><b>Marked to uninstall</b></html>"));
       } else  {
-        name.setText(pkg);
+        name.setText(pkgTitle);
         String txt;
         if (d.updatedPackages.contains(pkg)) {
           txt = "<html><i>Installed from repository</i></html>";
@@ -300,13 +302,13 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       for (String pkg : d.packagesToInstall) {
         if (isCancelled()) return null;
         try {
-          publishProgress(activity.STR_INSTALLING + " " + pkg + "...");
+          publishProgress(activity.getString(R.string.downloading) + " " + pkg + "...");
           URL url = d.packageToURL.get(pkg);
           URLConnection uc = url.openConnection();
           long lastModified = uc.getLastModified();
           int contentLength = uc.getContentLength();
           BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
-          File tmpjarfile = new File(activity.getCacheDir(), d.packageToJarfile.get(pkg));
+          File tmpjarfile = new File(activity.getCacheDir(), pkg+".jar");
           FileOutputStream fos = new FileOutputStream(tmpjarfile);
           byte data[] = new byte[8192];
           int count;
@@ -314,14 +316,17 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           while ((count = in.read(data, 0, 1024)) != -1) {
             fos.write(data, 0, count);
             total += count;
-            Log.d("",""+100*packageNo + "+ 100* "+total+" / " +contentLength);
-            publishProgress(100*packageNo + 100*total/contentLength);
+            //Log.d("",""+100*packageNo + "+ 100* "+total+" / " +contentLength);
+            publishProgress(100*packageNo + 90*total/contentLength);
           }
           fos.close();
           in.close();
           tmpjarfile.setLastModified(lastModified);
           //TODO
-          ApertiumInstallation.instance.installJar(tmpjarfile, ApertiumInstallation.stripJar(d.packageToJarfile.get(pkg)));
+          publishProgress(activity.getString(R.string.installing) + " " + pkg + "...");
+          ApertiumInstallation.instance.installJar(tmpjarfile, pkg);
+          packageNo++;
+          publishProgress(98*packageNo);
 
           // TODO: Remove all unneeded stuff from jarfile // jarfile.delete();
           d.installedPackages.add(pkg);
@@ -329,15 +334,13 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           ex.printStackTrace();
           return ex;
         }
-        packageNo++;
       }
 
       for (String pkg : d.packagesToUninstall) {
-        publishProgress(activity.STR_UNINSTALLING + " " + pkg + "...");
-        String fn = d.packageToJarfile.get(pkg);
-        FileUtils.remove(new File(ApertiumInstallation.packagesDir, fn));
-        FileUtils.remove(new File(ApertiumInstallation.packagesDir, ApertiumInstallation.stripJar(fn)));
-        FileUtils.remove(new File(ApertiumInstallation.dexBytecodeCache, fn));
+        publishProgress(activity.getString(R.string.deleting) + " " + pkg + "...");
+        FileUtils.remove(new File(ApertiumInstallation.packagesDir, pkg+".jar"));
+        FileUtils.remove(new File(ApertiumInstallation.packagesDir, pkg));
+        FileUtils.remove(new File(ApertiumInstallation.dexBytecodeCache, pkg+".dex"));
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();

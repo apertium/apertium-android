@@ -24,7 +24,9 @@ import dalvik.system.DexClassLoader;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import org.apertium.Translator;
 import org.apertium.utils.IOUtils;
 
@@ -70,6 +72,11 @@ public class ApertiumInstallation {
       return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?");
     }
   };
+  
+  public HashSet<String> getInstalledPackages() {
+    HashSet<String> installedPackagesFilenames = new HashSet<String>(Arrays.asList(packagesDir.list(apertiumDirectoryFilter)));
+    return installedPackagesFilenames;
+  }
 
   public void scanForPackages() {
     titleToBasedir.clear();
