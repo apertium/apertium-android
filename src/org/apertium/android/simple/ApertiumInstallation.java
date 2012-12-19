@@ -23,6 +23,7 @@ import android.util.Log;
 import dalvik.system.DexClassLoader;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 import org.apertium.Translator;
 import org.apertium.utils.IOUtils;
@@ -101,5 +102,12 @@ public class ApertiumInstallation {
 
   public static String stripJar(String fn_jar) {
     return fn_jar.substring(0, fn_jar.length()-4); // strip '.jar'
+  }
+
+  void installJar(File tmpjarfile, String pkg) throws IOException {
+    File dir = new File(ApertiumInstallation.packagesDir, pkg);
+    FileUtils.unzip(tmpjarfile.getPath(), dir.getPath());
+    File jarfile = new File(ApertiumInstallation.packagesDir, pkg+".jar");
+    tmpjarfile.renameTo(jarfile);
   }
 }

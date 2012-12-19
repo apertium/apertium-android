@@ -78,7 +78,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     HashSet<String> packagesToUninstall = new HashSet<String>();
     File cachedRepoFile;
     RepoAsyncTask repoTask;
-    InstallAsyncTask installTask;
+    InstallRemoveAsyncTask installTask;
     String progressText;
     private int progressMax;
     private int progress;
@@ -108,7 +108,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     if (d == null) {
       d = new Data();
       d.cachedRepoFile = new File(getCacheDir(), new File(REPO_URL).getName());
-      d.progressText = "Downloading package list, please wait...";
+      d.progressText = "Refreshing package list, please wait...";
       d.repoTask = new RepoAsyncTask();
       d.repoTask.activity = this;
       d.repoTask.execute();
@@ -138,21 +138,21 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     while ((line = reader.readLine()) != null) {
       String[] columns = line.split("\t");
       if (columns.length > 3) {
-        String p = Translator.getTitle(columns[3]);
-        packages.add(p);
+        String modeTitle = Translator.getTitle(columns[3]);
+        packages.add(modeTitle);
         URL url = new URL(columns[1]);
-        d.packageToURL.put(p, url);
-        d.packageToJarfile.put(p, columns[0] + ".jar");
+        d.packageToURL.put(modeTitle, url);
+        d.packageToJarfile.put(modeTitle, columns[0] + ".jar");
         if (installedPackagesFilenames.contains(columns[0])) {
           installedPackagesFilenames.remove(columns[0]);
-          d.installedPackages.add(p);
+          d.installedPackages.add(modeTitle);
           if (useNetwork) {
             long localLastModified = new File(ApertiumInstallation.packagesDir, columns[0]).lastModified();
             long onlineLastModified = url.openConnection().getLastModified();
             if (onlineLastModified > localLastModified) {
-              d.updatablePackages.add(p);
+              d.updatablePackages.add(modeTitle);
             } else {
-              d.updatedPackages.add(p);
+              d.updatedPackages.add(modeTitle);
             }
           }
         }
@@ -260,7 +260,12 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         } else if (d.updatablePackages.contains(pkg)) {
           txt = "<html><i>Installed from repository</i></html>";
         } else if (d.installedPackages.contains(pkg)) {
-          txt = "<html><i>Manually installed</i></html>";
+          if (d.repoTask!=null) {
+            // During repo refresh packages are just listed in installedPackages, thus we end here during repo refresh
+            txt = "<html><i>Installed</i></html>";
+          } else {
+            txt = "<html><i>Manually installed</i></html>";
+          }
         } else {
           txt = "<html><i>Not installed</i></html>";
         }
@@ -285,7 +290,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   }
 
 
-  private static class InstallAsyncTask extends AsyncTask {
+  private static class InstallRemoveAsyncTask extends AsyncTask {
     private InstallActivity activity;
     @Override
     protected Object doInBackground(Object... arg0) {
@@ -314,11 +319,10 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           }
           fos.close();
           in.close();
-          File dir = new File(ApertiumInstallation.packagesDir, ApertiumInstallation.stripJar(d.packageToJarfile.get(pkg)));
-          FileUtils.unzip(tmpjarfile.getPath(), dir.getPath());
-          File jarfile = new File(ApertiumInstallation.packagesDir, d.packageToJarfile.get(pkg));
-          tmpjarfile.renameTo(jarfile);
-          dir.setLastModified(lastModified);
+          tmpjarfile.setLastModified(lastModified);
+          //TODO
+          ApertiumInstallation.instance.installJar(tmpjarfile, ApertiumInstallation.stripJar(d.packageToJarfile.get(pkg)));
+
           // TODO: Remove all unneeded stuff from jarfile // jarfile.delete();
           d.installedPackages.add(pkg);
         } catch (IOException ex) {
@@ -372,7 +376,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     d.progressText = "Preparing...";
     updateUI();
     //progressTextView.setText(STR_INSTALLING + "...");
-    d.installTask = new InstallAsyncTask();
+    d.installTask = new InstallRemoveAsyncTask();
     d.installTask.activity = this;
     d.installTask.execute();
     updateUI();
