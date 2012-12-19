@@ -76,6 +76,7 @@ public class ApertiumInstallation {
     modeToPackage.clear();
     packageToBasedir.clear();
 
+    Log.d("", "Scanning "+packagesDir);
     File packages[] = packagesDir.listFiles(apertiumDirectoryFilter);
     for (File pkg : packages) {
       String basedir = pkg.getPath();

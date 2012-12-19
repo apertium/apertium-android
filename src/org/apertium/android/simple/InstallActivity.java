@@ -289,20 +289,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     private InstallActivity activity;
     @Override
     protected Object doInBackground(Object... arg0) {
-      d.progressMax = 1;
-      d.progress = 0;
-      for (String pkg : d.packagesToInstall) {
-        if (isCancelled()) return null;
-        try {
-          URL url = d.packageToURL.get(pkg);
-          Log.d("", pkg +" " + url);
-          d.progressMax += url.openConnection().getContentLength();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          return ex;
-        }
-      }
+      d.progressMax = d.packagesToInstall.size()*100;
 
+      int packageNo = 0;
       for (String pkg : d.packagesToInstall) {
         if (isCancelled()) return null;
         try {
@@ -310,15 +299,18 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           URL url = d.packageToURL.get(pkg);
           URLConnection uc = url.openConnection();
           long lastModified = uc.getLastModified();
+          int contentLength = uc.getContentLength();
           BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
           File tmpjarfile = new File(activity.getCacheDir(), d.packageToJarfile.get(pkg));
           FileOutputStream fos = new FileOutputStream(tmpjarfile);
-          byte data[] = new byte[1024];
+          byte data[] = new byte[8192];
           int count;
+          int total = 0;
           while ((count = in.read(data, 0, 1024)) != -1) {
             fos.write(data, 0, count);
-            d.progress += count;
-            publishProgress(d.progress);
+            total += count;
+            Log.d("",""+100*packageNo + "+ 100* "+total+" / " +contentLength);
+            publishProgress(100*packageNo + 100*total/contentLength);
           }
           fos.close();
           in.close();
@@ -333,6 +325,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           ex.printStackTrace();
           return ex;
         }
+        packageNo++;
       }
 
       for (String pkg : d.packagesToUninstall) {
@@ -354,13 +347,13 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     protected void onProgressUpdate(Object... values) {
       if (activity==null) return;
       Object v = values[0];
-      Log.d("", ""+v);
+      //Log.d("", ""+v);
       if (v instanceof Integer) {
         d.progress = (Integer) v;
       } else {
         d.progressText = String.valueOf(v);
-        activity.updateUI();
       }
+      activity.updateUI();
     }
 
     @Override
