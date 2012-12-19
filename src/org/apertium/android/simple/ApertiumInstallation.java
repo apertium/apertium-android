@@ -58,12 +58,8 @@ public class ApertiumInstallation {
   public ApertiumInstallation(App app) {
     packagesDir = new File(app.getCacheDir(), "packages");
     packagesDir.mkdirs();
-    dexBytecodeCache = new File(app.getCacheDir(), "dex");
+    dexBytecodeCache = new File(app.getCacheDir(), "dex-cache");
     dexBytecodeCache.mkdirs();
-
-    // Set where the app will keep cached indexes
-    IOUtils.cacheDir = new File(app.getCacheDir(), "apertium-cache/");
-    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
   }
 
   public static final FilenameFilter apertiumDirectoryFilter = new FilenameFilter() {
@@ -72,10 +68,11 @@ public class ApertiumInstallation {
       return name.matches("apertium-[a-z][a-z][a-z]?-[a-z][a-z][a-z]?");
     }
   };
-  
+
   public HashSet<String> getInstalledPackages() {
-    HashSet<String> installedPackagesFilenames = new HashSet<String>(Arrays.asList(packagesDir.list(apertiumDirectoryFilter)));
-    return installedPackagesFilenames;
+    HashSet<String> installedPackages = new HashSet<String>(Arrays.asList(packagesDir.list(apertiumDirectoryFilter)));
+    Log.d("", "Scanning "+packagesDir+" gave "+installedPackages);
+    return installedPackages;
   }
 
   public void scanForPackages() {
@@ -84,10 +81,8 @@ public class ApertiumInstallation {
     modeToPackage.clear();
     packageToBasedir.clear();
 
-    Log.d("", "Scanning "+packagesDir);
-    File packages[] = packagesDir.listFiles(apertiumDirectoryFilter);
-    for (File pkg : packages) {
-      String basedir = pkg.getPath();
+    for (String pkg : getInstalledPackages()) {
+      String basedir = packagesDir + "/" + pkg;
       try {
         DexClassLoader cl = new DexClassLoader(basedir+".jar", dexBytecodeCache.getAbsolutePath(), null, this.getClass().getClassLoader());
         Translator.setBase(basedir, cl);
@@ -96,9 +91,9 @@ public class ApertiumInstallation {
           Log.d("", mode+"  "+title+"  "+basedir);
           titleToBasedir.put(title, basedir);
           titleToMode.put(title, mode);
-          modeToPackage.put(mode, pkg.getName());
+          modeToPackage.put(mode, pkg);
         }
-        packageToBasedir.put(pkg.getName(), basedir);
+        packageToBasedir.put(pkg, basedir);
       } catch (Exception ex) {
         //Perhaps the directory contained a file that wasn't a valid package...
         ex.printStackTrace();
@@ -107,14 +102,11 @@ public class ApertiumInstallation {
     }
   }
 
-  public static String stripJar(String fn_jar) {
-    return fn_jar.substring(0, fn_jar.length()-4); // strip '.jar'
-  }
-
   void installJar(File tmpjarfile, String pkg) throws IOException {
-    File dir = new File(ApertiumInstallation.packagesDir, pkg);
+    File dir = new File(packagesDir, pkg);
     FileUtils.unzip(tmpjarfile.getPath(), dir.getPath());
     File jarfile = new File(ApertiumInstallation.packagesDir, pkg+".jar");
     tmpjarfile.renameTo(jarfile);
+    scanForPackages();
   }
 }

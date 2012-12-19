@@ -62,6 +62,10 @@ public class App extends Application {
     instance = this;
     handler = new Handler();
 
+    // Set where the app will keep cached indexes
+    IOUtils.cacheDir = new File(getExternalCacheDir(), "apertium-index-cache");
+    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
+
     try {
       Class.forName("android.os.AsyncTask"); // Fix for http://code.google.com/p/android/issues/detail?id=20915
     } catch (Exception e) {
