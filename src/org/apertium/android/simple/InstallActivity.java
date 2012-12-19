@@ -65,24 +65,26 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   private static String STR_UNINSTALLING = "Uninstalling";
 
 
-  /** Data regarding the install activity.
+  /** Data regarding the activity.
       Put in a seperate object so we don't have to reinitialize on screen change */
-  private static class InstallData {
+  private static class Data {
     ArrayList<String> packages = new ArrayList<String>();
     HashSet<String> installedPackages = new HashSet<String>();
     HashSet<String> updatablePackages = new HashSet<String>();
     HashSet<String> updatedPackages = new HashSet<String>();
-    HashMap<String, String> packageToFilename = new HashMap<String, String>();
+    HashMap<String, String> packageToJarfile = new HashMap<String, String>();
     HashMap<String, URL> packageToURL = new HashMap<String, URL>();
     HashSet<String> packagesToInstall = new HashSet<String>();
     HashSet<String> packagesToUninstall = new HashSet<String>();
     File cachedRepoFile;
-    DownloadAsyncTask downloadTask;
+    RepoAsyncTask repoTask;
     InstallAsyncTask installTask;
     String progressText;
+    private int progressMax;
+    private int progress;
   }
 
-  private static InstallData d;
+  private static Data d;
 
   private ListView listView;
   private ProgressBar progressBar;
@@ -104,29 +106,31 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     listView.setAdapter(adapter);
 
     if (d == null) {
-      d = new InstallData();
+      d = new Data();
       d.cachedRepoFile = new File(getCacheDir(), new File(REPO_URL).getName());
       d.progressText = "Downloading package list, please wait...";
-      d.downloadTask = new DownloadAsyncTask();
-      d.downloadTask.activity = this;
-      d.downloadTask.execute();
+      d.repoTask = new RepoAsyncTask();
+      d.repoTask.activity = this;
+      d.repoTask.execute();
     }
-    if (d.downloadTask!=null) d.downloadTask.activity = this;
+    if (d.repoTask!=null) d.repoTask.activity = this;
 
     updateUI();
   }
 
 
   private void updateUI() {
-    setProgressBarIndeterminateVisibility(d.downloadTask!=null);
+    setProgressBarIndeterminateVisibility(d.repoTask!=null);
     progressTextView.setText(d.progressText);
     progressBar.setVisibility(d.installTask!=null?View.VISIBLE:View.GONE);
+    progressBar.setMax(d.progressMax);
+    progressBar.setProgress(d.progress);
   }
 
 
 
   private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
-    ArrayList<String> installedPackagesFilenames = new ArrayList<String>(Arrays.asList(ApertiumCaffeine.packagesDir.list(ApertiumCaffeine.filter)));
+    ArrayList<String> installedPackagesFilenames = new ArrayList<String>(Arrays.asList(ApertiumInstallation.packagesDir.list(ApertiumInstallation.apertiumDirectoryFilter)));
     ArrayList<String> packages = new ArrayList<String>();
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -138,12 +142,12 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         packages.add(p);
         URL url = new URL(columns[1]);
         d.packageToURL.put(p, url);
-        d.packageToFilename.put(p, columns[0] + ".jar");
+        d.packageToJarfile.put(p, columns[0] + ".jar");
         if (installedPackagesFilenames.contains(columns[0])) {
           installedPackagesFilenames.remove(columns[0]);
           d.installedPackages.add(p);
           if (useNetwork) {
-            long localLastModified = new File(ApertiumCaffeine.packagesDir, columns[0]).lastModified();
+            long localLastModified = new File(ApertiumInstallation.packagesDir, columns[0]).lastModified();
             long onlineLastModified = url.openConnection().getLastModified();
             if (onlineLastModified > localLastModified) {
               d.updatablePackages.add(p);
@@ -158,14 +162,14 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     for (String code : installedPackagesFilenames) {
       packages.add(code);
       d.installedPackages.add(code);
-      d.packageToFilename.put(code, code);
+      d.packageToJarfile.put(code, code);
     }
 
     Collections.sort(packages);
     d.packages = packages;
   }
 
-  private static class DownloadAsyncTask extends AsyncTask {
+  private static class RepoAsyncTask extends AsyncTask {
     private InstallActivity activity;
 
     @Override
@@ -184,7 +188,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         d.progressText = STR_INSTRUCTIONS;
       } catch (IOException ex) {
         ex.printStackTrace();
-        d.progressText = ex.toString();
+        d.progressText = activity.getString(R.string.network_error);
       } catch (Exception ex) {
         ex.printStackTrace();
         d.progressText = ex.toString();
@@ -203,8 +207,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
     @Override
     protected void onPostExecute(Object result) {
-      d.downloadTask = null;
+      d.repoTask = null;
       if (activity==null) return;
+      activity.updateUI();
       activity = null;
     }
   }
@@ -281,50 +286,46 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
 
   private static class InstallAsyncTask extends AsyncTask {
-    int length = 1;
     private InstallActivity activity;
     @Override
     protected Object doInBackground(Object... arg0) {
-      int value = 0;
+      d.progressMax = 1;
+      d.progress = 0;
       for (String pkg : d.packagesToInstall) {
         if (isCancelled()) return null;
         try {
           URL url = d.packageToURL.get(pkg);
           Log.d("", pkg +" " + url);
-          length += url.openConnection().getContentLength();
+          d.progressMax += url.openConnection().getContentLength();
         } catch (Exception ex) {
           ex.printStackTrace();
           return ex;
         }
       }
-      App.handler.post(new Runnable() {
-        public void run() {
-          activity.progressBar.setMax(length);
-        }
-      });
 
       for (String pkg : d.packagesToInstall) {
         if (isCancelled()) return null;
         try {
           publishProgress(activity.STR_INSTALLING + " " + pkg + "...");
-          String fn_jar = d.packageToFilename.get(pkg);
           URL url = d.packageToURL.get(pkg);
           URLConnection uc = url.openConnection();
           long lastModified = uc.getLastModified();
           BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
-          File jarfile = new File(ApertiumCaffeine.packagesDir, fn_jar);
-          FileOutputStream fos = new FileOutputStream(jarfile);
+          File tmpjarfile = new File(activity.getCacheDir(), d.packageToJarfile.get(pkg));
+          FileOutputStream fos = new FileOutputStream(tmpjarfile);
           byte data[] = new byte[1024];
           int count;
           while ((count = in.read(data, 0, 1024)) != -1) {
             fos.write(data, 0, count);
-            value += count;
-            publishProgress(value);
+            d.progress += count;
+            publishProgress(d.progress);
           }
           fos.close();
           in.close();
-          File dir = new File(ApertiumCaffeine.packagesDir, ApertiumCaffeine.stripJar(fn_jar));
-          FileUtils.unzip(jarfile.getPath(), dir.getPath());
+          File dir = new File(ApertiumInstallation.packagesDir, ApertiumInstallation.stripJar(d.packageToJarfile.get(pkg)));
+          FileUtils.unzip(tmpjarfile.getPath(), dir.getPath());
+          File jarfile = new File(ApertiumInstallation.packagesDir, d.packageToJarfile.get(pkg));
+          tmpjarfile.renameTo(jarfile);
           dir.setLastModified(lastModified);
           // TODO: Remove all unneeded stuff from jarfile // jarfile.delete();
           d.installedPackages.add(pkg);
@@ -336,16 +337,16 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
       for (String pkg : d.packagesToUninstall) {
         publishProgress(activity.STR_UNINSTALLING + " " + pkg + "...");
-        String fn = d.packageToFilename.get(pkg);
-        FileUtils.remove(new File(ApertiumCaffeine.packagesDir, fn));
-        FileUtils.remove(new File(ApertiumCaffeine.packagesDir, ApertiumCaffeine.stripJar(fn)));
-        FileUtils.remove(new File(ApertiumCaffeine.dexOutputDir, fn));
+        String fn = d.packageToJarfile.get(pkg);
+        FileUtils.remove(new File(ApertiumInstallation.packagesDir, fn));
+        FileUtils.remove(new File(ApertiumInstallation.packagesDir, ApertiumInstallation.stripJar(fn)));
+        FileUtils.remove(new File(ApertiumInstallation.dexBytecodeCache, fn));
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();
       d.packagesToUninstall.clear();
 
-      ApertiumCaffeine.instance.initModes(ApertiumCaffeine.packagesDir);
+      ApertiumInstallation.instance.scanForPackages();
       return null;
     }
 
@@ -355,8 +356,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       Object v = values[0];
       Log.d("", ""+v);
       if (v instanceof Integer) {
-        activity.progressBar.setProgress((Integer) v);
-        //progress.setString(value * 100 / length + "%");
+        d.progress = (Integer) v;
       } else {
         d.progressText = String.valueOf(v);
         activity.updateUI();
@@ -388,7 +388,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   @Override
   public void finish() {
     super.finish();
-    if (d.downloadTask!=null) d.downloadTask.cancel(false);
+    if (d.repoTask!=null) d.repoTask.cancel(false);
     d = null;
   }
 }

@@ -65,7 +65,7 @@
 	<string name="select_language_mode">Select languages to translate</string>
     <string name="send_email_in">Send your email in:</string>
     <string name="share_via">Share via</string>
-    <string name="translating">Translating</string>
+    <string name="translating">Translating...</string>
 	<string name="unziping">Unzipping files</string>
 	<string name="updating_db">Updating database</string>
     <string name="working">Working</string>
@@ -99,7 +99,9 @@
 
   <string name="apply">Apply</string>
   <string name="about">About</string>
-	<string name="choose_languages">&lt;choose languages&gt;</string>
+	<string name="choose_languages">Choose languages</string>
+	<string name="network_error">Network error</string>
+  <string name="download_languages">Download languages</string>
   <string name="aboutText"><![CDATA[
 <html><body>
 This is a free/open-source, offline machine translation app which offers

@@ -24,6 +24,8 @@ public class App extends Application {
   public static App instance;
   public static Handler handler;
   public static SharedPreferences prefs;
+  /** Last selected mode preference */
+  public static final String lastModeTitle = "lastModeTitle";
   /*Cache Preference*/
   public static final String cacheEnabled = "CachePref";
   /*DisplayMark Preference*/
@@ -66,10 +68,6 @@ public class App extends Application {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-    // Set where the app will keep cached indexes
-    IOUtils.cacheDir = new File(getCacheDir(), "apertium-cache/");
-    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
 
   }
 

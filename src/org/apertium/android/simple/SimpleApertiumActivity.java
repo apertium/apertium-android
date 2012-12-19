@@ -28,15 +28,11 @@ import org.apertium.Translator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,14 +45,16 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import dalvik.system.DexClassLoader;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import org.apertium.android.R;
-import org.apertium.android.extended.Extended;
 import org.apertium.android.extended.ExtendedApertiumActivity;
 import org.apertium.android.extended.helper.Prefs;
+import org.apertium.utils.IOUtils;
+import org.apertium.utils.Timing;
 
 public class SimpleApertiumActivity extends Activity implements OnClickListener {
   private static final String TAG = "ApertiumActiviy";
@@ -68,7 +66,7 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
   private Button submitButton;
 
   /*Mode related variable*/
-  private String currentMode = null;
+  private String currentModeTitle = null;
 
 
   @Override
@@ -81,8 +79,8 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
     outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
 
-    ApertiumCaffeine.init(this);
-    ApertiumCaffeine.instance.initModes(ApertiumCaffeine.packagesDir);
+    ApertiumInstallation.init(this);
+    ApertiumInstallation.instance.scanForPackages();
 
     submitButton = (Button) findViewById(R.id.translateButton);
     fromButton = (Button) findViewById(R.id.fromButton);
@@ -98,29 +96,52 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
   @Override
   protected void onResume() {
     super.onResume();
-    if (!ApertiumCaffeine.instance.titleToBase.containsKey(currentMode)) {
-      currentMode = null;
+    // Set from last selected mode if not set
+    if (currentModeTitle==null) {
+      currentModeTitle = App.prefs.getString(App.lastModeTitle, null);
     }
-    if (currentMode!=null) fromButton.setText(currentMode);
+    // Reset if that mode isnt installed (anymore)
+    if (!ApertiumInstallation.instance.titleToBasedir.containsKey(currentModeTitle)) {
+      currentModeTitle = null;
+    }
+    // If there is no mode set at this stage then just pick any which is installed
+    if (currentModeTitle==null && ApertiumInstallation.instance.titleToBasedir.size()>0) {
+      currentModeTitle = ApertiumInstallation.instance.titleToBasedir.keySet().iterator().next();
+    }
+    // And, show on the button
+    if (currentModeTitle!=null) {
+      fromButton.setText(currentModeTitle);
+    } else {
+      fromButton.setText(R.string.choose_languages);
+    }
   }
 
 
   @Override
   public void onClick(View v) {
-    if (ApertiumCaffeine.instance.titleToBase.isEmpty()) {
+    if (ApertiumInstallation.instance.titleToBasedir.isEmpty()) {
       startActivity(new Intent(this, InstallActivity.class));
       return;
     }
 
     if (v.equals(fromButton)) {
-      final String[] modeTitle = ApertiumCaffeine.instance.titleToBase.keySet().toArray(new String[0]); //{"eo", "sv", "da" };
+      ArrayList<String> modeTitle = new ArrayList<String>(ApertiumInstallation.instance.titleToBasedir.keySet());
+      Collections.sort(modeTitle);
+      modeTitle.add(getString(R.string.download_languages));
+
+      final String[] modeTitlex = modeTitle.toArray(new String[modeTitle.size()]);
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
-      builder.setTitle(getString(R.string.translate_from));
-      builder.setItems(modeTitle, new DialogInterface.OnClickListener() {
+      builder.setTitle(getString(R.string.choose_languages));
+      builder.setItems(modeTitlex, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int position) {
-          currentMode = modeTitle[position];
-          fromButton.setText(currentMode);
-          updateGui();
+          if (position==modeTitlex.length-1) { // if user chose 'download_languages'
+            startActivity(new Intent(App.instance, InstallActivity.class));
+            return;
+          }
+          currentModeTitle = modeTitlex[position];
+          fromButton.setText(currentModeTitle);
+          App.prefs.edit().putString(App.lastModeTitle, currentModeTitle).commit();
+          updateUi();
         }
       });
       AlertDialog alert = builder.create();
@@ -137,11 +158,11 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
       Translator.setParallelProcessingEnabled(false);
       try {
         // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
-        String base = ApertiumCaffeine.instance.titleToBase.get(currentMode);
-        Log.d(TAG, "new DexClassLoader(" + base+".jar");
-        DexClassLoader cl = new DexClassLoader(base+".jar", ApertiumCaffeine.dexOutputDir.getAbsolutePath(), null, this.getClass().getClassLoader());
-        Translator.setBase(base, cl);
-        Translator.setMode(ApertiumCaffeine.instance.titleToMode.get(currentMode));
+        String basedir = ApertiumInstallation.instance.titleToBasedir.get(currentModeTitle);
+        Log.d(TAG, "new DexClassLoader(" + basedir+".jar");
+        DexClassLoader classloader = new DexClassLoader(basedir+".jar", ApertiumInstallation.dexBytecodeCache.getAbsolutePath(), null, this.getClass().getClassLoader());
+        Translator.setBase(basedir, classloader);
+        Translator.setMode(ApertiumInstallation.instance.titleToMode.get(currentModeTitle));
         translationTask = new TranslationTask();
         translationTask.activity = this;
         translationTask.execute(inputEditText.getText().toString());
@@ -150,14 +171,15 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
         App.langToast(e.toString());
         BugSenseHandler.sendException(e);
       }
-      updateGui();
+      updateUi();
     }
   }
 
 
-  private void updateGui() {
+  private void updateUi() {
     boolean ready = translationTask==null;
     submitButton.setEnabled(ready);
+    submitButton.setText(ready?R.string.translate:R.string.translating);
     setProgressBarIndeterminateVisibility(!ready);
   }
 
@@ -175,17 +197,16 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
       Log.d(TAG, "start mem f=" + rt.freeMemory() / 1000000 + "  t=" + rt.totalMemory() / 1000000 + " m=" + rt.maxMemory() / 1000000);
       App.timing = new org.apertium.utils.Timing("overall");
       try {
-        //Translator.setCacheEnabled(Prefs.isCacheEnabled());
-        //Log.i(TAG, "Translator Run Cache =" + Prefs.isCacheEnabled() + ", Mark =" + Prefs.isDisplayMarkEnabled() + ", MODE = " + currentMode);
-        //Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
         String input = inputText[0];
         Log.i(TAG, "Translator Run input " +input);
+        Timing timing = new Timing("Translator.translate()");
         String output = Translator.translate(input);
+        timing.report();
         Log.i(TAG, "Translator Run output " +output);
         return output;
       } catch (Throwable e) {
         e.printStackTrace();
-        Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + activity.currentMode + ";InputText = " + activity.inputEditText.getText());
+        Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + activity.currentModeTitle + ";InputText = " + activity.inputEditText.getText());
         return "error: "+e;
       } finally {
         App.timing.report();
@@ -198,7 +219,7 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
     protected void onPostExecute(String output) {
       activity.translationTask = null;
       activity.outputTextView.setText(output);
-      activity.updateGui();
+      activity.updateUi();
     }
   }
 
