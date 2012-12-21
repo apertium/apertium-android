@@ -29,8 +29,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apertium.android.extended.SMS.SMSobject;
-import org.apertium.android.extended.SMS.SmsArrayAdapter;
 
 import android.app.ListActivity;
 import android.content.ContentResolver;

@@ -24,21 +24,22 @@ public class App extends Application {
   public static Handler handler;
   public static SharedPreferences prefs;
   /** Last selected mode preference */
-  public static final String lastModeTitle = "lastModeTitle";
+  public static final String PREF_lastModeTitle = "lastModeTitle";
   /*Cache Preference*/
-  public static final String cacheEnabled = "CachePref";
+  public static final String PREF_cacheEnabled = "CachePref";
   /*DisplayMark Preference*/
-  public static final String displayMark = "MarkPref";
+  public static final String PREF_displayMark = "MarkPref";
   /*ClipBoardPush Preference*/
-  public static final String clipBoardGet = "ClipGetPref";
-  public static final String clipBoardPush = "ClipPushPref";
+  public static final String PREF_clipBoardGet = "ClipGetPref";
+  public static final String PREF_clipBoardPush = "ClipPushPref";
 
-  static void reportError(Exception ex) {
+  public static void reportError(Exception ex) {
     ex.printStackTrace();
     langToast("Error: "+ex);
     langToast("The error will be reported to the developers. sorry for the inconvenience.");
     BugSenseHandler.sendException(ex);
   }
+  public static ApertiumInstallation apertiumInstallation;
 
   @Override
   public void onCreate() {
@@ -71,6 +72,9 @@ public class App extends Application {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    apertiumInstallation = new ApertiumInstallation(this);
+    apertiumInstallation.rescanForPackages();
 
   }
 

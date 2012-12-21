@@ -82,9 +82,6 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
     outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
 
-    ApertiumInstallation.init(this);
-    ApertiumInstallation.instance.scanForPackages();
-
     submitButton = (Button) findViewById(R.id.translateButton);
     fromButton = (Button) findViewById(R.id.fromButton);
 
@@ -101,15 +98,15 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
     super.onResume();
     // Set from last selected mode if not set
     if (currentModeTitle==null) {
-      currentModeTitle = App.prefs.getString(App.lastModeTitle, null);
+      currentModeTitle = App.prefs.getString(App.PREF_lastModeTitle, null);
     }
     // Reset if that mode isnt installed (anymore)
-    if (!ApertiumInstallation.instance.titleToBasedir.containsKey(currentModeTitle)) {
+    if (!App.apertiumInstallation.titleToMode.containsKey(currentModeTitle)) {
       currentModeTitle = null;
     }
     // If there is no mode set at this stage then just pick any which is installed
-    if (currentModeTitle==null && ApertiumInstallation.instance.titleToBasedir.size()>0) {
-      currentModeTitle = ApertiumInstallation.instance.titleToBasedir.keySet().iterator().next();
+    if (currentModeTitle==null && App.apertiumInstallation.titleToMode.size()>0) {
+      currentModeTitle = App.apertiumInstallation.titleToMode.keySet().iterator().next();
     }
     // And, show on the button
     if (currentModeTitle!=null) {
@@ -122,13 +119,13 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
 
   @Override
   public void onClick(View v) {
-    if (ApertiumInstallation.instance.titleToBasedir.isEmpty()) {
+    if (App.apertiumInstallation.titleToBasedir.isEmpty()) {
       startActivity(new Intent(this, InstallActivity.class));
       return;
     }
 
     if (v.equals(fromButton)) {
-      ArrayList<String> modeTitle = new ArrayList<String>(ApertiumInstallation.instance.titleToBasedir.keySet());
+      ArrayList<String> modeTitle = new ArrayList<String>(App.apertiumInstallation.titleToBasedir.keySet());
       Collections.sort(modeTitle);
       modeTitle.add(getString(R.string.download_languages));
 
@@ -143,7 +140,7 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
           }
           currentModeTitle = modeTitlex[position];
           fromButton.setText(currentModeTitle);
-          App.prefs.edit().putString(App.lastModeTitle, currentModeTitle).commit();
+          App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).commit();
           updateUi();
         }
       });
@@ -160,12 +157,13 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
       Translator.setDelayedNodeLoadingEnabled(true);
       Translator.setParallelProcessingEnabled(false);
       try {
+        String mode = App.apertiumInstallation.titleToMode.get(currentModeTitle);
         // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
-        String basedir = ApertiumInstallation.instance.titleToBasedir.get(currentModeTitle);
+        String basedir = App.apertiumInstallation.titleToBasedir.get(currentModeTitle);
         Log.d(TAG, "new DexClassLoader(" + basedir+".jar");
-        DexClassLoader classloader = new DexClassLoader(basedir+".jar", ApertiumInstallation.dexBytecodeCache.getAbsolutePath(), null, this.getClass().getClassLoader());
+        DexClassLoader classloader = new DexClassLoader(basedir+".jar", App.apertiumInstallation.dexBytecodeCache.getAbsolutePath(), null, this.getClass().getClassLoader());
         Translator.setBase(basedir, classloader);
-        Translator.setMode(ApertiumInstallation.instance.titleToMode.get(currentModeTitle));
+        Translator.setMode(mode);
         translationTask = new TranslationTask();
         translationTask.activity = this;
         translationTask.execute(inputEditText.getText().toString());

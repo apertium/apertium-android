@@ -63,7 +63,9 @@ public class FileUtils {
 
   static public void unzip(String zipFile, String to) throws ZipException, IOException {
     unzip(zipFile, to, new FilenameFilter() {
-      public boolean accept(File arg0, String arg1) {
+      /** @param dir the directory in which the filename was found.
+          @param filename the name of the file in dir to test. */
+      public boolean accept(File dir, String filename) {
         return true;
       }
     });

@@ -130,7 +130,8 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
   private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
     ArrayList<String> packages = new ArrayList<String>();
-    HashSet<String> installedPackages = ApertiumInstallation.instance.getInstalledPackages();
+    // Get a copy of the list of installed packages, as we modify it below
+    HashSet<String> installedPackages = new HashSet<String>(App.apertiumInstallation.packageToBasedir.keySet());
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     String line;
@@ -149,7 +150,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           installedPackages.remove(pkg);
           d.installedPackages.add(pkg);
           if (useNetwork) {
-            long localLastModified = new File(ApertiumInstallation.packagesDir, pkg).lastModified();
+            long localLastModified = new File(App.apertiumInstallation.packagesDir, pkg).lastModified();
             long onlineLastModified = url.openConnection().getLastModified();
             if (onlineLastModified > localLastModified) {
               d.updatablePackages.add(pkg);
@@ -324,11 +325,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           tmpjarfile.setLastModified(lastModified);
           //TODO
           publishProgress(activity.getString(R.string.installing) + " " + pkg + "...");
-          ApertiumInstallation.instance.installJar(tmpjarfile, pkg);
+          App.apertiumInstallation.installJar(tmpjarfile, pkg);
           packageNo++;
           publishProgress(98*packageNo);
-
-          // TODO: Remove all unneeded stuff from jarfile // jarfile.delete();
           d.installedPackages.add(pkg);
         } catch (IOException ex) {
           ex.printStackTrace();
@@ -338,15 +337,15 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
       for (String pkg : d.packagesToUninstall) {
         publishProgress(activity.getString(R.string.deleting) + " " + pkg + "...");
-        FileUtils.remove(new File(ApertiumInstallation.packagesDir, pkg+".jar"));
-        FileUtils.remove(new File(ApertiumInstallation.packagesDir, pkg));
-        FileUtils.remove(new File(ApertiumInstallation.dexBytecodeCache, pkg+".dex"));
+        FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg+".jar"));
+        FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg));
+        FileUtils.remove(new File(App.apertiumInstallation.dexBytecodeCache, pkg+".dex"));
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();
       d.packagesToUninstall.clear();
 
-      ApertiumInstallation.instance.scanForPackages();
+      App.apertiumInstallation.rescanForPackages();
       return null;
     }
 
