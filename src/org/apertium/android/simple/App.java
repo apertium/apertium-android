@@ -23,7 +23,9 @@ public class App extends Application {
   public static App instance;
   public static Handler handler;
   public static SharedPreferences prefs;
-  /** Last selected mode preference */
+  /**
+   Last selected mode preference
+   */
   public static final String PREF_lastModeTitle = "lastModeTitle";
   /*Cache Preference*/
   public static final String PREF_cacheEnabled = "CachePref";
@@ -35,7 +37,7 @@ public class App extends Application {
 
   public static void reportError(Exception ex) {
     ex.printStackTrace();
-    langToast("Error: "+ex);
+    langToast("Error: " + ex);
     langToast("The error will be reported to the developers. sorry for the inconvenience.");
     BugSenseHandler.sendException(ex);
   }

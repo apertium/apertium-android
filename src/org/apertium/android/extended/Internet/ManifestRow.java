@@ -36,5 +36,4 @@ public class ManifestRow {
   public String getJarFileName() {
     return jarURL.substring(jarURL.lastIndexOf("/") + 1, jarURL.length());
   }
-
 }

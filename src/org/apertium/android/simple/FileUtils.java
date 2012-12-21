@@ -63,8 +63,10 @@ public class FileUtils {
 
   static public void unzip(String zipFile, String to) throws ZipException, IOException {
     unzip(zipFile, to, new FilenameFilter() {
-      /** @param dir the directory in which the filename was found.
-          @param filename the name of the file in dir to test. */
+      /**
+       @param dir the directory in which the filename was found.
+       @param filename the name of the file in dir to test.
+       */
       public boolean accept(File dir, String filename) {
         return true;
       }
@@ -92,7 +94,9 @@ public class FileUtils {
       //destFile = new File(newPath, destFile.getName());
       File destinationParent = destFile.getParentFile();
 
-      if (!filter.accept(destinationParent, destFile.getName())) continue;
+      if (!filter.accept(destinationParent, destFile.getName())) {
+        continue;
+      }
 
       // create the parent directory structure if needed
       destinationParent.mkdirs();

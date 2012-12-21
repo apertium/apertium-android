@@ -23,8 +23,8 @@ import android.preference.PreferenceActivity;
 import org.apertium.android.R;
 
 /**
- *
- * @author Jacob Nordfalk
+
+ @author Jacob Nordfalk
  */
 public class SettingsActivity extends PreferenceActivity {
   @SuppressWarnings("deprecation")
@@ -34,6 +34,4 @@ public class SettingsActivity extends PreferenceActivity {
     addPreferencesFromResource(R.xml.setting_caffeine);
     this.setTheme(R.style.PreferenceTheme);
   }
-
-
 }

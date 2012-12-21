@@ -86,7 +86,7 @@ public class DatabaseHandler {
   }
 
   /**
-   *
+
    Modes related queries
 
    */
@@ -110,7 +110,7 @@ public class DatabaseHandler {
         String t = cursor.getString(1);	//Title
         String p = cursor.getString(2);	//Package_id
         TranslationMode M = new TranslationMode(m, t);
-        M.packageName=(p);
+        M.packageName = (p);
         LangList.add(M);
       } while (cursor.moveToNext());
     }
@@ -207,7 +207,7 @@ public class DatabaseHandler {
         String t = cursor.getString(1);	//Title
         String p = cursor.getString(2);	//Package_id
         TranslationMode M = new TranslationMode(m, t);
-        M.packageName=(p);
+        M.packageName = (p);
         LangList.add(M);
       } while (cursor.moveToNext());
     }
@@ -251,7 +251,7 @@ public class DatabaseHandler {
       String t = cursor.getString(1);	//Title
       String p = cursor.getString(2);	//Package_id
       M = new TranslationMode(m, t);
-      M.packageName=(p);
+      M.packageName = (p);
     }
     db.close();
     return M;

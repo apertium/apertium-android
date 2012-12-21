@@ -100,8 +100,7 @@ public class RulesHandler {
   }
 
   public static DexClassLoader getDexClassLoader(String dexPath, String optimizedDirectory, String libraryPath, ClassLoader parent) {
-    Log.d(TAG, "new DexClassLoader(" + dexPath + "," + optimizedDirectory + ", " + libraryPath+ ", "+parent);
+    Log.d(TAG, "new DexClassLoader(" + dexPath + "," + optimizedDirectory + ", " + libraryPath + ", " + parent);
     return new DexClassLoader(dexPath, optimizedDirectory, libraryPath, parent);
   }
-
 }

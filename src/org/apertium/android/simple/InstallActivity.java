@@ -58,14 +58,13 @@ import org.apertium.android.R;
  */
 public class InstallActivity extends Activity implements OnItemClickListener, OnClickListener {
   static final String REPO_URL = "https://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
-
   private static String STR_INSTRUCTIONS = "Check the language pairs to install and uncheck the ones to uninstall.";
   private static String STR_INSTALLING = "Installing";
   private static String STR_UNINSTALLING = "Uninstalling";
 
-
-  /** Data regarding the activity.
-      Put in a seperate object so we don't have to reinitialize on screen change */
+  /**
+   Data regarding the activity. Put in a seperate object so we don't have to reinitialize on screen change
+   */
   private static class Data {
     ArrayList<String> packages = new ArrayList<String>();
     HashSet<String> installedPackages = new HashSet<String>();
@@ -84,7 +83,6 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   }
 
   private static Data d;
-
   private ListView listView;
   private ProgressBar progressBar;
   private TextView progressTextView;
@@ -112,21 +110,20 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       d.repoTask.activity = this;
       d.repoTask.execute();
     }
-    if (d.repoTask!=null) d.repoTask.activity = this;
+    if (d.repoTask != null) {
+      d.repoTask.activity = this;
+    }
 
     updateUI();
   }
 
-
   private void updateUI() {
-    setProgressBarIndeterminateVisibility(d.repoTask!=null);
+    setProgressBarIndeterminateVisibility(d.repoTask != null);
     progressTextView.setText(d.progressText);
-    progressBar.setVisibility(d.installTask!=null?View.VISIBLE:View.GONE);
+    progressBar.setVisibility(d.installTask != null ? View.VISIBLE : View.GONE);
     progressBar.setMax(d.progressMax);
     progressBar.setProgress(d.progress);
   }
-
-
 
   private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
     ArrayList<String> packages = new ArrayList<String>();
@@ -202,7 +199,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
     @Override
     protected void onProgressUpdate(Object... values) {
-      if (activity==null) return;
+      if (activity == null) {
+        return;
+      }
       activity.adapter.notifyDataSetChanged();
       activity.updateUI();
     }
@@ -210,16 +209,19 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     @Override
     protected void onPostExecute(Object result) {
       d.repoTask = null;
-      if (activity==null) return;
+      if (activity == null) {
+        return;
+      }
       activity.updateUI();
       activity = null;
     }
   }
 
-  private class LanguagePairAdapter extends BaseAdapter
-  {
+  private class LanguagePairAdapter extends BaseAdapter {
     public int getCount() {
-      if (d==null) return 0;
+      if (d == null) {
+        return 0;
+      }
       return d.packages.size();
     }
 
@@ -232,14 +234,20 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     }
 
     private boolean isChecked(String pkg) {
-      if (d.installedPackages.contains(pkg) && !d.packagesToUninstall.contains(pkg)) return true;
-      if (d.packagesToInstall.contains(pkg)) return true;
+      if (d.installedPackages.contains(pkg) && !d.packagesToUninstall.contains(pkg)) {
+        return true;
+      }
+      if (d.packagesToInstall.contains(pkg)) {
+        return true;
+      }
       return false;
     }
 
     @Override
     public View getView(int row, View v, ViewGroup parent) {
-      if (v==null) v=getLayoutInflater().inflate(R.layout.simple_install_elem, null);
+      if (v == null) {
+        v = getLayoutInflater().inflate(R.layout.simple_install_elem, null);
+      }
       CheckBox checkBox = (CheckBox) v.findViewById(R.id.checkBox);
       TextView name = (TextView) v.findViewById(R.id.name);
       TextView status = (TextView) v.findViewById(R.id.status);
@@ -255,7 +263,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       } else if (d.packagesToUninstall.contains(pkg)) {
         name.setText(Html.fromHtml("<html><b>" + pkgTitle + "</b></html>"));
         status.setText(Html.fromHtml("<html><b>Marked to uninstall</b></html>"));
-      } else  {
+      } else {
         name.setText(pkgTitle);
         String txt;
         if (d.updatedPackages.contains(pkg)) {
@@ -263,7 +271,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         } else if (d.updatablePackages.contains(pkg)) {
           txt = "<html><i>Installed from repository</i></html>";
         } else if (d.installedPackages.contains(pkg)) {
-          if (d.repoTask!=null) {
+          if (d.repoTask != null) {
             // During repo refresh packages are just listed in installedPackages, thus we end here during repo refresh
             txt = "<html><i>Installed</i></html>";
           } else {
@@ -278,30 +286,37 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     }
   };
 
-
   public void onItemClick(AdapterView<?> arg0, View arg1, int row, long arg3) {
     String pkg = d.packages.get(row);
 
     if (d.installedPackages.contains(pkg)) {
-      if (d.packagesToUninstall.contains(pkg)) d.packagesToUninstall.remove(pkg);
-      else d.packagesToUninstall.add(pkg);
+      if (d.packagesToUninstall.contains(pkg)) {
+        d.packagesToUninstall.remove(pkg);
+      } else {
+        d.packagesToUninstall.add(pkg);
+      }
     } else {
-      if (d.packagesToInstall.contains(pkg)) d.packagesToInstall.remove(pkg);
-      else d.packagesToInstall.add(pkg);
+      if (d.packagesToInstall.contains(pkg)) {
+        d.packagesToInstall.remove(pkg);
+      } else {
+        d.packagesToInstall.add(pkg);
+      }
     }
     adapter.notifyDataSetChanged();
   }
 
-
   private static class InstallRemoveAsyncTask extends AsyncTask {
     private InstallActivity activity;
+
     @Override
     protected Object doInBackground(Object... arg0) {
-      d.progressMax = d.packagesToInstall.size()*100;
+      d.progressMax = d.packagesToInstall.size() * 100;
 
       int packageNo = 0;
       for (String pkg : d.packagesToInstall) {
-        if (isCancelled()) return null;
+        if (isCancelled()) {
+          return null;
+        }
         try {
           publishProgress(activity.getString(R.string.downloading) + " " + pkg + "...");
           URL url = d.packageToURL.get(pkg);
@@ -309,7 +324,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           long lastModified = uc.getLastModified();
           int contentLength = uc.getContentLength();
           BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
-          File tmpjarfile = new File(activity.getCacheDir(), pkg+".jar");
+          File tmpjarfile = new File(activity.getCacheDir(), pkg + ".jar");
           FileOutputStream fos = new FileOutputStream(tmpjarfile);
           byte data[] = new byte[8192];
           int count;
@@ -318,7 +333,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
             fos.write(data, 0, count);
             total += count;
             //Log.d("",""+100*packageNo + "+ 100* "+total+" / " +contentLength);
-            publishProgress(100*packageNo + 90*total/contentLength);
+            publishProgress(100 * packageNo + 90 * total / contentLength);
           }
           fos.close();
           in.close();
@@ -327,7 +342,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           publishProgress(activity.getString(R.string.installing) + " " + pkg + "...");
           App.apertiumInstallation.installJar(tmpjarfile, pkg);
           packageNo++;
-          publishProgress(98*packageNo);
+          publishProgress(98 * packageNo);
           d.installedPackages.add(pkg);
         } catch (IOException ex) {
           ex.printStackTrace();
@@ -337,9 +352,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
       for (String pkg : d.packagesToUninstall) {
         publishProgress(activity.getString(R.string.deleting) + " " + pkg + "...");
-        FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg+".jar"));
+        FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg + ".jar"));
         FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg));
-        FileUtils.remove(new File(App.apertiumInstallation.dexBytecodeCache, pkg+".dex"));
+        FileUtils.remove(new File(App.apertiumInstallation.dexBytecodeCache, pkg + ".dex"));
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();
@@ -351,7 +366,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
     @Override
     protected void onProgressUpdate(Object... values) {
-      if (activity==null) return;
+      if (activity == null) {
+        return;
+      }
       Object v = values[0];
       //Log.d("", ""+v);
       if (v instanceof Integer) {
@@ -364,9 +381,11 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
     @Override
     protected void onPostExecute(Object result) {
-      if (activity==null) return;
-      if (result!=null) {
-        d.progressText = String.valueOf(""+result);
+      if (activity == null) {
+        return;
+      }
+      if (result != null) {
+        d.progressText = String.valueOf("" + result);
         activity.updateUI();
       } else {
         activity.finish();
@@ -387,7 +406,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   @Override
   public void finish() {
     super.finish();
-    if (d.repoTask!=null) d.repoTask.cancel(false);
+    if (d.repoTask != null) {
+      d.repoTask.cancel(false);
+    }
     d = null;
   }
 }

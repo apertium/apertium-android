@@ -41,7 +41,6 @@ public class Prefs {
   //Preferences name
   public static final String PREFERENCE_NAME = "ore.apertium.Pref";
 
-
   public static boolean isCacheEnabled() {
     return App.prefs.getBoolean(App.PREF_cacheEnabled, true);
   }

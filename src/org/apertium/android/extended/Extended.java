@@ -15,7 +15,9 @@ public class Extended {
   public static RulesHandler rulesHandler;
 
   public static void init(Context ctx) {
-    if (databaseHandler!=null) return;
+    if (databaseHandler != null) {
+      return;
+    }
 
 
     FileManager.setDIR();

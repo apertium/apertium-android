@@ -174,9 +174,9 @@ public class InstallActivity extends Activity implements OnClickListener {
   }
 
   /**
-   * Installation in 3 steps Step 0 (if updatating) RemoveOldRun() Step 1 ExtractRun() Step 2 FileCopyRun() Step 3
+   Installation in 3 steps Step 0 (if updatating) RemoveOldRun() Step 1 ExtractRun() Step 2 FileCopyRun() Step 3
    DataBaseWriteRun() Step 4 RemoveOtherFileRun()
- *
+
    */
 //Step 0
 //Removing old files and data

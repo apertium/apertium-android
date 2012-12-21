@@ -26,7 +26,6 @@ import android.content.Context;
 
 //@TargetApi(11)
 public class ClipboardHandlerV11 extends ClipboardHandler {
-
   public ClipboardHandlerV11(Context thisActivity) {
     super(thisActivity);
   }
