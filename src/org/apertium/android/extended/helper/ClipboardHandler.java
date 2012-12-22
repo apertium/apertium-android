@@ -19,7 +19,6 @@
 package org.apertium.android.extended.helper;
 
 //import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 
 //@TargetApi(11)

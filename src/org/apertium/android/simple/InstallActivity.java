@@ -338,9 +338,9 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           fos.close();
           in.close();
           tmpjarfile.setLastModified(lastModified);
-          //TODO
           publishProgress(activity.getString(R.string.installing) + " " + pkg + "...");
           App.apertiumInstallation.installJar(tmpjarfile, pkg);
+          tmpjarfile.delete();
           packageNo++;
           publishProgress(98 * packageNo);
           d.installedPackages.add(pkg);
@@ -354,7 +354,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         publishProgress(activity.getString(R.string.deleting) + " " + pkg + "...");
         FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg + ".jar"));
         FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg));
-        FileUtils.remove(new File(App.apertiumInstallation.dexBytecodeCache, pkg + ".dex"));
+        FileUtils.remove(new File(App.apertiumInstallation.bytecodeCacheDir, pkg + ".dex"));
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();

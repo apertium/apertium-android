@@ -42,22 +42,31 @@ public class ApertiumInstallation {
   public HashMap<String, String> titleToMode = new HashMap<String, String>();
   public HashMap<String, String> modeToPackage = new HashMap<String, String>();
   public HashMap<String, String> packageToBasedir = new HashMap<String, String>();
+
+
   /**
    This is where the packages are installed
    */
   public File packagesDir;
   /**
-   This is where optimized bytecode will be put. It will be regenerated if deleted, so it can be put in the cacheDir of
-   the app NOTE: To avoid code injection attacks this should be placed in a private place, inaccesible for others
+   * This is where bytecode will be put.
+   * NOTE: To avoid code injection attacks this should be placed in a private place, inaccesible for others
    */
-  public File dexBytecodeCache;
+  public File bytecodeDir;
+  /**
+   * This is where optimized bytecode will be put.
+   * It will be regenerated if deleted, so it can be put in the cacheDir of the app.
+   * NOTE: To avoid code injection attacks this should be placed in a private place, inaccesible for others
+   */
+  public File bytecodeCacheDir;
 
   public ApertiumInstallation(App app) {
     packagesDir = new File(app.getCacheDir(), "packages");
     packagesDir.mkdirs();
-    dexBytecodeCache = new File(app.getCacheDir(), "dex-cache");
-    dexBytecodeCache.mkdirs();
+    bytecodeCacheDir = new File(app.getCacheDir(), "dex-cache");
+    bytecodeCacheDir.mkdirs();
   }
+
   public static final FilenameFilter apertiumDirectoryFilter = new FilenameFilter() {
     @Override
     public boolean accept(File dir, String name) {
@@ -80,7 +89,7 @@ public class ApertiumInstallation {
     for (String pkg : getInstalledPackages()) {
       String basedir = packagesDir + "/" + pkg;
       try {
-        DexClassLoader cl = new DexClassLoader(basedir + ".jar", dexBytecodeCache.getAbsolutePath(), null, this.getClass().getClassLoader());
+        DexClassLoader cl = new DexClassLoader(basedir + ".jar", bytecodeCacheDir.getAbsolutePath(), null, this.getClass().getClassLoader());
         Translator.setBase(basedir, cl);
         for (String mode : Translator.getAvailableModes()) {
           String title = Translator.getTitle(mode);
@@ -114,6 +123,7 @@ public class ApertiumInstallation {
         return true;
       }
     });
+    dir.setLastModified(tmpjarfile.lastModified());
     File classesDex = new File(dir, "classes.dex");
     File installedjarfile = new File(packagesDir, pkg + ".jar");
     if (!classesDex.exists()) {
@@ -139,6 +149,7 @@ public class ApertiumInstallation {
       } finally {
         zos.close();
       }
+      installedjarfile.setLastModified(tmpjarfile.lastModified());
     }
     rescanForPackages();
   }

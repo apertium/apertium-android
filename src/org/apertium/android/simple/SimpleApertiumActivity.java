@@ -159,8 +159,9 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
         String mode = App.apertiumInstallation.titleToMode.get(currentModeTitle);
         // new DexClassLoader(/mnt/sdcard/apertium/jars/en-eo,eo-en/en-eo,eo-en.jar,/data/data/org.apertium.android/app_dex, null, dalvik.system.PathClassLoader[/data/app/org.apertium.android-2.apk]
         String basedir = App.apertiumInstallation.titleToBasedir.get(currentModeTitle);
+        //App.apertiumInstallation.getClassLoadeFromMode(mode)
         Log.d(TAG, "new DexClassLoader(" + basedir + ".jar");
-        DexClassLoader classloader = new DexClassLoader(basedir + ".jar", App.apertiumInstallation.dexBytecodeCache.getAbsolutePath(), null, this.getClass().getClassLoader());
+        DexClassLoader classloader = new DexClassLoader(basedir + ".jar", App.apertiumInstallation.bytecodeCacheDir.getAbsolutePath(), null, this.getClass().getClassLoader());
         Translator.setBase(basedir, classloader);
         Translator.setMode(mode);
         translationTask = new TranslationTask();
