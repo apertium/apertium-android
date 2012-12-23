@@ -52,7 +52,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.apertium.android.R;
-import org.apertium.android.simple.App;
+import org.apertium.android.App;
 import org.apertium.utils.IOUtils;
 
 public class ExtendedApertiumActivity extends Activity implements OnClickListener {

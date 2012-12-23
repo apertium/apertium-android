@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.simple.FileUtils;
+import org.apertium.android.FileUtils;
 import org.apertium.android.extended.helper.Prefs;
 import org.apertium.android.extended.languagepair.LanguagePackage;
 import org.apertium.android.extended.languagepair.TranslationMode;
@@ -45,7 +45,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import org.apertium.android.R;
-import org.apertium.android.simple.App;
+import org.apertium.android.App;
 
 public class InstallActivity extends Activity implements OnClickListener {
   private final String TAG = "InstallActivity";

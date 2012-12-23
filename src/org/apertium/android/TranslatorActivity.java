@@ -17,12 +17,12 @@
  * 02111-1307, USA.
  */
 /**
- SimpleApertiumActivity.java Main Launcher Activity of application
+ TranslatorActivity.java Main Launcher Activity of application
 
  @author Arink Verma, Jacob Nordfalk
 
  */
-package org.apertium.android.simple;
+package org.apertium.android;
 
 import org.apertium.Translator;
 
@@ -57,7 +57,7 @@ import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
 
-public class SimpleApertiumActivity extends Activity implements OnClickListener {
+public class TranslatorActivity extends Activity implements OnClickListener {
   private static final String TAG = "ApertiumActiviy";
 
   /*Layout variable*/
@@ -182,7 +182,7 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
   /* Translation Thread,
    * Load translation rules and excute lttoolbox.jar */
   static class TranslationTask extends AsyncTask<String, Object, String> implements Translator.TranslationProgressListener {
-    private SimpleApertiumActivity activity;
+    private TranslatorActivity activity;
 
     @Override
     protected String doInBackground(String... inputText) {
@@ -273,7 +273,7 @@ public class SimpleApertiumActivity extends Activity implements OnClickListener 
         builder.setTitle(getString(R.string.about));
         WebView wv = new WebView(this);
         Log.d(TAG, getString(R.string.aboutText));
-        wv.loadData(getString(R.string.aboutText), "text/html", "utf-8");
+        wv.loadData(getString(R.string.aboutText), "text/html", "ISO-8859-1"); // "utf-8");
         builder.setView(wv);
         AlertDialog alert = builder.create();
         alert.show();

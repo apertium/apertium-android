@@ -27,7 +27,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import org.apertium.android.simple.App;
+import org.apertium.android.App;
 
 public class Prefs {
   private static final String TAG = "AppPreference";

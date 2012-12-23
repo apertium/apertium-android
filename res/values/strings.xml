@@ -137,24 +137,27 @@ Contact us for details.
 <h2>Authors and contributors</h2>
 This app would not have been possible without the support of Google Summer of Code (GSoC) stipends.
 <pre>
-2012 Arink Verma arinkverma@gmail.com
-Created this Android app during GSoC 2012
-
-2012 Mikel Artetxe artetxem@gmail.com
-Making Java port embeddable during GSoC 2012
-
-2010 Stephen Tigner stephen.tigner@gmail.com
-http://stephentigner.com/
-Java port of the Apertium C++ library during GSoC 2010
-
-2009 Raphaël Laurent raphal.laurent@gmail.com
-Java port of the Apertium C++ library during GSoC 2009
-
-2008 by Nic Cottrell
-Initial draft of Java port
-
-2009-2012 Jacob Nordfalk jacob.nordfalk@gmail.com
-Maintainer and GSOC mentor 2010 and 2012
+2012 Mikel Artetxe artetxem@gmail.com<br>
+Making Java port of lttoolbox embeddable during GSoC 2012<br>
+<br>
+2012 Arink Verma arinkverma@gmail.com<br>
+Created an Android app using lttoolbox-java during GSoC 2012<br>
+<br>
+2012 Jacob Nordfalk jacob.nordfalk@gmail.com<br>
+Mentor of Mikel and Arink, re-architect lttoolbox-java and Android app autumn 2012<br>
+<br>
+2010 Stephen Tigner stephen.tigner@gmail.com<br>
+http://stephentigner.com/<br>
+Java port of the Apertium C++ library during GSoC 2010<br>
+<br>
+2009 Raphaël Laurent raphal.laurent@gmail.com<br>
+Java port of the Apertium C++ library during GSoC 2009<br>
+<br>
+2008 by Nic Cottrell<br>
+Initial draft of Java port<br>
+<br>
+2009-2012 Jacob Nordfalk jacob.nordfalk@gmail.com<br>
+Maintainer and GSOC mentor 2010 and 2012<br>
 </pre>
 
 ]]>

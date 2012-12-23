@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.simple.FileUtils;
+import org.apertium.android.FileUtils;
 import org.apertium.android.extended.helper.Prefs;
 import org.apertium.android.extended.languagepair.TranslationMode;
 
@@ -47,7 +47,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.apertium.android.R;
-import org.apertium.android.simple.App;
+import org.apertium.android.App;
 
 public class ModeManageActivity extends ListActivity {
   String TAG = "ModeManageActivity";

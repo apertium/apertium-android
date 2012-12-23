@@ -1,4 +1,4 @@
-package org.apertium.android.simple;
+package org.apertium.android;
 
 import android.app.*;
 import android.content.Context;
