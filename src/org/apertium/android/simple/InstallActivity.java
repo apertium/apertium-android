@@ -128,7 +128,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
     ArrayList<String> packages = new ArrayList<String>();
     // Get a copy of the list of installed packages, as we modify it below
-    HashSet<String> installedPackages = new HashSet<String>(App.apertiumInstallation.packageToBasedir.keySet());
+    HashSet<String> installedPackages = new HashSet<String>(App.apertiumInstallation.modeToPackage.values());
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     String line;
@@ -147,7 +147,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           installedPackages.remove(pkg);
           d.installedPackages.add(pkg);
           if (useNetwork) {
-            long localLastModified = new File(App.apertiumInstallation.packagesDir, pkg).lastModified();
+            long localLastModified = new File(App.apertiumInstallation.getBasedirForPackage(pkg)).lastModified();
             long onlineLastModified = url.openConnection().getLastModified();
             if (onlineLastModified > localLastModified) {
               d.updatablePackages.add(pkg);
@@ -352,9 +352,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
       for (String pkg : d.packagesToUninstall) {
         publishProgress(activity.getString(R.string.deleting) + " " + pkg + "...");
-        FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg + ".jar"));
-        FileUtils.remove(new File(App.apertiumInstallation.packagesDir, pkg));
-        FileUtils.remove(new File(App.apertiumInstallation.bytecodeCacheDir, pkg + ".dex"));
+        App.apertiumInstallation.uninstallPackage(pkg);
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();

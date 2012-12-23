@@ -37,8 +37,8 @@ public class App extends Application {
 
   public static void reportError(Exception ex) {
     ex.printStackTrace();
-    langToast("Error: " + ex);
-    langToast("The error will be reported to the developers. sorry for the inconvenience.");
+    longToast("Error: " + ex);
+    longToast("The error will be reported to the developers. sorry for the inconvenience.");
     BugSenseHandler.sendException(ex);
   }
   public static ApertiumInstallation apertiumInstallation;
@@ -65,23 +65,17 @@ public class App extends Application {
     instance = this;
     handler = new Handler();
 
-    try {
-      Class.forName("android.os.AsyncTask"); // Fix for http://code.google.com/p/android/issues/detail?id=20915
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    // Set where the app will keep cached indexes
-    IOUtils.cacheDir = new File(getExternalCacheDir(), "apertium-index-cache");
-    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
-
-    apertiumInstallation = new ApertiumInstallation(this);
+    File packagesDir = new File(getFilesDir(), "packages"); // where packages' data are installed
+    File bytecodeDir = new File(getFilesDir(), "bytecode"); // where packages' bytecode are installed. Must be private
+    File bytecodeCacheDir = new File(getCacheDir(), "bytecodecache"); // where bytecode cache is kept. Must be private
+    IOUtils.cacheDir = new File(getCacheDir(), "apertium-index-cache"); // where cached transducerindexes are kept
+    apertiumInstallation = new ApertiumInstallation(packagesDir, bytecodeDir, bytecodeCacheDir);
     apertiumInstallation.rescanForPackages();
 
+    Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
   }
 
-  public static void langToast(final String txt) {
-    //new Throwable(txt).printStackTrace();
+  public static void longToast(final String txt) {
     instance.handler.post(new Runnable() {
       @Override
       public void run() {
@@ -89,17 +83,6 @@ public class App extends Application {
       }
     });
   }
-
-  public static void kortToast(final String txt) {
-    //new Throwable(txt).printStackTrace();
-    instance.handler.post(new Runnable() {
-      @Override
-      public void run() {
-        Toast.makeText(instance, txt, Toast.LENGTH_SHORT).show();
-      }
-    });
-  }
-
 
   /* Version fra http://developer.android.com/training/basics/network-ops/managing.html */
   public static boolean isOnline() {

@@ -254,7 +254,7 @@ public class InstallActivity extends Activity implements OnClickListener {
         } catch (IOException e) {
           Log.e(TAG, e + "");
           e.printStackTrace();
-          App.langToast(e.getLocalizedMessage());
+          App.longToast(e.getLocalizedMessage());
         }
 
       }
