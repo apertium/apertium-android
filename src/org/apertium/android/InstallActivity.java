@@ -34,6 +34,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.bugsense.trace.BugSenseHandler;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -184,6 +185,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           initPackages(d, new FileInputStream(d.cachedRepoFile), false);
         } else {
           initPackages(d, d.activity.getResources().openRawResource(R.raw.language_pairs), false);
+          BugSenseHandler.sendException(new Exception("New installation"));
         }
         publishProgress();
         // Then make the check over the network

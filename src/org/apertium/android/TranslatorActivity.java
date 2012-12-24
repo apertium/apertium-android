@@ -171,6 +171,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
         ApertiumInstallation ai = App.apertiumInstallation;
         String mode = ai.titleToMode.get(currentModeTitle);
         String pkg = ai.modeToPackage.get(mode);
+        //if (!ai.hasBeenOptimized(pkg)) App.longToast("Optimization during first run, please wait...");
         Translator.setBase(ai.getBasedirForPackage(pkg), ai.getClassLoaderForPackage(pkg));
         Translator.setMode(mode);
         translationTask = new TranslationTask();

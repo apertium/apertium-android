@@ -94,7 +94,7 @@ public class ApertiumInstallation {
   public void rescanForPackages() {
     titleToMode.clear();
     modeToPackage.clear();
-    ClassLoader dummyClassLoader = getClass().getClassLoader(); // Not really used during scanning
+    //ClassLoader dummyClassLoader = getClass().getClassLoader(); // Not really used during scanning
 
     String[] installedPackages = packagesDir.list(apertiumPackageDirectoryFilter);
     Log.d("", "Scanning " + packagesDir + " gave " + Arrays.asList(installedPackages));
@@ -169,6 +169,7 @@ public class ApertiumInstallation {
     FileUtils.remove(new File(packagesDir, pkg));
     FileUtils.remove(new File(bytecodeCacheDir, pkg + ".dex"));
   }
+
 
   public DexClassLoader getClassLoaderForPackage(String pkg) {
 //        Log.d(TAG, "new DexClassLoader(" + basedir + ".jar");
