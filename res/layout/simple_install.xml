@@ -22,7 +22,6 @@
       android:id="@+id/progressTextView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="xxx"
   />
 
 
@@ -32,7 +31,7 @@
       android:layout_height="wrap_content"
       android:layout_margin="6dp"
       android:layout_gravity="center_horizontal"
-      android:text="Apply" />
+      android:text="@string/apply" />
 
 
 </LinearLayout>

@@ -91,29 +91,43 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     }
   }
 
-  /* OnResume */
+  Runnable apertiumInstallationObserver = new Runnable() {
+    public void run() {
+      // Set from last selected mode if not set
+      if (currentModeTitle == null) {
+        currentModeTitle = App.prefs.getString(App.PREF_lastModeTitle, null);
+      }
+      // Reset if that mode isnt installed (anymore)
+      if (!App.apertiumInstallation.titleToMode.containsKey(currentModeTitle)) {
+        currentModeTitle = null;
+      }
+      // If there is no mode set at this stage then just pick any which is installed
+      if (currentModeTitle == null && App.apertiumInstallation.titleToMode.size() > 0) {
+        currentModeTitle = App.apertiumInstallation.titleToMode.keySet().iterator().next();
+      }
+      // And, show on the button
+      if (currentModeTitle != null) {
+        fromButton.setText(currentModeTitle);
+      } else {
+        fromButton.setText(R.string.choose_languages);
+      }
+    }
+  };
+
   @Override
   protected void onResume() {
     super.onResume();
-    // Set from last selected mode if not set
-    if (currentModeTitle == null) {
-      currentModeTitle = App.prefs.getString(App.PREF_lastModeTitle, null);
-    }
-    // Reset if that mode isnt installed (anymore)
-    if (!App.apertiumInstallation.titleToMode.containsKey(currentModeTitle)) {
-      currentModeTitle = null;
-    }
-    // If there is no mode set at this stage then just pick any which is installed
-    if (currentModeTitle == null && App.apertiumInstallation.titleToMode.size() > 0) {
-      currentModeTitle = App.apertiumInstallation.titleToMode.keySet().iterator().next();
-    }
-    // And, show on the button
-    if (currentModeTitle != null) {
-      fromButton.setText(currentModeTitle);
-    } else {
-      fromButton.setText(R.string.choose_languages);
-    }
+    App.apertiumInstallation.observers.add(apertiumInstallationObserver);
+    apertiumInstallationObserver.run();
   }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    App.apertiumInstallation.observers.remove(apertiumInstallationObserver);
+  }
+
+
 
   @Override
   public void onClick(View v) {
@@ -177,7 +191,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     submitButton.setText(ready ? R.string.translate : R.string.translating);
     setProgressBarIndeterminateVisibility(!ready);
   }
-  TranslationTask translationTask;
+  static TranslationTask translationTask;
 
   /* Translation Thread,
    * Load translation rules and excute lttoolbox.jar */

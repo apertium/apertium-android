@@ -98,6 +98,7 @@
 
 
   <string name="apply">Apply</string>
+  <string name="cancel">Cancel</string>
   <string name="about">About</string>
 	<string name="choose_languages">Choose languages</string>
 	<string name="network_error">Network error</string>

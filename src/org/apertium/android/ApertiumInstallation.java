@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -35,9 +37,22 @@ import org.apertium.Translator;
  @author Mikel Artetxe, Jacob Nordfalk
  */
 public class ApertiumInstallation {
-  // These maps are intentionally not encapsulated. Don't misuse, they are only for reading
-  public HashMap<String, String> titleToMode = new HashMap<String, String>();
-  public HashMap<String, String> modeToPackage = new HashMap<String, String>();
+  /**
+   * Convert a title of a mode, like 'Spanish -> Esperanto' to its mode name (es-eo).
+   * This map is intentionally not encapsulated. Don't misuse, its only for reading
+   */
+  public final HashMap<String, String> titleToMode = new HashMap<String, String>();
+  /**
+   * Given a mode name, like 'es-eo', find its package name (eo-es).
+   * This map is intentionally not encapsulated. Don't misuse, its only for reading
+   */
+  public final HashMap<String, String> modeToPackage = new HashMap<String, String>();
+
+  /**
+   * List of oberservers to notify after a rescan.
+   * The run() method will be runned by the UI thread
+   */
+  public final ArrayList<Runnable> observers = new ArrayList<Runnable>();
 
 
   /**
@@ -61,6 +76,7 @@ public class ApertiumInstallation {
     this.bytecodeDir = bytecodeDir;
     this.bytecodeCacheDir = bytecodeCacheDir;
     packagesDir.mkdirs();
+    bytecodeDir.mkdirs();
     bytecodeCacheDir.mkdirs();
   }
 
@@ -71,30 +87,35 @@ public class ApertiumInstallation {
     }
   };
 
+  private void notifyObservers() {
+    for (Runnable r : observers) App.handler.post(r);
+  }
+
   public void rescanForPackages() {
     titleToMode.clear();
     modeToPackage.clear();
     ClassLoader dummyClassLoader = getClass().getClassLoader(); // Not really used during scanning
 
     String[] installedPackages = packagesDir.list(apertiumPackageDirectoryFilter);
-    Log.d("", "Scanning " + packagesDir + " gave " + installedPackages);
+    Log.d("", "Scanning " + packagesDir + " gave " + Arrays.asList(installedPackages));
     for (String pkg : installedPackages) {
 
       String basedir = packagesDir + "/" + pkg;
       try {
-        Translator.setBase(basedir, dummyClassLoader); // getClassLoaderForPackage(pkg)
+        Translator.setBase(basedir, getClassLoaderForPackage(pkg)); // getClassLoaderForPackage(pkg)
         for (String mode : Translator.getAvailableModes()) {
           String title = Translator.getTitle(mode);
           Log.d("", mode + "  " + title + "  " + basedir);
           titleToMode.put(title, mode);
           modeToPackage.put(mode, pkg);
         }
-      } catch (Exception ex) {
+      } catch (Throwable ex) {
         //Perhaps the directory contained a file that wasn't a valid package...
         ex.printStackTrace();
         Log.e("", basedir, ex);
       }
     }
+    notifyObservers();
   }
 
   public void installJar(File tmpjarfile, String pkg) throws IOException {
@@ -115,7 +136,7 @@ public class ApertiumInstallation {
     });
     dir.setLastModified(tmpjarfile.lastModified());
     File classesDex = new File(dir, "classes.dex");
-    File installedjarfile = new File(packagesDir, pkg + ".jar");
+    File installedjarfile = new File(bytecodeDir, pkg + ".jar");
     if (!classesDex.exists()) {
       App.reportError(new IllegalStateException(classesDex + " missing for " + pkg + " " + tmpjarfile));
       tmpjarfile.renameTo(installedjarfile); // resolve to renaming and hope for the best!
@@ -141,17 +162,6 @@ public class ApertiumInstallation {
       }
       installedjarfile.setLastModified(tmpjarfile.lastModified());
     }
-    rescanForPackages();
-  }
-
-  public DexClassLoader getClassLoaderForPackage(String pkg) {
-//        Log.d(TAG, "new DexClassLoader(" + basedir + ".jar");
-    return new DexClassLoader(getBasedirForPackage(pkg)+ ".jar", bytecodeCacheDir.getAbsolutePath(), null, this.getClass().getClassLoader());
-  }
-
-
-  public String getBasedirForPackage(String pkg) {
-    return packagesDir + "/" + pkg;
   }
 
   public void uninstallPackage(String pkg) {
@@ -160,4 +170,14 @@ public class ApertiumInstallation {
     FileUtils.remove(new File(bytecodeCacheDir, pkg + ".dex"));
   }
 
+  public DexClassLoader getClassLoaderForPackage(String pkg) {
+//        Log.d(TAG, "new DexClassLoader(" + basedir + ".jar");
+    //return new DexClassLoader(getBasedirForPackage(pkg)+ ".jar", bytecodeCacheDir.getAbsolutePath(), null, this.getClass().getClassLoader());
+    return new DexClassLoader(bytecodeDir+ "/" + pkg + ".jar", bytecodeCacheDir.getAbsolutePath(), null, this.getClass().getClassLoader());
+  }
+
+
+  public String getBasedirForPackage(String pkg) {
+    return packagesDir + "/" + pkg;
+  }
 }

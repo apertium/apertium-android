@@ -65,10 +65,10 @@ public class App extends Application {
     instance = this;
     handler = new Handler();
 
-    File packagesDir = new File(getFilesDir(), "packages"); // where packages' data are installed
-    File bytecodeDir = new File(getFilesDir(), "bytecode"); // where packages' bytecode are installed. Must be private
-    File bytecodeCacheDir = new File(getCacheDir(), "bytecodecache"); // where bytecode cache is kept. Must be private
-    IOUtils.cacheDir = new File(getCacheDir(), "apertium-index-cache"); // where cached transducerindexes are kept
+    File packagesDir = new File(getFilesDir(), "packages2"); // where packages' data are installed
+    File bytecodeDir = new File(getFilesDir(), "bytecode2"); // where packages' bytecode are installed. Must be private
+    File bytecodeCacheDir = new File(getCacheDir(), "bytecodecache2"); // where bytecode cache is kept. Must be private
+    IOUtils.cacheDir = new File(getCacheDir(), "apertium-index-cache2"); // where cached transducerindexes are kept
     apertiumInstallation = new ApertiumInstallation(packagesDir, bytecodeDir, bytecodeCacheDir);
     apertiumInstallation.rescanForPackages();
 

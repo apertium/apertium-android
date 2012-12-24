@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -46,12 +45,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import org.apertium.Translator;
-import org.apertium.android.R;
 
 /**
  @author Mikel Artetxe, Jacob Nordfalk
@@ -63,9 +60,11 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   private static String STR_UNINSTALLING = "Uninstalling";
 
   /**
-   Data regarding the activity. Put in a seperate object so we don't have to reinitialize on screen change
+   * Data regarding the activity.
+   * Put in a seperate object so we don't have to reinitialize on screen change
    */
   private static class Data {
+    InstallActivity activity;
     ArrayList<String> packages = new ArrayList<String>();
     HashSet<String> installedPackages = new HashSet<String>();
     HashSet<String> updatablePackages = new HashSet<String>();
@@ -82,7 +81,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     private int progress;
   }
 
-  private static Data d;
+  private Data d;
   private ListView listView;
   private ProgressBar progressBar;
   private TextView progressTextView;
@@ -102,30 +101,37 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     listView.setOnItemClickListener(this);
     listView.setAdapter(adapter);
 
+    d = (Data) getLastNonConfigurationInstance();
     if (d == null) {
       d = new Data();
       d.cachedRepoFile = new File(getCacheDir(), new File(REPO_URL).getName());
       d.progressText = "Refreshing package list, please wait...";
       d.repoTask = new RepoAsyncTask();
-      d.repoTask.activity = this;
+      d.repoTask.d = d;
       d.repoTask.execute();
     }
-    if (d.repoTask != null) {
-      d.repoTask.activity = this;
-    }
-
+    d.activity = this;
     updateUI();
   }
+
+  @Override
+  public Object onRetainNonConfigurationInstance() {
+    return d;
+  }
+
+
+
 
   private void updateUI() {
     setProgressBarIndeterminateVisibility(d.repoTask != null);
     progressTextView.setText(d.progressText);
+    applyButton.setText(d.installTask==null?R.string.apply:R.string.cancel);
     progressBar.setVisibility(d.installTask != null ? View.VISIBLE : View.GONE);
     progressBar.setMax(d.progressMax);
     progressBar.setProgress(d.progress);
   }
 
-  private static void initPackages(InputStream inputStream, boolean useNetwork) throws IOException {
+  private static void initPackages(Data d, InputStream inputStream, boolean useNetwork) throws IOException {
     ArrayList<String> packages = new ArrayList<String>();
     // Get a copy of the list of installed packages, as we modify it below
     HashSet<String> installedPackages = new HashSet<String>(App.apertiumInstallation.modeToPackage.values());
@@ -169,25 +175,24 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   }
 
   private static class RepoAsyncTask extends AsyncTask {
-    private InstallActivity activity;
-
+    Data d;
     @Override
     protected Object doInBackground(Object... arg0) {
       try {
         // First load old version of the list to display
         if (d.cachedRepoFile.exists()) {
-          initPackages(new FileInputStream(d.cachedRepoFile), false);
+          initPackages(d, new FileInputStream(d.cachedRepoFile), false);
         } else {
-          initPackages(activity.getResources().openRawResource(R.raw.language_pairs), false);
+          initPackages(d, d.activity.getResources().openRawResource(R.raw.language_pairs), false);
         }
         publishProgress();
         // Then make the check over the network
         FileUtils.copyStream(new URL(REPO_URL).openStream(), new FileOutputStream(d.cachedRepoFile));
-        initPackages(new FileInputStream(d.cachedRepoFile), true);
+        initPackages(d, new FileInputStream(d.cachedRepoFile), true);
         d.progressText = STR_INSTRUCTIONS;
       } catch (IOException ex) {
         ex.printStackTrace();
-        d.progressText = activity.getString(R.string.network_error);
+        d.progressText = d.activity.getString(R.string.network_error);
       } catch (Exception ex) {
         ex.printStackTrace();
         d.progressText = ex.toString();
@@ -199,21 +204,20 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
     @Override
     protected void onProgressUpdate(Object... values) {
-      if (activity == null) {
+      if (d.activity == null) {
         return;
       }
-      activity.adapter.notifyDataSetChanged();
-      activity.updateUI();
+      d.activity.adapter.notifyDataSetChanged();
+      d.activity.updateUI();
     }
 
     @Override
     protected void onPostExecute(Object result) {
       d.repoTask = null;
-      if (activity == null) {
+      if (d.activity == null) {
         return;
       }
-      activity.updateUI();
-      activity = null;
+      d.activity.updateUI();
     }
   }
 
@@ -306,7 +310,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   }
 
   private static class InstallRemoveAsyncTask extends AsyncTask {
-    private InstallActivity activity;
+    Data d;
 
     @Override
     protected Object doInBackground(Object... arg0) {
@@ -314,17 +318,15 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
       int packageNo = 0;
       for (String pkg : d.packagesToInstall) {
-        if (isCancelled()) {
-          return null;
-        }
+        if (isCancelled()) break;
         try {
-          publishProgress(activity.getString(R.string.downloading) + " " + pkg + "...");
+          publishProgress(d.activity.getString(R.string.downloading) + " " + pkg + "...");
           URL url = d.packageToURL.get(pkg);
           URLConnection uc = url.openConnection();
           long lastModified = uc.getLastModified();
           int contentLength = uc.getContentLength();
           BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
-          File tmpjarfile = new File(activity.getCacheDir(), pkg + ".jar");
+          File tmpjarfile = new File(d.activity.getCacheDir(), pkg + ".jar");
           FileOutputStream fos = new FileOutputStream(tmpjarfile);
           byte data[] = new byte[8192];
           int count;
@@ -338,33 +340,33 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           fos.close();
           in.close();
           tmpjarfile.setLastModified(lastModified);
-          publishProgress(activity.getString(R.string.installing) + " " + pkg + "...");
+          publishProgress(d.activity.getString(R.string.installing) + " " + pkg + "...");
           App.apertiumInstallation.installJar(tmpjarfile, pkg);
           tmpjarfile.delete();
           packageNo++;
           publishProgress(98 * packageNo);
           d.installedPackages.add(pkg);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
           ex.printStackTrace();
           return ex;
         }
       }
 
+      if (isCancelled()) return "";
       for (String pkg : d.packagesToUninstall) {
-        publishProgress(activity.getString(R.string.deleting) + " " + pkg + "...");
+        publishProgress(d.activity.getString(R.string.deleting) + " " + pkg + "...");
         App.apertiumInstallation.uninstallPackage(pkg);
         d.installedPackages.remove(pkg);
       }
       d.packagesToInstall.clear();
       d.packagesToUninstall.clear();
 
-      App.apertiumInstallation.rescanForPackages();
       return null;
     }
 
     @Override
     protected void onProgressUpdate(Object... values) {
-      if (activity == null) {
+      if (d.activity == null) {
         return;
       }
       Object v = values[0];
@@ -374,32 +376,51 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       } else {
         d.progressText = String.valueOf(v);
       }
-      activity.updateUI();
+      d.activity.updateUI();
     }
 
     @Override
     protected void onPostExecute(Object result) {
-      if (activity == null) {
+      d.installTask = null;
+      App.apertiumInstallation.rescanForPackages();
+      if (d.activity == null) {
         return;
       }
       if (result != null) {
         d.progressText = String.valueOf("" + result);
-        activity.updateUI();
+        d.activity.updateUI();
       } else {
-        activity.finish();
+        d.activity.finish();
       }
+    }
+
+    @Override
+    protected void onCancelled() {
+      d.installTask = null;
+      d.progressText = "Cancelled";
+      App.apertiumInstallation.rescanForPackages();
+      if (d.activity == null) {
+        return;
+      }
+      d.repoTask = new RepoAsyncTask();
+      d.repoTask.d = d;
+      d.repoTask.execute();
+      d.activity.updateUI();
     }
   }
 
   public void onClick(View arg0) {
-    d.progressText = "Preparing...";
-    updateUI();
-    //progressTextView.setText(STR_INSTALLING + "...");
-    d.installTask = new InstallRemoveAsyncTask();
-    d.installTask.activity = this;
-    d.installTask.execute();
+    if (d.installTask==null) {
+      d.progressText = "Preparing...";
+      d.installTask = new InstallRemoveAsyncTask();
+      d.installTask.d = d;
+      d.installTask.execute();
+    } else {
+      d.installTask.cancel(true);
+    }
     updateUI();
   }
+
 
   @Override
   public void finish() {
@@ -407,6 +428,8 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     if (d.repoTask != null) {
       d.repoTask.cancel(false);
     }
-    d = null;
+    if (d.installTask != null) {
+      App.longToast("Continuing installation in background");
+    }
   }
 }
