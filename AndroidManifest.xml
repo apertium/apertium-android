@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="org.apertium.android"
           android:versionCode="1"
-          android:versionName="0.92" >
+          android:installLocation="auto"
+          android:versionName="0.93" >
 
   <uses-sdk android:minSdkVersion="4"
               android:targetSdkVersion="17" />
