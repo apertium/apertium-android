@@ -18,3 +18,27 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Slår obfuskering fra. Det gør det meget nemmere at læse stakspor, men gør APK'en ca 60kb større.
+-dontobfuscate
+
+-keepclassmembers class org.apertium.interchunk.InterchunkWord { *; }
+-keepclassmembers class org.apertium.transfer.TransferWord { *; }
+-keepclassmembers class org.apertium.transfer.generated.GeneratedTransferBase { *; }
+-keepclassmembers class org.apertium.transfer.WordList { *; }
+-keepclassmembers class org.apertium.transfer.ApertiumRE { *; }
+
+-keep class org.apertium.interchunk.InterchunkWord
+-keep class org.apertium.transfer.TransferWord
+-keep class org.apertium.transfer.generated.GeneratedTransferBase
+-keep class org.apertium.transfer.WordList
+-keep class org.apertium.transfer.ApertiumRE
+
+#-keepattributes InnerClasses
+#-keep class org.apertium.**
+#-keepclassmembers class * {
+#    public *; protected *; private *;
+#}
+
+-dontwarn org.apertium.transfer.generation.**
+

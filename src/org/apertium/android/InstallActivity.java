@@ -109,6 +109,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
       d.progressText = "Refreshing package list, please wait...";
       d.repoTask = new RepoAsyncTask();
       d.repoTask.d = d;
+      d.activity = this;
       d.repoTask.execute();
     }
     d.activity = this;
