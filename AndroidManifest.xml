@@ -8,10 +8,12 @@
   <uses-sdk android:minSdkVersion="4"
               android:targetSdkVersion="17" />
 
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.INTERNET"/>
-  <uses-permission android:name="android.permission.READ_SMS" />
 
+<!-- For extended app
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.READ_SMS" />
+-->
   <!-- Note the use of android:largeHeap as offline machine translation is memory intensive -->
   <application
     android:largeHeap="true"
@@ -19,11 +21,6 @@
     android:label="@string/app_name"
     android:name="org.apertium.android.App"
     android:theme="@style/MainAppTheme">
-    <!--
->
-    android:configChanges="orientation|keyboardHidden">
--->
-
 
     <activity
       android:name=".TranslatorActivity"
@@ -33,23 +30,32 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-    </activity>
-    <activity android:name=".InstallActivity"/>
-    <activity android:name=".SettingsActivity"/>
-
-
-
-    <activity
-      android:name=".extended.ExtendedApertiumActivity"
-      android:label="@string/app_name"
-      android:configChanges="orientation"
-      android:windowSoftInputMode="stateHidden">
-
       <intent-filter>
         <action android:name="android.intent.action.SEND" />
         <category android:name="android.intent.category.DEFAULT" />
         <data android:mimeType="text/plain" />
       </intent-filter>
+    </activity>
+    <activity android:name=".InstallActivity"
+      android:label="Apertium install language pair"
+    >
+      <!-- only for extended activity
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="application/zip" />
+      </intent-filter>
+      -->
+    </activity>
+    <activity android:name=".SettingsActivity"/>
+
+
+<!--
+    <activity
+      android:name=".extended.ExtendedApertiumActivity"
+      android:label="@string/app_name"
+      android:configChanges="orientation"
+      android:windowSoftInputMode="stateHidden">
     </activity>
 
     <receiver android:name=".extended.widget.WidgetProvider" >
@@ -70,7 +76,7 @@
     <activity android:name=".extended.widget.WidgetConfigActivity"/>
     <activity android:name=".extended.DownloadActivity" android:configChanges="orientation"/>
     <activity android:name=".extended.SMS.SMSInboxActivity" android:configChanges="orientation"/>
-
+-->
   </application>
 
 </manifest>

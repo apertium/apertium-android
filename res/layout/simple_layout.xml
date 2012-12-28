@@ -10,7 +10,7 @@
         android:layout_height="0px"
         android:layout_weight="0.5"
         android:inputType="text|textMultiLine"
-        android:text="@string/input_text" />
+        android:text="@string/aboutText" />
 
     <LinearLayout
         android:layout_width="match_parent"

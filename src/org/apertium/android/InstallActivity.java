@@ -19,9 +19,13 @@
 package org.apertium.android;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -102,6 +106,14 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     listView.setOnItemClickListener(this);
     listView.setAdapter(adapter);
 
+    /* Only for extended example - open ZIP file with Apertium language pair installer
+    Intent i = getIntent();
+    if (i!=null) {
+      App.longToast(i.toString());
+      App.longToast(""+i.getData());
+
+    }*/
+
     d = (Data) getLastNonConfigurationInstance();
     if (d == null) {
       d = new Data();
@@ -120,10 +132,22 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   public Object onRetainNonConfigurationInstance() {
     return d;
   }
+/*
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    menu.add(R.string.installInternet);
+    return super.onCreateOptionsMenu(menu);
+  }
 
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.string.installInternet) {
 
-
-
+    }
+    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apertium.svn.sourceforge.net/svnroot/apertium/builds/")));
+    return super.onOptionsItemSelected(item);
+  }
+*/
   private void updateUI() {
     setProgressBarIndeterminateVisibility(d.repoTask != null);
     progressTextView.setText(d.progressText);

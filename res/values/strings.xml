@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Apertium</string>
-    <string name="input_text">Apertium offers both text translation, along with the translation of documents and surf and translate.</string>
     <string name="translateHint">Translated text will appear here</string>
 
 
@@ -110,13 +109,13 @@ most of the language directions from Apertium.<br>
 
 Apertium is a rule-based, free/open-source, machine translation project and platform.
 
-Apertium can, like this app, be installed on your own machine.
+Apertium can, like this app, be installed on your own machine and doesen\'t require
+an internet connection for translation. This means you don\'t
+need to send confidential text through the Internet to get a translation.<br>
 
-That means that you don\'t need an Internet connection and you don\'t
-need to send confidential text through the Internet to get a translation.
+<b>Tip:</b>You can mark text in e.g. the web browser, long-click and select to "Share" with Apertium
+to put it into the translator. <br>
 
-If you want to quickly try it out there are zero-install Java web start applets
-(see <a href="http://wiki.apertium.org/wiki/Apertium-Caffeine">http://wiki.apertium.org/wiki/Apertium-Caffeine</a>)
 
 <h3>Need help creating your own offline translation service?</h3>
 This app is an open source showcase of how to do offline translation.
@@ -126,6 +125,8 @@ and end users. Please see
 <a href="http://wiki.apertium.org">http://wiki.apertium.org</a>
 for how to get in touch.
 
+If you want to quickly try it out on the desktop there are zero-install Java web start applets
+(see <a href="http://wiki.apertium.org/wiki/Apertium-Caffeine">http://wiki.apertium.org/wiki/Apertium-Caffeine</a>)
 
 <h3>Something missing? Want to make your own language pair?</h3>
 

@@ -33,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -78,6 +79,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     setContentView(R.layout.simple_layout);
     outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
+    inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
 
     submitButton = (Button) findViewById(R.id.translateButton);
     fromButton = (Button) findViewById(R.id.fromButton);
@@ -266,11 +268,12 @@ public class TranslatorActivity extends Activity implements OnClickListener {
        intent = new Intent(this, SMSInboxActivity.class);
        startActivityForResult(intent, 0);
        return true;
-       */
       case R.id.extended:
         intent = new Intent(this, ExtendedApertiumActivity.class);
         startActivity(intent);
         return true;
+       */
+//        android.R.drawable.ic_me
       case R.id.install:
         intent = new Intent(this, InstallActivity.class);
         startActivity(intent);

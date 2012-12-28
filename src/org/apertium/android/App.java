@@ -76,6 +76,7 @@ public class App extends Application {
   }
 
   public static void longToast(final String txt) {
+    Log.d("TAG", txt);
     instance.handler.post(new Runnable() {
       @Override
       public void run() {
