@@ -104,17 +104,41 @@
   <string name="download_languages">Download languages</string>
   <string name="aboutText"><![CDATA[
 <html><body>
-This is a free/open-source, offline machine translation app which offers
+This is an open-source, offline machine translation app which offers
 most of the language directions from Apertium.<br>
 
-Apertium is a rule-based, free/open-source, machine translation project and platform.
+Apertium is a free/open-source, rule-based, machine translation project and platform.<br>
 
-Apertium can, like this app, be installed on your own machine and doesen\'t require
-an internet connection for translation. This means you don\'t
-need to send confidential text through the Internet to get a translation.<br>
+Apertium doesen\'t require an internet connection for translation.
+This means you don\'t need to send confidential text through the Internet to get a translation.<br>
 
-<b>Tip:</b>You can mark text in e.g. the web browser, long-click and select to "Share" with Apertium
+<h2>Using this app</h2>
+
+This is first version of our Android app, and therefore some stuff is still missing, of course.<br>
+
+<b>Note:</b>You can mark text in e.g. the web browser, long-click and select to "Share" with Apertium
 to put it into the translator. <br>
+
+The first translation you do will be probably be slow, on older phones it can take up to a minute.
+The subsequent translations will be faster.<br>
+
+On smaller phones you are adviced to start out installing just one language pair.<br>
+
+To download language pairs we require internet access in this version.
+If you feel unconfident about that, you can switch off data connections while
+translating, or you can download the
+<a href="http://apertium.svn.sourceforge.net/viewvc/apertium/trunk/apertium-mobile/apertium-android/">source
+code</a> and build your own version.<br>
+
+Later on (february 2013), as a seperate version will come fancy stuff such as widgets, SMS translation,
+store language data to SD card etc that require more permissions.
+
+<h2>Apertium in general</h2>
+Apertium can be installed on your own desktop machine, and is bundled with several Linux flavors.<br>
+
+If you want to quickly try it out on the desktop there are
+<a href="http://wiki.apertium.org/wiki/Apertium-Caffeine">zero-install Java web start applets</a>
+for most languages.
 
 
 <h3>Need help creating your own offline translation service?</h3>
@@ -125,16 +149,14 @@ and end users. Please see
 <a href="http://wiki.apertium.org">http://wiki.apertium.org</a>
 for how to get in touch.
 
-If you want to quickly try it out on the desktop there are zero-install Java web start applets
-(see <a href="http://wiki.apertium.org/wiki/Apertium-Caffeine">http://wiki.apertium.org/wiki/Apertium-Caffeine</a>)
 
 <h3>Something missing? Want to make your own language pair?</h3>
 
-It takes around 3 months of full time work to create a language pair from scratch.
+It takes around 3 months of full time work to create a language pair from scratch.<br/>
 We at Apertium will help you, of course, and if you are a student you could consider
 engaging in Apertium work being sponsored by the Google Summer of Code free/open-source
 program (see <a href="http://code.google.com/intl/ca/soc/">http://code.google.com/intl/ca/soc/</a>).
-Contact us for details.
+Please contact us for details!
 
 <h2>Authors and contributors</h2>
 This app would not have been possible without the support of Google Summer of Code (GSoC) stipends.
@@ -145,11 +167,12 @@ Making Java port of lttoolbox embeddable during GSoC 2012<br>
 2012 Arink Verma arinkverma@gmail.com<br>
 Created an Android app using lttoolbox-java during GSoC 2012<br>
 <br>
-2012 Jacob Nordfalk jacob.nordfalk@gmail.com<br>
-Mentor of Mikel and Arink, re-architect lttoolbox-java and Android app autumn 2012<br>
+2012 <a href="http://profiles.google.com/jacob.nordfalk">Jacob Nordfalk</a> jacob.nordfalk@gmail.com<br>
+Mentor of Mikel and Arink
+Re-architect lttoolbox-java for memory constrained devices
+Android app revision autumn 2012<br>
 <br>
-2010 Stephen Tigner stephen.tigner@gmail.com<br>
-http://stephentigner.com/<br>
+2010 <a href="http://stephentigner.com/">Stephen Tigner</a> stephen.tigner@gmail.com<br>
 Java port of the Apertium C++ library during GSoC 2010<br>
 <br>
 2009 Raphaël Laurent raphal.laurent@gmail.com<br>

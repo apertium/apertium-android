@@ -28,9 +28,9 @@ public class App extends Application {
    */
   public static final String PREF_lastModeTitle = "lastModeTitle";
   /*Cache Preference*/
-  public static final String PREF_cacheEnabled = "CachePref";
+  public static final String PREF_cacheEnabled = "cacheEnabled";
   /*DisplayMark Preference*/
-  public static final String PREF_displayMark = "MarkPref";
+  public static final String PREF_displayMark = "displayMark";
   /*ClipBoardPush Preference*/
   public static final String PREF_clipBoardGet = "ClipGetPref";
   public static final String PREF_clipBoardPush = "ClipPushPref";

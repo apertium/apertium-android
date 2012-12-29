@@ -210,7 +210,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           initPackages(d, new FileInputStream(d.cachedRepoFile), false);
         } else {
           initPackages(d, d.activity.getResources().openRawResource(R.raw.language_pairs), false);
-          BugSenseHandler.sendException(new Exception("New installation"));
+          //BugSenseHandler.sendException(new Exception("New installation"));
         }
         publishProgress();
         // Then make the check over the network

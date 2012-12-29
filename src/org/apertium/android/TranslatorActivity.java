@@ -234,7 +234,8 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 
     @Override
     protected void onProgressUpdate(Object... v) {
-      activity.outputTextView.setText(v[0] + " " + v[1] + "/" + v[2]);
+      Log.d(TAG, v[0] + " " + v[1] + "/" + v[2]);
+      activity.outputTextView.setText("Translating...\n(in stage " + v[1] + " of " + v[2]+")");
     }
 
     @Override
@@ -291,7 +292,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
         builder.setTitle(getString(R.string.about));
         WebView wv = new WebView(this);
         Log.d(TAG, getString(R.string.aboutText));
-        wv.loadData(getString(R.string.aboutText), "text/html", "ISO-8859-1"); // "utf-8");
+        wv.loadData(getString(R.string.aboutText), "text/html", "UTF-8"); // );"ISO-8859-1"
         builder.setView(wv);
         AlertDialog alert = builder.create();
         alert.show();
@@ -323,7 +324,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, outputTextView.getText().toString());
     startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
   }
-
+/* TODO
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode != RESULT_OK) {
@@ -331,4 +332,5 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     }
     inputEditText.setText(data.getStringExtra("input"));
   }
+  */
 }
