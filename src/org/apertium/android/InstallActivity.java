@@ -290,7 +290,11 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
 
       if (d.packagesToInstall.contains(pkg)) {
         name.setText(Html.fromHtml("<html><b>" + pkgTitle + "</b></html>"));
-        status.setText(Html.fromHtml("<html><b>Marked to install</b></html>"));
+        if (d.updatablePackages.contains(pkg)) {
+          status.setText(Html.fromHtml("<html><b>Marked to update</b></html>"));
+        } else {
+          status.setText(Html.fromHtml("<html><b>Marked to install</b></html>"));
+        }
       } else if (d.packagesToUninstall.contains(pkg)) {
         name.setText(Html.fromHtml("<html><b>" + pkgTitle + "</b></html>"));
         status.setText(Html.fromHtml("<html><b>Marked to uninstall</b></html>"));
@@ -300,7 +304,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
         if (d.updatedPackages.contains(pkg)) {
           txt = "<html><i>Installed from repository</i></html>";
         } else if (d.updatablePackages.contains(pkg)) {
-          txt = "<html><i>Installed from repository</i></html>";
+          txt = "<html><i>Update available in repository</i></html>";
         } else if (d.installedPackages.contains(pkg)) {
           if (d.repoTask != null) {
             // During repo refresh packages are just listed in installedPackages, thus we end here during repo refresh
@@ -320,17 +324,34 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   public void onItemClick(AdapterView<?> arg0, View arg1, int row, long arg3) {
     String pkg = d.packages.get(row);
 
-    if (d.installedPackages.contains(pkg)) {
-      if (d.packagesToUninstall.contains(pkg)) {
-        d.packagesToUninstall.remove(pkg);
+    if (!d.updatablePackages.contains(pkg)) {
+      if (d.installedPackages.contains(pkg)) {
+        if (d.packagesToUninstall.contains(pkg)) {
+          d.packagesToUninstall.remove(pkg);
+        } else {
+          d.packagesToUninstall.add(pkg);
+        }
       } else {
-        d.packagesToUninstall.add(pkg);
+        if (d.packagesToInstall.contains(pkg)) {
+          d.packagesToInstall.remove(pkg);
+        } else {
+          d.packagesToInstall.add(pkg);
+        }
       }
     } else {
+      // An updateable package - there are 3 states: untouched, update, uninstall
       if (d.packagesToInstall.contains(pkg)) {
+        // update -> uninstall
         d.packagesToInstall.remove(pkg);
+        d.packagesToUninstall.add(pkg);
       } else {
-        d.packagesToInstall.add(pkg);
+        if (d.packagesToUninstall.contains(pkg)) {
+          // uninstall -> untouched
+          d.packagesToUninstall.remove(pkg);
+        } else {
+          // untouched -> update
+          d.packagesToInstall.add(pkg);
+        }
       }
     }
     adapter.notifyDataSetChanged();
