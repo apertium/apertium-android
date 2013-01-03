@@ -88,8 +88,6 @@ public class ExtendedApertiumActivity extends Activity implements OnClickListene
     getExtrasData();
 
 
-    /* Recovery and restore states */
-    CrashRecovery();
     // FileManager.setDIR();  done in Application singledon
     updateDirChanges();
 
@@ -408,24 +406,6 @@ public class ExtendedApertiumActivity extends Activity implements OnClickListene
     t.start();
 
 
-    //Saving and setting crash happen flag
-
-    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-      @Override
-      public void uncaughtException(Thread t, Throwable e) {
-
-        Translator.clearCache();
-        String error = "[" + e + "]\nTranslation direction: " + currentMode + "\n\n";
-        Log.e("Error", error);
-        Prefs.reportCrash(error);
-        progressDialog.dismiss();
-        e.printStackTrace();
-        thisActivity.finish();
-        android.os.Process.killProcess(android.os.Process.myPid());
-
-      }
-    });
-
   }
 
   private void updateDirChanges() {
@@ -447,41 +427,6 @@ public class ExtendedApertiumActivity extends Activity implements OnClickListene
         }
       };
       t.start();
-    }
-  }
-
-  @SuppressWarnings("deprecation")
-  private void CrashRecovery() {
-    final String crash = Prefs.getCrashReport();
-    if (crash != null) {
-      Prefs.clearCrashReport();
-      Log.i(TAG, "Crash on last run time" + crash);
-
-      final AlertDialog alertDialog = new AlertDialog.Builder(thisActivity).create();
-      alertDialog.setTitle(R.string.crash_detect);
-      alertDialog.setMessage(getString(R.string.crash_message_with_error_and_support_address, crash, Prefs.SUPPORT_MAIL));
-
-      alertDialog.setButton(getString(R.string.report), new DialogInterface.OnClickListener() {
-        public void onClick(final DialogInterface dialog, final int which) {
-          Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-          emailIntent.setType("plain/text");
-          String aEmailList[] = {Prefs.SUPPORT_MAIL};
-          emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, aEmailList);
-          emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Apertium Android Error Report");
-          emailIntent.setType("plain/text");
-          emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Error : " + crash + "\nSDK Version :" + android.os.Build.VERSION.SDK_INT);
-          startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email_in)));
-          alertDialog.dismiss();
-        }
-      });
-
-      alertDialog.setButton2(getString(R.string.setting), new DialogInterface.OnClickListener() {
-        public void onClick(final DialogInterface dialog, final int which) {
-          final Intent myIntent = new Intent(ExtendedApertiumActivity.this, ManageActivity.class);
-          ExtendedApertiumActivity.this.startActivity(myIntent);
-        }
-      });
-      alertDialog.show();
     }
   }
 

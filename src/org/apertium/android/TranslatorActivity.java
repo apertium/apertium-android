@@ -264,17 +264,6 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       case R.id.share:
         share_text();
         return true;
-      /*
-       case R.id.inbox:
-       intent = new Intent(this, SMSInboxActivity.class);
-       startActivityForResult(intent, 0);
-       return true;
-      case R.id.extended:
-        intent = new Intent(this, ExtendedApertiumActivity.class);
-        startActivity(intent);
-        return true;
-       */
-//        android.R.drawable.ic_me
       case R.id.install:
         intent = new Intent(this, InstallActivity.class);
         startActivity(intent);

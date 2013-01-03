@@ -45,53 +45,18 @@ public class Prefs {
     return App.prefs.getBoolean(App.PREF_cacheEnabled, true);
   }
 
-  public static void setDisplayMark(boolean y) {
-    Editor editor = App.prefs.edit();
-    editor.putBoolean(App.PREF_displayMark, y);
-    editor.commit();
-  }
-
   public static boolean isDisplayMarkEnabled() {
     return App.prefs.getBoolean(App.PREF_displayMark, true);
-  }
-
-  public static void setClipBoardPush(boolean y) {
-    Editor editor = App.prefs.edit();
-    editor.putBoolean(App.PREF_clipBoardPush, y);
-    editor.commit();
   }
 
   public static boolean isClipBoardPushEnabled() {
     return App.prefs.getBoolean(App.PREF_clipBoardPush, false);
   }
 
-  public static void setClipBoardGet(boolean y) {
-    Editor editor = App.prefs.edit();
-    editor.putBoolean(App.PREF_clipBoardGet, y);
-    editor.commit();
-  }
-
   public static boolean isClipBoardGetEnabled() {
     return App.prefs.getBoolean(App.PREF_clipBoardGet, false);
   }
-  /*Crash Preference*/
-  public static final String CrashPref = "CrashPref";
 
-  public static void reportCrash(String y) {
-    Editor editor = App.prefs.edit();
-    editor.putString(CrashPref, y);
-    editor.commit();
-  }
-
-  public static String getCrashReport() {
-    return App.prefs.getString(CrashPref, null);
-  }
-
-  public static void clearCrashReport() {
-    Editor editor = App.prefs.edit();
-    editor.putString(CrashPref, null);
-    editor.commit();
-  }
   //Last state
   private static final String LocalePref = "LocalePref";
   private static final String LastJARDirChangedPref = "LastJARDirChangedPref";

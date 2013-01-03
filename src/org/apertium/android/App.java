@@ -14,7 +14,6 @@ import com.bugsense.trace.BugSenseHandler;
 import java.io.File;
 import java.io.IOException;
 import org.apertium.utils.IOUtils;
-import org.apertium.utils.Timing;
 
 public class App extends Application {
   public static boolean isSdk() {
@@ -51,7 +50,6 @@ public class App extends Application {
     // If you want to use BugSense for your fork, register with
     // them and place your API key in /assets/bugsense.txt
     try {
-      //String key = getString(R.string.bugsensekey);
       byte[] buffer = new byte[16];
       int n = getAssets().open("bugsense.txt").read(buffer);
       String key = new String(buffer, 0, n).trim();
@@ -77,7 +75,7 @@ public class App extends Application {
 
   public static void longToast(final String txt) {
     Log.d("TAG", txt);
-    instance.handler.post(new Runnable() {
+    handler.post(new Runnable() {
       @Override
       public void run() {
         Toast.makeText(instance, txt, Toast.LENGTH_LONG).show();
