@@ -25,7 +25,6 @@
 package org.apertium.android.extended;
 
 import org.apertium.android.extended.SMS.SMSInboxActivity;
-import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.apertium.Translator;
 import org.apertium.android.extended.helper.Prefs;
