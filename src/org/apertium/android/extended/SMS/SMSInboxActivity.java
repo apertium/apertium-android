@@ -40,7 +40,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import org.apertium.android.R;
-import org.apertium.android.extended.Extended;
 
 public class SMSInboxActivity extends ListActivity {
   String TAG = "SMSInboxActivity";
@@ -54,7 +53,6 @@ public class SMSInboxActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Extended.init(this);
     mContentResolver = getContentResolver();
 
     fill();

@@ -18,7 +18,6 @@
  */
 package org.apertium.android.extended.widget;
 
-import org.apertium.android.extended.ModeManageActivity;
 import org.apertium.android.R;
 
 import android.app.Activity;
@@ -31,7 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RemoteViews;
-import org.apertium.android.extended.Extended;
+import org.apertium.android.App;
 
 public class WidgetConfigActivity extends Activity implements OnClickListener {
   private final String TAG = "WidgetConfigActivity";
@@ -48,7 +47,6 @@ public class WidgetConfigActivity extends Activity implements OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Extended.init(this);
     setContentView(R.layout.widget_config);
     setResult(RESULT_CANCELED);
 
@@ -64,7 +62,7 @@ public class WidgetConfigActivity extends Activity implements OnClickListener {
       this.finish();
       return;
     } else {
-      widgetHandler = new WidgetHandler(this.getBaseContext(), AppWidgetId);
+      widgetHandler = new WidgetHandler();
     }
 
     initView();
@@ -77,9 +75,7 @@ public class WidgetConfigActivity extends Activity implements OnClickListener {
     for (int i = 0; i < 5; i++) {
       if (v.equals(_modeButton[i])) {
         CurrentButton = i;
-        Intent intent = new Intent(WidgetConfigActivity.this, ModeManageActivity.class);
-        intent.putExtra("PrefToSet", "WIDGETS" + AppWidgetId + i);
-        startActivityForResult(intent, 0);
+        App.longToast("TODO: Choose language");
       }
     }
   }
@@ -135,7 +131,7 @@ public class WidgetConfigActivity extends Activity implements OnClickListener {
         _modeButton[i].setText("+");
         remoteViews.setViewVisibility(ModeButtonCode[i], View.GONE);
       } else {
-        String modeTitle = Extended.databaseHandler.getMode(Modes[i]).title;
+        String modeTitle = App.prefs.getString("widget.mode"+i, "???");
         _modeButton[i].setText(modeTitle);
         remoteViews.setViewVisibility(ModeButtonCode[i], View.VISIBLE);
       }

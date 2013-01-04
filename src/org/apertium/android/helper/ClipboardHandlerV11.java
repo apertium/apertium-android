@@ -19,9 +19,7 @@
 package org.apertium.android.helper;
 
 //import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 
 //@TargetApi(11)

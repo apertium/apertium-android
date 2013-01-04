@@ -18,7 +18,6 @@
  */
 package org.apertium.android.extended.filemanager;
 
-import org.apertium.android.extended.InstallActivity;
 import org.apertium.android.R;
 
 import java.io.File;
@@ -32,10 +31,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ListView;
-import org.apertium.android.extended.Extended;
+import org.apertium.android.InstallActivity;
 
 public class FileChooserActivity extends ListActivity {
-  private File currentDir;
+  private static File currentDir;
   private FileArrayAdapter adapter;
   private Option o;
 
@@ -45,8 +44,9 @@ public class FileChooserActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Extended.init(this);
-    currentDir = new File(Environment.getExternalStorageDirectory().getPath());
+    if (currentDir==null) {
+      currentDir = new File(Environment.getExternalStorageDirectory().getPath());
+    }
     fill(currentDir);
   }
 
@@ -73,7 +73,7 @@ public class FileChooserActivity extends ListActivity {
       dir.add(0, new Option("..", "Parent Directory", f.getParent()));
     }
 
-    adapter = new FileArrayAdapter(FileChooserActivity.this, R.layout.file_view, dir);
+    adapter = new FileArrayAdapter(this, R.layout.file_view, dir);
     this.setListAdapter(adapter);
 
 
@@ -87,7 +87,7 @@ public class FileChooserActivity extends ListActivity {
       currentDir = new File(o.getPath());
       fill(currentDir);
     } else {
-      Intent myIntent = new Intent(FileChooserActivity.this, InstallActivity.class);
+      Intent myIntent = new Intent(this, InstallActivity.class);
       myIntent.putExtra("filepath", o.getPath());
       myIntent.putExtra("filename", o.getName());
       startActivity(myIntent);

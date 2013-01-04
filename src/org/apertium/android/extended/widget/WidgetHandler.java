@@ -18,26 +18,17 @@
  */
 package org.apertium.android.extended.widget;
 
-import org.apertium.android.helper.Prefs;
-import org.apertium.android.extended.languagepair.TranslationMode;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import org.apertium.android.extended.Extended;
+import android.content.SharedPreferences.Editor;
+import org.apertium.android.App;
 
 public class WidgetHandler {
-  private Context CTX;
-  private final SharedPreferences settings;
-  private SharedPreferences.Editor editor;
 
-  public WidgetHandler(Context ctx, int widgetID) {
-    this.CTX = ctx;
-    this.settings = CTX.getSharedPreferences(Prefs.PREFERENCE_NAME, 0);
-    this.editor = settings.edit();
-  }
 
   public void setWidgetModes(String[] modes) {
     for (int i = 0; i < modes.length; i++) {
+      Editor editor = App.prefs.edit();
       editor.putString("WidgetMode" + i, modes[i]);
       editor.commit();
     }
@@ -48,25 +39,26 @@ public class WidgetHandler {
 
     String[] modes = new String[5];
     for (int i = 0; i < modes.length; i++) {
-      String mode = settings.getString("WidgetMode" + i, "+");
+      String mode = App.prefs.getString("WidgetMode" + i, "+");
       modes[i] = mode;
     }
     return modes;
   }
 
   public void setWidgetMode(String mode, int id) {
+    Editor editor = App.prefs.edit();
     editor.putString("WidgetMode" + id, mode);
     editor.commit();
   }
 
   public String getWidgetMode(int id) {
-    String mode = settings.getString("WidgetMode" + id, "+");
+    String mode = App.prefs.getString("WidgetMode" + id, "+");
     return mode;
   }
 
   public void removeMode(String modeID) {
     for (int i = 0; i < 5; i++) {
-      String mode = settings.getString("WidgetMode" + i, "+");
+      String mode = App.prefs.getString("WidgetMode" + i, "+");
       if (mode.equals(modeID)) {
         setWidgetMode("+", i);
       }
@@ -75,11 +67,9 @@ public class WidgetHandler {
 
   private void udateWidget() {
     for (int i = 0; i < 5; i++) {
-      String mode = settings.getString("WidgetMode" + i, "+");
-      TranslationMode translationMode = Extended.databaseHandler.getMode(mode);
-      if (translationMode == null || translationMode != null && !translationMode.isValid()) {
-        setWidgetMode("+", i);
-      }
+      String mode = App.prefs.getString("WidgetMode" + i, "+");
+      setWidgetMode("+", i);
+      App.longToast("TODO");
     }
   }
 }

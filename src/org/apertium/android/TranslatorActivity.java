@@ -89,6 +89,44 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     if (translationTask != null) {
       translationTask.activity = this;
     }
+
+    if (savedInstanceState==null) {
+      // New activity
+      getExtrasData();
+    }
+  }
+
+
+  void getExtrasData() {
+    Intent i = getIntent();
+
+    /**
+     First look for shared from other apps
+     */
+    if (Intent.ACTION_SEND.equals(i.getAction())) {
+      if ("text/plain".equals(i.getType())) {
+        inputEditText.setText(i.getStringExtra(Intent.EXTRA_TEXT));
+        return;
+      }
+    }
+
+    /**
+     Then look for data from clipboard *
+     */
+    Bundle extras = i.getExtras();
+    if (extras != null) {
+      //Getting input from ModeManageActivity and Widget Button
+      String mode = extras.getString("Mode");
+      if (mode != null) {
+        currentModeTitle = mode;
+      }
+
+      //Gettting input from SMS Activity
+      String input = extras.getString("input");
+      if (input != null) {
+        inputEditText.setText(input);
+      }
+    }
   }
 
   Runnable apertiumInstallationObserver = new Runnable() {
@@ -118,6 +156,11 @@ public class TranslatorActivity extends Activity implements OnClickListener {
   protected void onResume() {
     super.onResume();
     App.apertiumInstallation.observers.add(apertiumInstallationObserver);
+    if (Prefs.isClipBoardGetEnabled()) {
+      String inputText = App.clipboardHandler.getText();
+      if (inputText.length()>0) inputEditText.setText(inputText);
+    }
+
     apertiumInstallationObserver.run();
   }
 
@@ -241,6 +284,9 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     protected void onPostExecute(String output) {
       activity.translationTask = null;
       activity.outputTextView.setText(output);
+      if (Prefs.isClipBoardPushEnabled()) {
+        App.clipboardHandler.putText(output);
+      }
       activity.updateUi();
     }
   }

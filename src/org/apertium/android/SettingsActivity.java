@@ -18,9 +18,13 @@
  */
 package org.apertium.android;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import org.apertium.android.R;
+import org.apertium.android.extended.filemanager.FileChooserActivity;
+import org.apertium.android.extended.widget.WidgetConfigActivity;
 
 /**
 
@@ -33,5 +37,25 @@ public class SettingsActivity extends PreferenceActivity {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.setting_caffeine);
     this.setTheme(R.style.PreferenceTheme);
+
+    /*Install Package*/
+    Preference p = (Preference) findPreference("installLocalPref");
+    if (p!=null) p.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      public boolean onPreferenceClick(Preference preference) {
+        startActivity(new Intent(getApplication(), FileChooserActivity.class));
+        return true;
+      }
+    });
+
+
+    /*Widget */
+    p = (Preference) findPreference("WidgetPref");
+    if (p!=null) p.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      public boolean onPreferenceClick(Preference preference) {
+        startActivity(new Intent(getApplication(), WidgetConfigActivity.class));
+        return true;
+      }
+    });
+
   }
 }

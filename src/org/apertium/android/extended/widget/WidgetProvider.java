@@ -18,7 +18,6 @@
  */
 package org.apertium.android.extended.widget;
 
-import org.apertium.android.extended.ExtendedApertiumActivity;
 import org.apertium.android.R;
 
 import android.app.PendingIntent;
@@ -30,7 +29,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
-import org.apertium.android.extended.Extended;
+import org.apertium.android.TranslatorActivity;
 
 public class WidgetProvider extends AppWidgetProvider {
   WidgetHandler widgetHandler = null;
@@ -47,7 +46,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-    Extended.init(context);
 
     // Get all ids
     ComponentName thisWidget = new ComponentName(context, WidgetProvider.class);
@@ -71,7 +69,7 @@ public class WidgetProvider extends AppWidgetProvider {
   }
 
   void initView(Context context, int widgetId) {
-    widgetHandler = new WidgetHandler(context, widgetId);
+    widgetHandler = new WidgetHandler();
     remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
     Modes = widgetHandler.getWidgetModes();
 
@@ -107,7 +105,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     //Setting up Mode button [1,..,5]
     for (int i = 0; i < intent.length; i++) {
-      intent[i] = new Intent(context, ExtendedApertiumActivity.class);
+      intent[i] = new Intent(context, TranslatorActivity.class);
       intent[i].setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
       intent[i].putExtra("Mode", Modes[i]);
       pendingIntent[i] = PendingIntent.getActivity(context, i, intent[i], PendingIntent.FLAG_UPDATE_CURRENT);
