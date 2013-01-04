@@ -27,7 +27,7 @@ package org.apertium.android.extended;
 import org.apertium.android.extended.SMS.SMSInboxActivity;
 
 import org.apertium.Translator;
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 import org.apertium.android.extended.languagepair.TranslationMode;
 
 import android.app.Activity;
@@ -133,7 +133,7 @@ public class ExtendedApertiumActivity extends Activity implements OnClickListene
      Giving priority to incoming text from intent over clipboardtext
      */
     if (inputText == null && Prefs.isClipBoardGetEnabled()) {
-      inputText = Extended.clipboardHandler.getText();
+      inputText = App.clipboardHandler.getText();
     }
 
     if (inputText != null) {
@@ -207,7 +207,7 @@ public class ExtendedApertiumActivity extends Activity implements OnClickListene
      Giving priority to incoming text from intent over clipboardtext
      */
     if (inputText == null && Prefs.isClipBoardGetEnabled()) {
-      inputText = Extended.clipboardHandler.getText();
+      inputText = App.clipboardHandler.getText();
     }
 
     if (inputText != null) {
@@ -381,7 +381,7 @@ public class ExtendedApertiumActivity extends Activity implements OnClickListene
             outputText = Translator.translate(inputEditText.getText().toString());
 
             if (Prefs.isClipBoardPushEnabled()) {
-              Extended.clipboardHandler.putText(outputText);
+              App.clipboardHandler.putText(outputText);
             }
 
           } catch (Throwable e) {

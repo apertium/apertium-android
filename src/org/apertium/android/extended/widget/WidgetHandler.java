@@ -18,7 +18,7 @@
  */
 package org.apertium.android.extended.widget;
 
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 import org.apertium.android.extended.languagepair.TranslationMode;
 
 import android.content.Context;

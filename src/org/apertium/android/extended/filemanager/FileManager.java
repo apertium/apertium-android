@@ -34,7 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 
 import android.content.Context;
 import android.content.res.AssetManager;

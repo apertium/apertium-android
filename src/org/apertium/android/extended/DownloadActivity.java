@@ -31,7 +31,7 @@ import java.util.Date;
 import org.apertium.Translator;
 import org.apertium.android.extended.Internet.InternetManifest;
 import org.apertium.android.extended.Internet.ManifestRow;
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -21,7 +21,7 @@ package org.apertium.android.extended.languagepair;
 import java.io.File;
 import java.security.SecureClassLoader;
 
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;

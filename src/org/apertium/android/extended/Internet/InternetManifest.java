@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apertium.Translator;
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 
 public class InternetManifest {
   private List<ManifestRow> manifestRowList = null;

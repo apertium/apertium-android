@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.apertium.Translator;
 import org.apertium.android.FileUtils;
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 import org.apertium.android.extended.languagepair.TranslationMode;
 
 import android.app.Activity;

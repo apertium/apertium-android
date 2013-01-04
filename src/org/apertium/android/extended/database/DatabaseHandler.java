@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apertium.android.FileUtils;
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 import org.apertium.android.extended.languagepair.LanguagePackage;
 import org.apertium.android.extended.languagepair.TranslationMode;
 

@@ -51,9 +51,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import org.apertium.android.R;
-import org.apertium.android.extended.ExtendedApertiumActivity;
-import org.apertium.android.extended.helper.Prefs;
+import org.apertium.android.helper.Prefs;
 import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
@@ -178,6 +176,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
         Translator.setMode(mode);
         translationTask = new TranslationTask();
         translationTask.activity = this;
+        outputTextView.setText("Preparing...");
         translationTask.execute(inputEditText.getText().toString());
       } catch (Exception e) {
         e.printStackTrace();
