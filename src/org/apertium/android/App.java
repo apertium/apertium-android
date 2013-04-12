@@ -51,7 +51,7 @@ public class App extends Application {
     prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     // If you want to use BugSense for your fork, register with
-    // them and place your API key in /assets/bugsense.txt
+    // them and place your own API key in /assets/bugsense.txt
     try {
       byte[] buffer = new byte[16];
       int n = getAssets().open("bugsense.txt").read(buffer);

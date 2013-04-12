@@ -40,6 +40,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import org.apertium.android.R;
+import org.apertium.android.TranslatorActivity;
 
 public class SMSInboxActivity extends ListActivity {
   String TAG = "SMSInboxActivity";
@@ -74,8 +75,8 @@ public class SMSInboxActivity extends ListActivity {
     super.onListItemClick(l, v, position, id);
     smsObj = adapter.getItem(position);
 
-    Intent intent = getIntent();
-    intent.putExtra("input", smsObj.getBody());
+    Intent intent = new Intent(this, TranslatorActivity.class);
+    intent.putExtra(Intent.EXTRA_TEXT, smsObj.getBody());
     setResult(RESULT_OK, intent);
     finish();
   }

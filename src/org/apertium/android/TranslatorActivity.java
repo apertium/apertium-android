@@ -67,6 +67,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 
   /*Mode related variable*/
   private String currentModeTitle = null;
+  public static final String EXTRA_MODE = "mode";
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -91,43 +92,37 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     }
 
     if (savedInstanceState==null) {
-      // New activity
-      getExtrasData();
-    }
-  }
+      // Not an activity restart - examine the Intent for data
+      Intent i = getIntent();
 
-
-  void getExtrasData() {
-    Intent i = getIntent();
-
-    /**
-     First look for shared from other apps
-     */
-    if (Intent.ACTION_SEND.equals(i.getAction())) {
-      if ("text/plain".equals(i.getType())) {
-        inputEditText.setText(i.getStringExtra(Intent.EXTRA_TEXT));
-        return;
-      }
-    }
-
-    /**
-     Then look for data from clipboard *
-     */
-    Bundle extras = i.getExtras();
-    if (extras != null) {
-      //Getting input from ModeManageActivity and Widget Button
-      String mode = extras.getString("Mode");
+      // See if mode is set
+      String mode = i.getStringExtra(EXTRA_MODE);
       if (mode != null) {
         currentModeTitle = mode;
       }
 
-      //Gettting input from SMS Activity
-      String input = extras.getString("input");
-      if (input != null) {
-        inputEditText.setText(input);
+      // First look for shared from other apps
+      String text = i.getStringExtra(Intent.EXTRA_TEXT);
+      if (text != null) {
+        inputEditText.setText(text);
+        return;
+      }
+
+      // Then look for data from clipboard
+      Bundle extras = i.getExtras();
+      if (extras != null) {
+        //Getting input from ModeManageActivity and Widget Button
+
+        //Gettting input from SMS Activity
+        String input = extras.getString("input");
+        if (input != null) {
+          inputEditText.setText(input);
+        }
       }
     }
   }
+
+
 
   Runnable apertiumInstallationObserver = new Runnable() {
     public void run() {
