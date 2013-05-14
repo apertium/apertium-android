@@ -7,9 +7,10 @@
     <item android:state_focused="true"  android:state_enabled="false" android:state_pressed="true" android:drawable="@color/pale_brown" />
     <item android:state_focused="true"  android:state_enabled="false"                              android:drawable="@color/pale_brown" />
     <item android:state_focused="true"                                android:state_pressed="true" android:drawable="@color/pale_brown" />
+    <!--
     <item android:state_focused="false"                               android:state_pressed="true" android:drawable="@color/bright_yellow" />
     <item android:state_focused="true"                                                             android:drawable="@color/bright_yellow" />
-    
+    -->
     
     
 </selector>

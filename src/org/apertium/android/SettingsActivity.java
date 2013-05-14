@@ -36,7 +36,6 @@ public class SettingsActivity extends PreferenceActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     addPreferencesFromResource(R.xml.setting_caffeine);
-    this.setTheme(R.style.PreferenceTheme);
 
     /*Install Package*/
     Preference p = (Preference) findPreference("installLocalPref");
