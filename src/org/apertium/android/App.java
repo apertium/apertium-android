@@ -13,8 +13,6 @@ import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import java.io.File;
 import java.io.IOException;
-import org.apertium.android.helper.ClipboardHandler;
-import org.apertium.android.helper.ClipboardHandlerV11;
 import org.apertium.utils.IOUtils;
 
 public class App extends Application {
@@ -43,7 +41,6 @@ public class App extends Application {
     BugSenseHandler.sendException(ex);
   }
   public static ApertiumInstallation apertiumInstallation;
-  public static ClipboardHandler clipboardHandler;
 
   @Override
   public void onCreate() {
@@ -75,13 +72,6 @@ public class App extends Application {
 
     Log.i("TAG", "IOUtils.cacheDir set to " + IOUtils.cacheDir);
 
-
-    int sdk = android.os.Build.VERSION.SDK_INT;
-    if (sdk < 11) {
-      clipboardHandler = new ClipboardHandler(this);
-    } else {
-      clipboardHandler = new ClipboardHandlerV11(this);
-    }
   }
 
   public static void longToast(final String txt) {

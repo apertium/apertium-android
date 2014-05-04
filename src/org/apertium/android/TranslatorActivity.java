@@ -51,7 +51,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import org.apertium.android.helper.Prefs;
 import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
@@ -61,7 +60,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 
   /*Layout variable*/
   private EditText inputEditText;
-  private TextView outputTextView;
+  private EditText outputTextView;
   private Button fromButton;
   private Button submitButton;
 
@@ -76,9 +75,8 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     setProgressBarIndeterminateVisibility(true);
 
     setContentView(R.layout.simple_layout);
-    outputTextView = (TextView) findViewById(R.id.outputText);
     inputEditText = (EditText) findViewById(R.id.inputtext);
-    inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
+    outputTextView = (EditText) findViewById(R.id.outputText);
 
     submitButton = (Button) findViewById(R.id.translateButton);
     fromButton = (Button) findViewById(R.id.fromButton);
@@ -101,7 +99,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
         currentModeTitle = mode;
       }
 
-      // First look for shared from other apps
+      // First look for shared text from other apps
       String text = i.getStringExtra(Intent.EXTRA_TEXT);
       if (text != null) {
         inputEditText.setText(text);
@@ -109,16 +107,13 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       }
 
       // Then look for data from clipboard
-      Bundle extras = i.getExtras();
-      if (extras != null) {
-        //Getting input from ModeManageActivity and Widget Button
-
-        //Gettting input from SMS Activity
-        String input = extras.getString("input");
-        if (input != null) {
-          inputEditText.setText(input);
-        }
-      }
+			if (App.prefs.getBoolean(App.PREF_clipBoardGet, false)) {
+				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+				String inputText = clipboard.getText().toString();
+				if (inputText.length()>0) inputEditText.setText(inputText);
+				return;
+			}
+	    inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
     }
   }
 
@@ -151,11 +146,6 @@ public class TranslatorActivity extends Activity implements OnClickListener {
   protected void onResume() {
     super.onResume();
     App.apertiumInstallation.observers.add(apertiumInstallationObserver);
-    if (Prefs.isClipBoardGetEnabled()) {
-      String inputText = App.clipboardHandler.getText();
-      if (inputText.length()>0) inputEditText.setText(inputText);
-    }
-
     apertiumInstallationObserver.run();
   }
 
@@ -201,8 +191,8 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
       inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
 
-      Translator.setCacheEnabled(Prefs.isCacheEnabled());
-      Translator.setDisplayMarks(Prefs.isDisplayMarkEnabled());
+      Translator.setCacheEnabled(App.prefs.getBoolean(App.PREF_cacheEnabled, true));
+      Translator.setDisplayMarks(App.prefs.getBoolean(App.PREF_displayMark, true));
       Translator.setDelayedNodeLoadingEnabled(true);
       Translator.setParallelProcessingEnabled(false);
       try {
@@ -231,6 +221,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     submitButton.setText(ready ? R.string.translate : R.string.translating);
     setProgressBarIndeterminateVisibility(!ready);
   }
+
   static TranslationTask translationTask;
 
   /* Translation Thread,
@@ -279,17 +270,14 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     protected void onPostExecute(String output) {
       activity.translationTask = null;
       activity.outputTextView.setText(output);
-      if (Prefs.isClipBoardPushEnabled()) {
-        App.clipboardHandler.putText(output);
+      if (App.prefs.getBoolean(App.PREF_clipBoardPush, false)) {
+				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+				clipboard.setText(output);
       }
       activity.updateUi();
     }
   }
 
-  /**
-   **
-   Option menu 1. share 2. inbox 3. manage 4. setting
-   */
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();

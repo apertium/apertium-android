@@ -18,14 +18,14 @@
 
         <Button
             android:id="@+id/translateButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:layout_weight="1.2"
+            android:layout_weight="1"
             android:text="@string/translate" />
 
         <Button
             android:id="@+id/fromButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/choose_languages" />

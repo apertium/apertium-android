@@ -10,12 +10,6 @@
       android:defaultValue="true"
       android:summary="@string/displayMarkDescription"
       android:key="displayMark" />
-<!--
-    <CheckBoxPreference
-      android:title="@string/enableCache"
-      android:defaultValue="true"
-      android:summary="@string/enableCacheDescription"
-      android:key="CachePref" />
 
     <CheckBoxPreference
       android:title="@string/clipBoardGet"
@@ -28,8 +22,15 @@
       android:defaultValue="false"
       android:summary="@string/clipBoardPushDescription"
       android:key="ClipPushPref" />
--->
-  </PreferenceCategory>
+<!--
+    <CheckBoxPreference
+      android:title="@string/enableCache"
+      android:defaultValue="true"
+      android:summary="@string/enableCacheDescription"
+      android:key="CachePref" />
   <PreferenceCategory android:title="More preferences comming in next release">
+  </PreferenceCategory>
+
+-->
   </PreferenceCategory>
 </PreferenceScreen>

@@ -16,39 +16,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
+package org.apertium.android;
 
-/* used by FileArray */
-package org.apertium.android.extended.filemanager;
+import android.os.Environment;
 
-class Option implements Comparable<Option> {
-  private String name;
-  private String data;
-  private String path;
-
-  public Option(String n, String d, String p) {
-    name = n;
-    data = d;
-    path = p;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getData() {
-    return data;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
-  @Override
-  public int compareTo(Option o) {
-    if (this.name != null) {
-      return this.name.toLowerCase().compareTo(o.getName().toLowerCase());
-    } else {
-      throw new IllegalArgumentException();
-    }
-  }
+public class Prefs {
+  //Directories path
+  public static final String BASE_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium";
+  public static final String JAR_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium/jars";
+  public static final String TEMP_DIR = Environment.getExternalStorageDirectory().toString() + "/apertium/temp";
+  public static final String MANIFEST_FILE = "Manifest";
+  public static final String SVN_MANIFEST_ADDRESS = "http://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
+  //Preferences name
+  public static final String PREFERENCE_NAME = "ore.apertium.Pref";
 }
