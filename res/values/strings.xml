@@ -77,8 +77,8 @@
 	<string name="clipBoardGetDescription">Fill input from clipboard</string>
 	<string name="clipBoardPush">ClipBoard Push</string>
 	<string name="clipBoardPushDescription">Copy output to clipboard</string>
-	<string name="displayMark">Show mark</string>
-	<string name="displayMarkDescription">Mark the unknown words</string>
+	<string name="displayMark">Mark unknown words</string>
+	<string name="displayMarkDescription">Mark unknown words with a *</string>
 	<string name="enableCache">Enable Cache</string>
 	<string name="enableCacheDescription">For quick translation enable</string>
 	<string name="installInternet">Install from Internet</string>
@@ -104,19 +104,16 @@
   <string name="download_languages">Download languages</string>
   <string name="aboutText"><![CDATA[
 <html><body>
-This is an open-source, offline machine translation app which offers
+This is an open source, off-line machine translation application which offers
 most of the language directions from Apertium.<br>
 
-Apertium is a free/open-source, rule-based, machine translation project and platform.<br>
+Apertium is a free, open-source, rule-based, machine translation project and platform.<br>
 
-Apertium doesen\'t require an internet connection for translation.
-This means you don\'t need to send confidential text through the Internet to get a translation.<br>
+This program don\'t send your text through the Internet to get a translation, and it
+doesn\'t require an internet connection for translation. <br>
 
 <h2>Using this app</h2>
-
-This is first version of our Android app, and therefore some stuff is still missing, of course.<br>
-
-<b>Note:</b>You can mark text in e.g. the web browser, long-click and select to "Share" with Apertium
+You can mark text in e.g. the web browser, long-press and select to "Share" with Apertium
 to put it into the translator. <br>
 
 The first translation you do will be probably be slow, on older phones it can take up to a minute.
@@ -129,9 +126,6 @@ If you feel unconfident about that, you can switch off data connections while
 translating, or you can download the
 <a href="http://apertium.svn.sourceforge.net/viewvc/apertium/trunk/apertium-mobile/apertium-android/">source
 code</a> and build your own version.<br>
-
-Later on (february 2013), as a seperate version will come fancy stuff such as widgets, SMS translation,
-store language data to SD card etc that require more permissions.
 
 <h2>Apertium in general</h2>
 Apertium can be installed on your own desktop machine, and is bundled with several Linux flavors.<br>

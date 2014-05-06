@@ -22,17 +22,13 @@ public class App extends Application {
   public static App instance;
   public static Handler handler;
   public static SharedPreferences prefs;
-  /**
-   Last selected mode preference
-   */
+
   public static final String PREF_lastModeTitle = "lastModeTitle";
-  /*Cache Preference*/
   public static final String PREF_cacheEnabled = "cacheEnabled";
-  /*DisplayMark Preference*/
   public static final String PREF_displayMark = "displayMark";
-  /*ClipBoardPush Preference*/
   public static final String PREF_clipBoardGet = "ClipGetPref";
   public static final String PREF_clipBoardPush = "ClipPushPref";
+  public static final String PREF_showInitialText = "show initial text";
 
   public static void reportError(Exception ex) {
     ex.printStackTrace();
@@ -63,6 +59,7 @@ public class App extends Application {
     instance = this;
     handler = new Handler();
 
+		// The '2' below is for historic reasons, we keep these names as users have already installed pairs there
     File packagesDir = new File(getFilesDir(), "packages2"); // where packages' data are installed
     File bytecodeDir = new File(getFilesDir(), "bytecode2"); // where packages' bytecode are installed. Must be private
     File bytecodeCacheDir = new File(getCacheDir(), "bytecodecache2"); // where bytecode cache is kept. Must be private

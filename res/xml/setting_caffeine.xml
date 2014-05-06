@@ -13,13 +13,13 @@
 
     <CheckBoxPreference
       android:title="@string/clipBoardGet"
-      android:defaultValue="false"
+      android:defaultValue="true"
       android:summary="@string/clipBoardGetDescription"
       android:key="ClipGetPref" />
 
     <CheckBoxPreference
       android:title="@string/clipBoardPush"
-      android:defaultValue="false"
+      android:defaultValue="true"
       android:summary="@string/clipBoardPushDescription"
       android:key="ClipPushPref" />
 <!--

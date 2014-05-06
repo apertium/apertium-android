@@ -106,6 +106,14 @@ public class TranslatorActivity extends Activity implements OnClickListener {
         return;
       }
 
+			// At first 'cold' startup we show the about text, just so people have something to look on
+			if (App.prefs.getBoolean(App.PREF_showInitialText, true)) {
+				//inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
+				inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
+				App.prefs.edit().putBoolean(App.PREF_showInitialText, false).commit();
+				return;
+			}
+
       // Then look for data from clipboard
 			if (App.prefs.getBoolean(App.PREF_clipBoardGet, false)) {
 				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -113,7 +121,6 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 				if (inputText.length()>0) inputEditText.setText(inputText);
 				return;
 			}
-	    inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
     }
   }
 
@@ -131,7 +138,9 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       }
       // If there is no mode set at this stage then just pick any which is installed
       if (currentModeTitle == null && App.apertiumInstallation.titleToMode.size() > 0) {
-        currentModeTitle = App.apertiumInstallation.titleToMode.keySet().iterator().next();
+				ArrayList<String> modeTitle = new ArrayList<String>(App.apertiumInstallation.titleToMode.keySet());
+				Collections.sort(modeTitle);
+        currentModeTitle = modeTitle.get(0);
       }
       // And, show on the button
       if (currentModeTitle != null) {
@@ -270,7 +279,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     protected void onPostExecute(String output) {
       activity.translationTask = null;
       activity.outputTextView.setText(output);
-      if (App.prefs.getBoolean(App.PREF_clipBoardPush, false)) {
+      if (App.prefs.getBoolean(App.PREF_clipBoardPush, true)) {
 				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
 				clipboard.setText(output);
       }
