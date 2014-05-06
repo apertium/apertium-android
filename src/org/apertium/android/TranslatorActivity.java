@@ -46,11 +46,13 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.bugsense.trace.BugSenseHandler;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import static org.apertium.android.App.instance;
 import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
@@ -115,7 +117,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 			}
 
       // Then look for data from clipboard
-			if (App.prefs.getBoolean(App.PREF_clipBoardGet, false)) {
+			if (App.prefs.getBoolean(App.PREF_clipBoardGet, true)) {
 				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 				String inputText = clipboard.getText().toString();
 				if (inputText.length()>0) inputEditText.setText(inputText);
@@ -282,6 +284,12 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       if (App.prefs.getBoolean(App.PREF_clipBoardPush, true)) {
 				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
 				clipboard.setText(output);
+				String PREF_TOASTKEY = "clipboardPasteToast";
+				int n = App.prefs.getInt(PREF_TOASTKEY, 0);
+				if (n<3) {
+	        Toast.makeText(instance, "Text was pasted to clibboard", Toast.LENGTH_SHORT).show();
+					App.prefs.edit().putInt(PREF_TOASTKEY, n+1).commit();					
+				}
       }
       activity.updateUi();
     }
