@@ -119,9 +119,9 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       // Then look for data from clipboard
 			if (App.prefs.getBoolean(App.PREF_clipBoardGet, true)) {
 				android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-				String inputText = clipboard.getText().toString();
+        CharSequence txt = clipboard.getText(); // Might be null if no text has been selected or its not convertable to a string
+				String inputText = txt==null?"":txt.toString();
 				if (inputText.length()>0) inputEditText.setText(inputText);
-				return;
 			}
     }
   }
