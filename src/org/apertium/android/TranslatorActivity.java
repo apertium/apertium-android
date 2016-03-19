@@ -64,7 +64,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
   private EditText inputEditText;
   private EditText outputTextView;
   private Button fromButton;
-  private Button submitButton;
+  private Button translateButton;
 
   /*Mode related variable*/
   private String currentModeTitle = null;
@@ -80,10 +80,10 @@ public class TranslatorActivity extends Activity implements OnClickListener {
     inputEditText = (EditText) findViewById(R.id.inputtext);
     outputTextView = (EditText) findViewById(R.id.outputText);
 
-    submitButton = (Button) findViewById(R.id.translateButton);
+    translateButton = (Button) findViewById(R.id.translateButton);
     fromButton = (Button) findViewById(R.id.fromButton);
 
-    submitButton.setOnClickListener(this);
+    translateButton.setOnClickListener(this);
     fromButton.setOnClickListener(this);
 
     // Connect asynctask to the correct activity
@@ -197,7 +197,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       });
       AlertDialog alert = builder.create();
       alert.show();
-    } else if (v.equals(submitButton)) {
+    } else if (v.equals(translateButton)) {
       //Hiding soft keypad
       InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
       inputManager.hideSoftInputFromWindow(inputEditText.getApplicationWindowToken(), 0);
@@ -228,8 +228,8 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 
   private void updateUi() {
     boolean ready = translationTask == null;
-    submitButton.setEnabled(ready);
-    submitButton.setText(ready ? R.string.translate : R.string.translating);
+    translateButton.setEnabled(ready);
+    translateButton.setText(ready ? R.string.translate : R.string.translating);
     setProgressBarIndeterminateVisibility(!ready);
   }
 
