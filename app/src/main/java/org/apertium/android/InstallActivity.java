@@ -56,7 +56,7 @@ import java.util.HashSet;
  @author Mikel Artetxe, Jacob Nordfalk
  */
 public class InstallActivity extends Activity implements OnItemClickListener, OnClickListener {
-  static final String REPO_URL = "https://apertium.svn.sourceforge.net/svnroot/apertium/builds/language-pairs";
+  static final String REPO_URL = "https://svn.code.sf.net/p/apertium/svn/builds/language-pairs";
   private static String STR_INSTRUCTIONS = "Check the language pairs to install and uncheck the ones to uninstall.";
   private static String STR_INSTALLING = "Installing";
   private static String STR_UNINSTALLING = "Uninstalling";
@@ -141,7 +141,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     if (item.getItemId() == R.string.installInternet) {
 
     }
-    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://apertium.svn.sourceforge.net/svnroot/apertium/builds/")));
+    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://svn.code.sf.net/p/apertium/svn/builds/")));
     return super.onOptionsItemSelected(item);
   }
 */
@@ -164,8 +164,8 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
     while ((line = reader.readLine()) != null) {
       String[] columns = line.split("\t");
       if (columns.length > 3) {
-        // apertium-af-nl	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-af-nl/apertium-af-nl.jar	file:apertium-af-nl-0.2.0.tar.gz	af-nl, nl-af
-        // apertium-ca-it	https://apertium.svn.sourceforge.net/svnroot/apertium/builds/apertium-ca-it/apertium-ca-it.jar	file:apertium-ca-it-0.1.0.tar.gz	ca-it, it-ca
+        // apertium-af-nl	https://svn.code.sf.net/p/apertium/svn/builds/apertium-af-nl/apertium-af-nl.jar	file:apertium-af-nl-0.2.0.tar.gz	af-nl, nl-af
+        // apertium-ca-it	https://svn.code.sf.net/p/apertium/svn/builds/apertium-ca-it/apertium-ca-it.jar	file:apertium-ca-it-0.1.0.tar.gz	ca-it, it-ca
         String pkg = columns[0];
         packages.add(pkg);
         URL url = new URL(columns[1]);
