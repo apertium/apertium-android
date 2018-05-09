@@ -47,7 +47,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.bugsense.trace.BugSenseHandler;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -220,7 +219,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       } catch (Exception e) {
         e.printStackTrace();
         App.longToast(e.toString());
-        BugSenseHandler.sendException(e);
+        //BugSenseHandler.sendException(e);
       }
       updateUi();
     }
@@ -259,7 +258,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       } catch (Throwable e) {
         e.printStackTrace();
         Log.e(TAG, "ApertiumActivity.TranslationRun MODE =" + activity.currentModeTitle + ";InputText = " + input);
-        BugSenseHandler.sendException(new Exception(e));
+        //BugSenseHandler.sendException(new Exception(e));
         return "error: " + e;
       } finally {
         if (IOUtils.timing!=null) IOUtils.timing.report(); // Fix for https://mint.splunk.com/dashboard/project/185c8f8c/errors/1149188060

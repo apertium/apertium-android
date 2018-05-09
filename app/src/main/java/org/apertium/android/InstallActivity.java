@@ -35,8 +35,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bugsense.trace.BugSenseHandler;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -395,7 +393,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           d.installedPackages.add(pkg);
         } catch (Exception ex) {
           ex.printStackTrace();
-          BugSenseHandler.sendException(ex);
+          //BugSenseHandler.sendException(ex);
           return ex;
         }
       }

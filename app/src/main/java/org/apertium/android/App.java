@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
-import com.bugsense.trace.BugSenseHandler;
 import java.io.File;
 import java.io.IOException;
 import org.apertium.utils.IOUtils;
@@ -34,7 +33,7 @@ public class App extends Application {
     ex.printStackTrace();
     longToast("Error: " + ex);
     longToast("The error will be reported to the developers. sorry for the inconvenience.");
-    BugSenseHandler.sendException(ex);
+    //BugSenseHandler.sendException(ex);
   }
   public static ApertiumInstallation apertiumInstallation;
 
@@ -45,6 +44,7 @@ public class App extends Application {
 
     // If you want to use BugSense for your fork, register with
     // them and place your own API key in /assets/bugsense.txt
+    /*
     if (!BuildConfig.DEBUG) try {
       byte[] buffer = new byte[16];
       int n = getAssets().open("bugsense.txt").read(buffer);
@@ -54,7 +54,7 @@ public class App extends Application {
       BugSenseHandler.initAndStartSession(this, key);
     } catch (IOException e) {
       Log.d("TAG", "No bugsense keyfile found");
-    }
+    }*/
 
     instance = this;
     handler = new Handler();

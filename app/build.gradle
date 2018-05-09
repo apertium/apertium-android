@@ -2,12 +2,20 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "org.apertium.android"
         minSdkVersion 7
         targetSdkVersion 18
+    }
+
+    android {
+        lintOptions {
+//            checkReleaseBuilds false
+            // Or, if you prefer, you can continue to check for errors in release builds,
+            // but continue the build even when errors are found:
+            abortOnError false
+        }
     }
 
     buildTypes {
@@ -19,6 +27,5 @@ android {
 }
 
 dependencies {
-    compile files('libs/bugsense3.0.7.jar')
     compile files('libs/lttoolbox.jar')
 }

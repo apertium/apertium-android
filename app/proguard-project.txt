@@ -42,3 +42,9 @@
 
 -dontwarn org.apertium.transfer.generation.**
 
+# Ignore warnings from the presence of Java Swing ApertiumGUI application inside lttoolbox.jar
+-dontwarn org.apertium.ApertiumGUI.**
+-dontwarn org.apertium.**
+-dontwarn javax.xml.**
+-dontwarn javax.swing.**
+-dontwarn java.awt.**
