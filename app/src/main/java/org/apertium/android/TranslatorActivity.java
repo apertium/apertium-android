@@ -24,15 +24,13 @@
  */
 package org.apertium.android;
 
-import org.apertium.Translator;
-
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -45,18 +43,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import static org.apertium.android.App.instance;
+
+import org.apertium.Translator;
 import org.apertium.pipeline.Program;
 import org.apertium.utils.IOUtils;
 import org.apertium.utils.Timing;
 
-public class TranslatorActivity extends Activity implements OnClickListener {
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import static org.apertium.android.App.instance;
+
+public class TranslatorActivity extends AppCompatActivity implements OnClickListener {
   private static final String TAG = "ApertiumActiviy";
 
   /*Layout variable*/
@@ -111,7 +112,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 			if (App.prefs.getBoolean(App.PREF_showInitialText, true)) {
 				//inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
 				inputEditText.setText(Html.fromHtml(getString(R.string.aboutText)));
-				App.prefs.edit().putBoolean(App.PREF_showInitialText, false).commit();
+				App.prefs.edit().putBoolean(App.PREF_showInitialText, false).apply();
 				return;
 			}
 
@@ -179,8 +180,8 @@ public class TranslatorActivity extends Activity implements OnClickListener {
       Collections.sort(modeTitle);
       modeTitle.add(getString(R.string.download_languages));
 
-      final String[] modeTitlex = modeTitle.toArray(new String[modeTitle.size()]);
-      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      final String[] modeTitlex = modeTitle.toArray(new String[0/*modeTitle.size()*/]);
+      androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
       builder.setTitle(getString(R.string.choose_languages));
       builder.setItems(modeTitlex, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int position) {
@@ -190,7 +191,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
           }
           currentModeTitle = modeTitlex[position];
           fromButton.setText(currentModeTitle);
-          App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).commit();
+          App.prefs.edit().putString(App.PREF_lastModeTitle, currentModeTitle).apply();
           updateUi();
         }
       });
@@ -288,7 +289,7 @@ public class TranslatorActivity extends Activity implements OnClickListener {
 				int n = App.prefs.getInt(PREF_TOASTKEY, 0);
 				if (n<3) {
 	        Toast.makeText(instance, "Text was pasted to clibboard", Toast.LENGTH_SHORT).show();
-					App.prefs.edit().putInt(PREF_TOASTKEY, n+1).commit();					
+					App.prefs.edit().putInt(PREF_TOASTKEY, n+1).apply();
 				}
       }
       activity.updateUi();
@@ -322,13 +323,13 @@ public class TranslatorActivity extends Activity implements OnClickListener {
         outputTextView.setText("");
         return true;
       case R.id.about:
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.about));
         WebView wv = new WebView(this);
         Log.d(TAG, getString(R.string.aboutText));
         wv.loadData(getString(R.string.aboutText), "text/html", "UTF-8"); // );"ISO-8859-1"
         builder.setView(wv);
-        AlertDialog alert = builder.create();
+        androidx.appcompat.app.AlertDialog alert = builder.create();
         alert.show();
         /*
          try {

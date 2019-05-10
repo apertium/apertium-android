@@ -18,9 +18,9 @@
  */
 package org.apertium.android;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,7 +53,7 @@ import java.util.HashSet;
 /**
  @author Mikel Artetxe, Jacob Nordfalk
  */
-public class InstallActivity extends Activity implements OnItemClickListener, OnClickListener {
+public class InstallActivity extends AppCompatActivity implements OnItemClickListener, OnClickListener {
   static final String REPO_URL = "https://svn.code.sf.net/p/apertium/svn/builds/language-pairs";
   private static String STR_INSTRUCTIONS = "Check the language pairs to install and uncheck the ones to uninstall.";
   private static String STR_INSTALLING = "Installing";
@@ -124,7 +124,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
   }
 
   @Override
-  public Object onRetainNonConfigurationInstance() {
+  public Object onRetainCustomNonConfigurationInstance() {
     return d;
   }
 /*
@@ -373,7 +373,7 @@ public class InstallActivity extends Activity implements OnItemClickListener, On
           BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
           File tmpjarfile = new File(d.activity.getCacheDir(), pkg + ".jar");
           FileOutputStream fos = new FileOutputStream(tmpjarfile);
-          byte data[] = new byte[8192];
+          byte[] data = new byte[8192];
           int count;
           int total = 0;
           while ((count = in.read(data, 0, 1024)) != -1) {

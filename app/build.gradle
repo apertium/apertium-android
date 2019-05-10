@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "org.apertium.android"
-        minSdkVersion 7
-        targetSdkVersion 18
+        minSdkVersion 19
+        targetSdkVersion 28
     }
 
     android {
@@ -24,8 +24,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {
-    compile files('libs/lttoolbox.jar')
+    implementation files('libs/lttoolbox.jar')
+    implementation 'androidx.appcompat:appcompat:1.0.0'
 }

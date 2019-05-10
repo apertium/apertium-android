@@ -18,9 +18,9 @@ public class LanguageTitles {
       id = id.substring(0, id.length() - 4);
     ArrayList<String[]> unidirectionalPairs = new ArrayList<String[]>();
     ArrayList<String[]> bidirectionalPairs = new ArrayList<String[]>();
-    String pairs[] = id.split(",");
-    for (int i = 0; i < pairs.length; i++) {
-      String pair[] = pairs[i].split("-");
+    String[] pairs = id.split(",");
+    for (String s : pairs) {
+      String[] pair = s.split("-");
       if (pair.length < 2 || pairs.length > 1 && (pair.length > 2)) //  || pair[0].contains("_") || pair[1].contains("_")
         continue;
       for (int j = 0; j < pair.length; j++)
@@ -41,12 +41,12 @@ public class LanguageTitles {
       return id;
     else {
       StringBuilder title = new StringBuilder();
-      for (String pair[] : bidirectionalPairs) {
+      for (String[] pair : bidirectionalPairs) {
         if (title.length() != 0)
           title.append(", ");
         title.append(getTitleForPair(pair, true));
       }
-      for (String pair[] : unidirectionalPairs) {
+      for (String[] pair : unidirectionalPairs) {
         if (title.length() != 0)
           title.append(", ");
         title.append(getTitleForPair(pair, false));
@@ -63,7 +63,7 @@ public class LanguageTitles {
 
     StringBuilder title = new StringBuilder();
 
-    String lang[] = pair[0].split("_");
+    String[] lang = pair[0].split("_");
     title.append(getTitleForCode(lang[0]));
     for (int i = 1; i < lang.length; i++)
       title.append("(").append(lang[i].toUpperCase()).append(")");
@@ -110,7 +110,7 @@ public class LanguageTitles {
     codeToTitle.put("eus", "Basque");
     codeToTitle.put("fin", "Finnish");
     codeToTitle.put("udm", "Udmurt");
-    codeToTitle.put("kaz", "Kazakh");
+//    codeToTitle.put("kaz", "Kazakh");
     codeToTitle.put("tat", "Tatar");
     codeToTitle.put("kpv", "Komi-Zyrian");
     codeToTitle.put("mhr", "Eastern Mari");
