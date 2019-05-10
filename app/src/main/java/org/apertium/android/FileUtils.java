@@ -33,102 +33,100 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import android.util.Log;
+
 import java.io.FilenameFilter;
 
 public class FileUtils {
-  static String TAG = "FileUtils";
+	static String TAG = "FileUtils";
 
-  public static void copyFile(String Src, String Target) throws IOException {
-    InputStream in = new FileInputStream(Src);
-    OutputStream out = new FileOutputStream(Target);
-    copyStream(in, out);
-  }
+	public static void copyFile(String Src, String Target) throws IOException {
+		InputStream in = new FileInputStream(Src);
+		OutputStream out = new FileOutputStream(Target);
+		copyStream(in, out);
+	}
 
-  public static void copyStream(InputStream in, OutputStream out) throws IOException {
-    byte[] buffer = new byte[1024];
-    int read;
-    while ((read = in.read(buffer)) != -1) {
-      out.write(buffer, 0, read);
-    }
-    in.close();
-    out.close();
-  }
+	public static void copyStream(InputStream in, OutputStream out) throws IOException {
+		byte[] buffer = new byte[1024];
+		int read;
+		while ((read = in.read(buffer)) != -1) {
+			out.write(buffer, 0, read);
+		}
+		in.close();
+		out.close();
+	}
 
-  public static void downloadFile(String source, String target) throws IOException {
-    BufferedInputStream in = new BufferedInputStream(new URL(source).openStream());
-    java.io.FileOutputStream fos = new java.io.FileOutputStream(target);
-    java.io.BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
-    copyStream(in, bout);
-  }
+	public static void downloadFile(String source, String target) throws IOException {
+		BufferedInputStream in = new BufferedInputStream(new URL(source).openStream());
+		java.io.FileOutputStream fos = new java.io.FileOutputStream(target);
+		java.io.BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
+		copyStream(in, bout);
+	}
 
-  static public void unzip(String zipFile, String to) throws ZipException, IOException {
-    unzip(zipFile, to, new FilenameFilter() {
-      /**
-       @param dir the directory in which the filename was found.
-       @param filename the name of the file in dir to test.
-       */
-      public boolean accept(File dir, String filename) {
-        return true;
-      }
-    });
-  }
+	static public void unzip(String zipFile, String to) throws ZipException, IOException {
+		unzip(zipFile, to, new FilenameFilter() {
+			/**
+			 @param dir the directory in which the filename was found.
+			 @param filename the name of the file in dir to test.
+			 */
+			public boolean accept(File dir, String filename) {
+				return true;
+			}
+		});
+	}
 
-  static public void unzip(String zipFile, String to, FilenameFilter filter) throws ZipException, IOException {
-    Log.i(TAG, zipFile);
-    int BUFFER = 2048;
-    File file = new File(zipFile);
+	static public void unzip(String zipFile, String to, FilenameFilter filter) throws ZipException, IOException {
+		Log.i(TAG, zipFile);
+		int BUFFER = 2048;
+		File file = new File(zipFile);
 
-    ZipFile zip = new ZipFile(file);
-    //removing extention name
-    String newPath = to;
+		ZipFile zip = new ZipFile(file);
+		//removing extention name
+		String newPath = to;
 
-    Log.i(TAG, "new path =" + newPath);
-    Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
+		Log.i(TAG, "new path =" + newPath);
+		Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
 
-    // Process each entry
-    while (zipFileEntries.hasMoreElements()) {
-      // grab a zip file entry
-      ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-      String currentEntry = entry.getName();
-      File destFile = new File(newPath, currentEntry);
-      //destFile = new File(newPath, destFile.getName());
-      File destinationParent = destFile.getParentFile();
+		// Process each entry
+		while (zipFileEntries.hasMoreElements()) {
+			// grab a zip file entry
+			ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+			String currentEntry = entry.getName();
+			File destFile = new File(newPath, currentEntry);
+			//destFile = new File(newPath, destFile.getName());
+			File destinationParent = destFile.getParentFile();
 
-      if (!filter.accept(destinationParent, destFile.getName())) {
-        continue;
-      }
+			if (!filter.accept(destinationParent, destFile.getName())) {
+				continue;
+			}
 
-      // create the parent directory structure if needed
-      destinationParent.mkdirs();
+			// create the parent directory structure if needed
+			destinationParent.mkdirs();
 
-      if (!entry.isDirectory()) {
-        BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry));
+			if (!entry.isDirectory()) {
+				BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry));
 
-        // write the current file to disk
-        FileOutputStream fos = new FileOutputStream(destFile);
-        BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+				// write the current file to disk
+				FileOutputStream fos = new FileOutputStream(destFile);
+				BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
 
-        copyStream(is, dest);
-      }
-    }
-  }
+				copyStream(is, dest);
+			}
+		}
+	}
 
-  public static Boolean move(String oldpath, String newpath) {
-    File dir = new File(oldpath);
-    File file = new File(newpath);
-    file.mkdirs();
-    if (dir.renameTo(file)) {
-      return true;
-    }
-    return false;
-  }
+	public static Boolean move(String oldpath, String newpath) {
+		File dir = new File(oldpath);
+		File file = new File(newpath);
+		file.mkdirs();
+		return dir.renameTo(file);
+	}
 
-  public static void remove(File dir) {
-    if (dir.isDirectory()) {
-      for (File child : dir.listFiles()) {
-        remove(child);
-      }
-    }
-    dir.delete();
-  }
+	public static void remove(File dir) {
+		if (dir.isDirectory()) {
+			for (File child : dir.listFiles()) {
+				remove(child);
+			}
+		}
+		dir.delete();
+	}
 }
